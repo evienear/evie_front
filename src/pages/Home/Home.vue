@@ -64,8 +64,8 @@
                   class="containerMarketplace relative">
                 
 
-                 <!-- <img src='@/assets/nft/monkeyA1.png' alt="NFT Market Place">  -->
-                 <img :src="item.metadata.media" alt="NFT Market Place">
+                 <img src='@/assets/nft/monkeyA1.png' alt="NFT Market Place"> 
+                 <!-- <img :src="item.metadata.media" alt="NFT Market Place"> -->
 
                   <span class="marketplaceId colorInverted colorCartasInverted">
                   # {{item.token_series_id}}
