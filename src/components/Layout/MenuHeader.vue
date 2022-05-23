@@ -20,10 +20,10 @@
       
       <v-col cols="11">
         <v-data-table
-          id="tableCollections"
+          id="tableCollections" 
           :headers="headers"
-          :items="collections"
-          :search="collections.token_series_id"
+          :items="filterOf"
+          :search="collections"
           item-key="name"
           hide-default-footer
           mobile-breakpoint="-1"
@@ -38,7 +38,7 @@
                   append-icon="mdi-magnify"
                   solo
                   hide-details="true"
-                  maxlength="20"
+                  
                 >
                   <template v-slot:label>
                     <span class="h8-em" style="font-weight: 600">SEARCH BY COLLECTIONS</span>
@@ -53,6 +53,7 @@
                 >
                   <template v-slot:label>
                     <span class="h8-em" style="font-weight: 600">ALL TIME VOLUME</span>
+                    <span>{{search}}</span>
                   </template>
 
                   <template v-slot:append>
@@ -73,11 +74,11 @@
             
               class="space marginbottom margintop"
               style="width: 100%; height: 100%"
-              @click="SelectNFT(item.token_series_id)"
+              @click="SelectNFT(item.metadata.title)"
             >
               <aside class="divrow center" style="gap: 10px">
                 <img class="nft" :src="item.metadata.media" alt="token" />
-                <span class="h8" style="font-weight: 400"> <a   href="#/collections"> {{ item.metadata.title }} </a></span>
+                <span class="h8" style="font-weight: 400"> <a   href="#/collections"> {{ item.metadata.title }}</a></span>
               </aside>
                 <span class="h8">
                   <strong> <a   href="#/collections"> series {{ item.token_series_id }}</a></strong>
@@ -165,6 +166,18 @@ export default {
         },
       ];
     },
+     filterOf() {
+      if (this.search) {
+        return this.collections.filter(item => {
+          return this.search
+            .toLowerCase()
+            .split(" ")
+            .every(v => item.metadata.title.toLowerCase().includes(v));
+        });
+      } else {
+        return this.collections;
+      }
+    }
   },
   data() {
     return {

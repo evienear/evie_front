@@ -196,6 +196,86 @@
     }
   }
 }
+#home2 {
+  position: relative;
+  padding-inline: 10% 2% !important;
+  .titulo {
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(6rem, 9vw, 9.375rem);
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 0.235em;
+    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
+  }
+  .containerUp {
+    img {
+      width: 4.69875rem;
+      height: 4.69875rem;
+    }
+    aside:nth-child(2) {
+      display: flex;
+      align-items: flex-end;
+      span:nth-child(1) {
+        font-weight: 500;
+        letter-spacing: 0.115em;
+        display: flex;
+        align-items: center;
+        padding-inline: 1rem;
+        padding-block: 0.5rem;
+        margin-inline: 2rem
+      }
+      span:nth-child(2) {
+        font-weight: 700;
+        letter-spacing: 0.545em;
+        height: min-content;
+      }
+      p {
+        font-weight: 400;
+      }
+    }
+  }
+  .containerDown {
+    #tableBuy {
+      background-color: transparent;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      grid-gap: 1.1rem 0.625rem;
+    }
+    #tableBuy2{
+      background-color: transparent;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      //grid-template-rows: repeat(2, 1fr);
+      grid-gap: 1.1rem 0.625rem;
+    }
+    .containerPagination {
+      margin-top: 12px;
+      .v-btn {
+        width: 11.64875rem;
+        height: 3rem;
+        border-radius: 0;
+      }
+      .img2 {
+        transform: rotate(180deg);
+      }
+    }
+    .titleAutocompleteBuy {
+      font-weight: 400;
+      letter-spacing: 0.115em;
+    }
+    .rightButton {
+      font-weight: 400;
+      letter-spacing: 0.115em;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      height: 3rem;
+      // padding-block: 0.8rem;
+    }
+  }
+}
+
 .containerMarketplace {
   width: 13.8rem;
   height: 11.5625rem;

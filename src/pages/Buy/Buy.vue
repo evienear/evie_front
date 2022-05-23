@@ -26,7 +26,7 @@
         <!-- separador -->
         <button class="botonBack" style="visibility: hidden" />
         <!-- separador -->
-        <template v-for="(item, index) in dataBuy">
+        <!-- <template v-for="(item, index) in dataBuy">
           <p v-bind:key="index"
             class="h8 p space"
           >
@@ -40,7 +40,7 @@
             class="h7 center color">
             &bullet;
           </i>
-        </template>
+        </template> -->
       </div>
     </v-col>
 
@@ -474,7 +474,7 @@ export default {
       this.$refs.menu.dialog = true;
     },
     getCollections(){
-      axios.post('http://localhost:3000/api/near/getNftGetSeries', {
+      axios.post('http://157.230.2.213:3080/api/near/getNftGetSeries', {
       receivedAccount: 'jeph.testnet'
     })
     .then( response => {

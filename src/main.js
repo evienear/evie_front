@@ -30,7 +30,7 @@ Vue.use(VueGoogleMaps, {
   },
 });
 
-axios.post('http://localhost:3000/api/near/getLandingPage', {
+axios.post('http://157.230.2.213:3080/api/near/getLandingPage', {
   receivedAccount: 'jeph.testnet',
   listReceivedContract: ['paras-token-v2.testnet']
 })
