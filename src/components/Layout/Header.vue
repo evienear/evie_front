@@ -1,0 +1,183 @@
+<template>
+  <section>
+    <MenuHeader ref="menu"></MenuHeader>
+    <v-app-bar id="headerApp" height="120px" fixed>
+      <v-row no-gutters>
+        <v-col cols="12" sm="11" class="space align" style="gap:1em">
+          <router-link to="/">
+            <img class="navLogo" :src="`${$store.state.baseURL}themes/${$store.state.theme}/logo.svg`" alt="logo">
+          </router-link>
+
+          <aside class="contNavbar" style="gap:1em">
+            <button v-for="(item, i) in dataNavbar" :key="i" class="navBtn divcol center eliminarmobile"
+              @click="$router.push(item.to); dataNavbar.forEach(e => { e.state = '-outline' }); item.state = ''">
+              <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/${item.key}${item.state}.svg`"
+                alt="navigation icons">
+              <span>{{ item.name }}</span>
+            </button>
+            
+
+            <button v-if="signedIn" class="sesionBtn btn" @click="logout">
+              <span>{{accountId}}</span>
+            </button>
+
+            <button v-else class="sesionBtn btn" @click="login">
+              <span>Login</span>
+            </button>
+
+            <button class="vermobile" @click="MenuHeaderMobile()">
+              <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/toggle.svg`" alt="toggle navbar">
+            </button>
+          </aside>
+        </v-col>
+      </v-row>
+    </v-app-bar>
+  </section>
+</template>
+
+<script>
+import MenuHeader from "./MenuHeader.vue"
+import { login, logout } from "../../utils";
+let scrollValue =
+  document.body.scrollTop || document.documentElement.scrollTop;
+// let ubicacionPrincipal = window.pageYOffset;
+let resizeTimeout;
+function resizeThrottler(actualResizeHandler) {
+  // ignore resize events as long as an actualResizeHandler execution is in the queue
+  if (!resizeTimeout) {
+    resizeTimeout = setTimeout(() => {
+      resizeTimeout = null;
+      actualResizeHandler();
+
+      // The actualResizeHandler will execute at a rate of 15fps
+    }, 80);
+  }
+}
+export default {
+  name: "Header",
+  components: { MenuHeader },
+  i18n: require("./i18n"),
+  data() {
+    return {
+      menuHeader: true,
+      user: 'evie.near',
+      dataNavbar: [
+        {
+          key: "buy",
+          state: "-outline",
+          name: "Buy",
+          to: "/"
+        },
+        {
+          key: "buy-limit",
+          state: "-outline",
+          name: "Buy Limit",
+          to: "/buy-limit"
+        },
+        {
+          key: "sell",
+          state: "-outline",
+          name: "Sell",
+          to: "/sell"
+        },
+        {
+          key: "stats",
+          state: "-outline",
+          name: "Stats",
+          to: "/stats"
+        },
+        {
+          key: "education",
+          state: "-outline",
+          name: "Education",
+          to: "/education"
+        },
+        {
+          key: "games",
+          state: "-outline",
+          name: "Games",
+          to: "/games"
+        },
+        {
+          key: "calendar",
+          state: "-outline",
+          name: "Calendar",
+          to: "/mint-calendar"
+        },
+        {
+          key: "faq",
+          state: "-outline",
+          name: "FAQ",
+          to: "/faq"
+        },
+      ],
+    };
+  },
+  computed: {
+    accountId() {
+      console.log(window.accountId)
+     
+
+      return window.accountId;
+    },
+    signedIn() {
+      return window.walletConnection.isSignedIn();
+    },
+    contractBalance() {
+
+
+      return window.contractBalance;
+    }
+  },
+  asyncComputed: {
+    getBalance() {
+      return window.contractBalance.then(balance => balance.total)
+    },
+  },
+
+  created() {
+    if (window.innerWidth <= 880) { this.menuHeader = false }
+    else { this.menuHeader = true }
+  },
+  methods: {
+    login() {
+      console.log("calling utils.login");
+      login();
+
+    },
+    logout: logout,
+
+    MenuHeaderMobile() {
+      this.$refs.menu.menuHeaderMobile = true;
+    },
+    OpenDialog() {
+      this.$refs.menu.dialog = true;
+    },
+    OcultarNavbar() {
+      let Desplazamiento_Actual = window.pageYOffset;
+      //     // in top
+      if (Desplazamiento_Actual > scrollValue) {
+        document.getElementById("headerApp").style.background = "var(--bg)";
+      } else {
+        document.getElementById("headerApp").style.background = "transparent";
+      }
+    },
+    scrollListener() { resizeThrottler(this.OcultarNavbar) }
+  },
+  mounted() {
+    document.getElementById("headerApp").style.background = "transparent";
+    document.addEventListener('scroll', this.scrollListener);
+    var root = this.$router.currentRoute.name;
+    if (root == 'home') { root = 'buy' }
+    const index = this.dataNavbar.findIndex(e => e.key == root)
+    this.dataNavbar.forEach(e => { e.state = '-outline' });
+    this.dataNavbar[index].state = ''
+  },
+  beforeDestroy() {
+    document.removeEventListener('scroll', this.scrollListener);
+  }
+};
+</script>
+
+
+<style src="./layout.scss" lang="scss" />

@@ -1,0 +1,171 @@
+@import "../../styles/app";
+
+//global
+// $containerW: 100px;
+// $containerH: 100px;
+
+// layout
+.v-main__wrap {
+  // padding: 4rem $content-padding 70px $content-padding;
+
+  padding-inline: 0;
+  padding-bottom: clamp(6rem, 8vh, 8rem);
+  padding-top: clamp(3rem, 22vh , 8rem);
+}
+@media (max-height: 800px) {
+  .v-main__wrap {
+    padding-top: clamp(3rem, 17vh , 9rem);
+  }
+}
+.fondo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0 0 0 0;
+  z-index: 0;
+}
+.content {
+  display: flex;
+  align-items: flex-start;
+}
+#navbar {
+  transition: 0.3s ease-in-out;
+}
+.close {
+  width: 2.6875em;
+  aspect-ratio: 1/1;
+  z-index: 2;
+}
+.buttonClose {
+  transition: .5s ease-in-out;
+}
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+// header
+#headerApp {
+  transition: 0.4s ease-in-out;
+  .navLogo {
+    width: clamp(4em, 5.5vw, 5.6875em);
+    aspect-ratio: 1/1;
+    z-index: 9;
+  }
+  .contNavbar {
+    --font-size-navbar: clamp(.6em, 1vw, .9375em);
+    @include media(max,small) {--font-size-navbar: .8em}
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    @include media(min, small){
+      display: inline-grid;grid-template-columns: repeat(8, 1fr) max-content;place-items: center
+    }
+    .navBtn {
+      text-transform: uppercase;
+      font-size: var(--font-size-navbar) !important;
+      img {
+        width: 3.3125em;
+        aspect-ratio: 1/1;
+      }
+      span {
+        font-weight: bold;
+        text-align: center;
+        color: var(--color) !important;
+      }
+    }
+    .sesionBtn {
+      font-size: var(--font-size-navbar) !important;
+      padding-inline: clamp(1em, 2vw, 2em) !important;
+      &::after {
+        content: "";
+        @include absolute(0,calc(var(--corner-size) - .2em),0);
+        width: calc(100% - (calc(var(--corner-size) * 2 + .6em)));
+        height: var(--corner-size);
+        background-color: var(--lineBtn);
+      }
+    }
+  }
+}
+
+.v-navigation-drawer__content {
+  background-color: var(--colorCartas) !important;
+}
+#menuHeader {
+  .themeBtn {
+    background-color: var(--color) !important;
+    &.dark::before {background-color: $clr-btn !important}
+    &.light::before {background-color: #58595B !important}
+    & .switch {background-color: var(--color) !important}
+    &.light .switchbefore {background-color: #96E9D3}
+    &.dark .switch:before {background-color: #EB92CA}
+  }
+}
+
+.containerMenuHeader {
+  position: relative;
+  min-width: clamp(100px, 200px + 10vw, 356px);
+  min-height: 617px;
+}
+.triangulo {
+  position: absolute;
+  right: 25%;
+  top: 5%;
+  width: 30px;
+  height: 20px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+.cardMenuHeader {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  position: absolute;
+  inset: 0;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25) !important;
+  & .cardItems {
+    min-height: 5.1rem !important;
+    &.v-list-item--active::before {visibility: hidden !important};
+  }
+}
+
+.containerControlsHeader {
+  @media (max-width: 700px) and (max-height: 1180px) {
+    padding-inline: 0 !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+  .col:nth-child(1) {
+    width: 100% !important;
+  }
+    .col:nth-child(2) {
+      min-width: 200px !important;
+    }
+  }
+}
+
+.v-dialog {
+  box-shadow: none !important;
+  @media (max-width: 880px) and (max-height: 1180px) {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+}
+.linea2 {
+  position: absolute;
+  bottom: 0%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 90%;
+  height: 1.5px;
+}
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+// footer
+.v-footer {
+  background: center url(../../assets/footer.png);
+  background-size: cover;
+  * {text-decoration: none !important;color: #58595B !important}
+  span {font-size: clamp(.8em, 1.2vw, 1.125em)}
+}

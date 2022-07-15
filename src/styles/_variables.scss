@@ -1,0 +1,196 @@
+@use "sass:list";
+@use "sass:map";
+@import '~vuetify/src/styles/styles.sass';
+
+//global size
+:root {--corner-size: .4em}
+$border: 15px;
+
+// Sidebar //
+$drawer-items-padding:                     32px !default;
+$navigation-drawer-mini-variant-width:     96px!important;
+
+// Layout //
+$body-bg: #20232C !default;
+$content-padding:                           24px;
+$clip-path: polygon(
+  0% var(--corner-size),
+  var(--corner-size) var(--corner-size),
+  var(--corner-size) 0%,
+  calc(100% - var(--corner-size)) 0%,
+  calc(100% - var(--corner-size)) var(--corner-size),
+  100% var(--corner-size),
+  100% calc(100% - var(--corner-size)),
+  calc(100% - var(--corner-size)) calc(100% - var(--corner-size)),
+  calc(100% - var(--corner-size)) 100%,
+  var(--corner-size) 100%,
+  var(--corner-size) calc(100% - var(--corner-size)),
+  0% calc(100% - var(--corner-size))
+);
+
+// Colors //
+$primary:           #536DFE;
+$secondary:         #FF5C93;
+$error:             #ff4081;
+$warning:           #FFC260;
+$success:           #3CD4A0;
+$info:              #9013FE;
+$text-color:        #6e6e6e;
+$text-grey:         #b9b9b9;
+$title-grey:        #4a4a4a;
+$clr-btn:           #D9D9D9;
+$clr-btn2:          #7BD7EB;
+$clr-text-btn:      #FFFFFF;
+$clr-hover:         #FF2C75;
+
+$card-title-color:  $text-color;
+
+// Typography //
+$h1-font-size:                3rem !default;      // 28px
+$h2-font-size:                2rem !default;       // 24px
+$h3-font-size:                1.64rem !default;     // 22px
+$h4-font-size:                1.5rem !default;     // 20px
+$h5-font-size:                1.285rem !default;         // 16px
+$h6-font-size:                1.142rem !default;     // 14px
+$h7-font-size:                1.0rem !default;
+$h8-font-size:                0.8rem !default;
+
+// Card //
+$card-shadow: 0 3px 11px 0 #111011, 0 3px 3px -2px #B2B2B21A, 0 1px 8px 0 #9A9A9A1A;
+$sombra-card: 0px 4px 50px rgba(0, 0, 0, 0.05);
+
+// Buttons //
+$button-shadow: 0px 3px 11px 0px #E8EAFC, 0 3px 3px -2px #B2B2B21A, 0 1px 8px 0 #9A9A9A1A;
+$sombra-btn: -2px 3px 3px 0px $clr-btn+ab;
+$sombra-filter: drop-shadow(0px 4px 1px rgba(0, 0, 0, 0.3));
+
+// hover //
+$ease: cubic-bezier(0.23, 1, 0.32, 1);
+$ease-return: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+$skew-right: skewX(12deg) translateX(1px);
+$skew-left: skewX(-12deg) translateX(-1px);
+
+// mixins //
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+/* // // media query // // */ 
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+$breakpoints: (
+  x-small: 400px,
+  small: 880px,
+  medium: 1200px,
+  large: 1440px,
+  x-large: 1800px,
+);
+@mixin media($dir1, $key1, $dir2: fixed, $key2: fixed) {
+  $size1: map.get($breakpoints, $key1);
+  $size2: map.get($breakpoints, $key2);
+  // if doble parameters
+  @if ($dir1) and ($key1) and ($dir2) and ($key2) {
+    // if number + number
+    @if type-of($key1) == number and type-of($key2) == number {
+      // if mobile
+      @if $key1 <= 880 and $dir1 == max {
+        @media (#{$dir1}-width: $key1) and (#{$dir2}-width: $key2) and (max-height: 1180px) {@content;}
+      }/* if desktop */ @else {
+        @media (#{$dir1}-width: $key1) and (#{$dir2}-width: $key2) {@content;}
+      }
+    }
+    // if variable + variable
+    @else if type-of($key1) != number and type-of($key2) != number {
+      // if mobile
+      @if $key1 == small or $key1 == x-small and $dir1 == max or $key2 == small or $key2 == x-small and $dir2 == max {
+        @media (#{$dir1}-width: $size1) and (#{$dir2}-width: $size2) and (max-height: 1180px) {@content;}
+      }/* if desktop */ @else {
+        @media (#{$dir1}-width: $size1) and (#{$dir2}-width: $size2) {@content;}
+      }
+    }
+    // if variable + number
+    @else if type-of($key1) != number and type-of($key2) == number {
+      // if mobile
+      @if $key1 == small or $key1 == x-small and $dir1 == max and $key2 <= 880 and $dir2 == max {
+        @media (#{$dir1}-width: $size1) and (#{$dir2}-width: $key2) and (max-height: 1180px) {@content;}
+      }/* if desktop */ @else {
+        @media (#{$dir1}-width: $size1) and (#{$dir2}-width: $key2) {@content;}
+      }
+    }
+    // if number + variable
+    @else if type-of($key1) == number and type-of($key2) != number {
+      // if mobile
+      @if $key1 <= 880 and $dir1 == max and $key2 == small or $key2 == x-small and $dir2 == max {
+        @media (#{$dir1}-width: $key1) and (#{$dir2}-width: $key2) and (max-height: 1180px) {@content;}
+      }/* if desktop */ @else {
+        @media (#{$dir1}-width: $key1) and (#{$dir2}-width: $key2) {@content;}
+      }
+    }
+  }
+  
+  // if single parameter
+  @if ($dir1) and ($key1) {
+    // if numeric
+    @if type-of($key1) == number {
+      // if mobile
+      @if $key1 <= 880 and $dir1 == max {
+        @media (#{$dir1}-width: $key1) and (max-height: 1180px) {@content;}
+      } @else {
+        @media (#{$dir1}-width: $key1) {@content;}
+      }
+    }
+    // if variable
+    @else {
+      // if mobile
+      @if $key1 == small or $key1 == x-small and $dir1 == max {
+        @media (#{$dir1}-width: $size1) and (max-height: 1180px) {@content;}
+      } /* if desktop */ @else {
+        @media (#{$dir1}-width: $size1) {@content;}
+      }
+    }
+  }
+}
+/* example
+@include media(min,small,max,1300px) {
+  display: none !important;
+}
+*/
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+/* // // absolute position // // */ 
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+@mixin absolute($value1, $value2:fixed, $value3:fixed, $value4:fixed) {
+  position: absolute;
+  margin: auto;
+  left: $value1;
+  top: $value2;
+  right: $value3;
+  bottom: $value4;
+}
+/* example
+@include absolute(auto, 0, 0, 0);
+*/
+@mixin absoluteCenter() {
+  position: absolute;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+/* example
+@include absoluteCenter;
+*/
+
+@mixin btn() {
+  background-color: var(--color);
+  clip-path: $clip-path;
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    @include absoluteCenter;
+    width: calc(100% - var(--corner-size));
+    height: calc(100% - var(--corner-size));
+    background-color: $clr-btn;
+    clip-path: $clip-path;
+    z-index: -1;
+  }
+}
