@@ -38,7 +38,7 @@ import MenuHeader from "./MenuHeader.vue"
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection} = nearAPI;
-const contractId = 'dev-1659076300799-36922271884219'
+const contractId = 'dev-1660244871256-92189441173983'
 let scrollValue =
 document.body.scrollTop || document.documentElement.scrollTop;
 // let ubicacionPrincipal = window.pageYOffset;
