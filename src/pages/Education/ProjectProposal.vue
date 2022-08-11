@@ -1,0 +1,168 @@
+<template>
+  <section id="projectProposal" class="relative">
+    <v-col class="padd">
+      <aside class="divrow" style="gap: clamp(0.2em, 2.2vw, 1.25em)">
+        <button class="botonBack center" @click="$router.push('/nft-projects')">
+          <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
+        </button>
+        <h1 class="tituloBack p">PROJECT PROPOSAL</h1>
+      </aside>
+
+      <aside class="contenedor1 start">
+        <span class="h9-em">BUY FROM:</span>
+        <aside class="divrow">
+          <v-btn v-for="(item,i) in dataMarketplace" :key="i" icon disabled>
+            <img :src="item.market" alt="button">
+          </v-btn>
+        </aside>
+      </aside>
+    </v-col>
+
+    <v-col class="container2">
+      <ul>
+        <li v-for="(item,i) in dataProjectProposal.lista" :key="i">
+          <img class="marker" :src="require(`@/assets/buttons/${item.market}.svg`)" alt="marker list">
+
+          <span>Listen: {{ item.listen }}</span>
+          <span>Floor Price: {{ item.price }}
+            <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
+          </span>
+          <span>Monthly Volume: $ {{ item.volume}}</span>
+          <span>Total Volumen: $ {{ item.total }}</span>
+        </li>
+      </ul>
+
+      <section class="contRight">
+        <aside>
+          <img class="images" :src="dataProjectProposal.description.form.images" alt="nft">
+          <div>
+            <h3 class="Title">{{ dataProjectProposal.description.form.title }}</h3>
+            <span><strong>Origianl Supply: </strong>{{ dataProjectProposal.description.form.supply }}</span>
+            <span><strong>Website: </strong>{{ dataProjectProposal.description.form.website }}</span>
+            <span><strong>Twitter: </strong>{{ dataProjectProposal.description.form.twitter }}</span>
+            <span><strong>Instagram: </strong>{{ dataProjectProposal.description.form.instagram }}</span>
+            <span><strong>Discord: </strong>{{ dataProjectProposal.description.form.discord }}</span>
+          </div>
+        </aside>
+
+        <aside>
+          <img v-if="dataProjectProposal.description.img" :src="dataProjectProposal.description.img"
+            alt="image">
+          <h3 class="Title">ABOUT:</h3>
+          <span>{{ dataProjectProposal.description.form.descriptions[0] }}</span>
+        </aside>
+        <aside>
+          <v-col>
+            <!-- <button class="button h9 btn2" @click="addForm()"> -->
+            <button class="button h9 btn2" @click="updateForm()">
+              EDIT
+            </button>
+            <!-- <button class="button h9 btn2" @click="addForm()"> -->
+            <button class="button h9 btn2 ml-3" @click="updateForm()">
+              DELETE
+            </button>
+          </v-col>
+        </aside>
+      </section>
+    </v-col>
+
+    <v-col cols="12" md="6" class="center">
+      <button class="button h9 btn2">
+        BUY NOW<v-icon medium>mdi-chevron-right</v-icon>
+      </button>
+    </v-col>
+  </section>
+</template>
+
+<script>
+import * as nearAPI from "near-api-js";
+import { CONFIG } from "@/services/api";
+const { connect, keyStores, WalletConnection, Contract } = nearAPI;
+const CONTRACT_NAME = 'dev-1660244871256-92189441173983'
+export default {
+  name: "ProjectProposal",
+  data() {
+    return {
+      dataMarketplace: [
+        { market: require("@/assets/buttons/xdn.svg") },
+        { market: require("@/assets/buttons/dlt.svg") },
+      ],
+      dataProjectProposal: {
+        lista: [
+          {
+            listen: "9",
+            price: "1068",
+            volume: "50,000",
+            total: "150,000",
+            market: "doge"
+          },
+          {
+            listen: "9",
+            price: "1068",
+            volume: "50,000",
+            total: "150,000",
+            market: "auto"
+          },
+          {
+            listen: "9",
+            price: "1068",
+            volume: "50,000",
+            total: "150,000",
+            market: "dlt"
+          },
+        ],
+        description: {
+          // nft: require("@/assets/nft/monkeyA2.png"),
+          // name: "MARA GEN 0",
+          // supply: "101",
+          // website: "maranft.art/",
+          // twitter: "twitter.com/MaraNFT_DAO",
+          // instagram: "instagram.com/mara_mtp",
+          // discord: "discord:discord.gg/prT5pxKv",
+          // about: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Deserunt ad quae ipsam qui debitis excepturi explicabo quas dolor, repellat itaque. In mollitia asperiores voluptate placeat ratione. Voluptas ipsum quibusdam quisquam.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas ipsum quibusdam quisquam.Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+          // img: require("@/assets/image1.png")
+        }
+      },
+      idForm: 0,
+    }
+  },
+  mounted() {
+    this.idForm = parseInt(localStorage.idForm)
+    console.log(typeof(this.idForm))
+    this.getFormId()
+  },
+  methods: {
+    async getFormId() {
+      // connect to NEAR
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        changeMethods: ["get_form_by_id"],
+        sender: wallet.account(),
+      })
+      await contract.get_form_by_id({
+        form_id: this.idForm
+      }, '85000000000000',
+      ).then((response) => {
+        // console.log(response);
+        this.dataNFTProjects = response
+        this.dataProjectProposal.description = response
+        console.log(this.dataProjectProposal.description)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    updateForm() {
+      this.$router.push('/form')
+    },
+    async deleteForm() {
+
+    },
+  }
+};
+</script>
+
+<style src="../pages.scss" lang="scss" />

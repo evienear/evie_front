@@ -1,0 +1,87 @@
+:root {
+  --color: #FFFFFF;
+  --colorInverted: #58595B;
+  --colorCartas: #000000;
+  --colorCartasInverted: #FFFFFF;
+  --colorHover: #080e35;
+  --colorLineas: #FFFFFF;
+  --colorBtn: #D9D9D9;
+  --colorBtn2: #58595B;
+  --lineBtn: #E5E5E5;
+  --lineBtn2: #B7B89F;
+  --text-shadow: rgba(0,0,0,0.4);
+  --colorCartas2: #182833;
+  --clr-scroll: #58595B;
+  --mix-blend-mode: screen;
+  --bg: #393939;
+}
+.v-icon, a {
+  color: var(--color) !important;
+}
+:is(span, p, h1, h2, h3, h4, h5, h6, button) {
+  color: var(--color);
+}
+.colorInverted {
+  color: var(--colorInverted) !important;
+}
+.colorCartas {
+  background-color: var(--colorCartas) !important;
+}
+.colorCartasInverted {
+  background-color: var(--colorCartasInverted) !important;
+}
+.color {
+  color: var(--color) !important;
+}
+#search {
+  color: #FFFFFF !important;
+}
+#autocomplete {
+  color: #FFFFFF !important;
+}
+.lineas {
+  background-color: #FFFFFF !important;
+}
+.filter {
+  filter: invert(100%) !important;
+}
+.filterInverted {
+  filter: invert(0%) !important;
+}
+.v-select-list {
+  background-color: #000000 !important;
+}
+.v-select__selection {
+  color: #FFFFFF !important;
+}
+.v-list-item:hover {
+  background-color: #080e35 !important;
+}
+.v-list-item__title {
+  color: #FFFFFF !important;
+}
+.containerSwitchPriceSelectionActive {
+  background-color: #B7B89F !important;
+  border: 2px solid #FFFFFF !important;
+}
+.switchPriceSelection {
+  background-color: #FFFFFF !important;
+}
+
+/* header */
+#tableCollections .v-data-table__wrapper > table > tbody > tr > td:hover {
+  background-color: #080e35 !important;
+}
+.v-data-table__wrapper > table > tbody > tr > td {
+  color: #FFFFFF !important;
+}
+
+/* stats */
+.containerChart {
+  background: #111011 !important;
+}
+
+/* education */
+.containerNFTProjects .v-card:hover {
+  background-color: #080e35 !important;
+}

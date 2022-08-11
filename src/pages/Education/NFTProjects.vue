@@ -1,0 +1,78 @@
+<template>
+  <section id="education" class="nftProjects relative">
+    <v-col class="padd">
+      <aside class="divrow" style="gap: 20px">
+        <button class="botonBack center" @click="$router.push('/education')">
+          <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
+        </button>
+        <h1 class="tituloBack p">NFT PROJECTS</h1>
+      </aside>
+    </v-col>
+
+    <v-col class="containerNFTProjects padd">
+      <v-card v-for="(item,i) in dataNFTProjects" :key="i" color="transparent" @click="viewEducation(item)">
+        <img class="images" :src="item.form.images" alt="token" />
+        <span>{{ item.form.title }}</span>
+      </v-card>
+    </v-col>
+
+    <button class="button h9 btn2" @click="viewForm()">
+      PROJECT PROPOSAL<v-icon medium>mdi-chevron-right</v-icon>
+    </button>
+  </section>
+</template>
+
+<script>
+// import axios from 'axios'
+import * as nearAPI from "near-api-js";
+import { CONFIG } from "@/services/api";
+const { connect, keyStores, WalletConnection, Contract } = nearAPI;
+const CONTRACT_NAME = 'dev-1660244871256-92189441173983'
+export default {
+  name: "NFTProjects",
+  data() {
+    return {
+      dataNFTProjects: [],
+    }
+  },
+  mounted() {
+    // this.collections()
+    this.getForm()
+  },
+  methods: {
+    viewForm() {
+      this.$router.push('/form'),
+      localStorage.removeItem('idForm')
+    },
+    async getForm() {
+      // connect to NEAR
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        changeMethods: ["get_forms"],
+        sender: wallet.account(),
+      })
+      await contract.get_forms({
+        from_index: '0',
+        limit: 50
+      }, '85000000000000',
+      ).then((response) => {
+        console.log(response);
+        this.dataNFTProjects = response
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    viewEducation(item) {
+      console.log(item)
+      localStorage.idForm = item.id
+      this.$router.push('/project-proposal')
+    },
+  }
+};
+</script>
+
+<style src="../pages.scss" lang="scss" />
