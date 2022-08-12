@@ -10,13 +10,13 @@
 
   padding-inline: 0;
   padding-bottom: clamp(6rem, 8vh, 8rem);
-  padding-top: clamp(3rem, 22vh , 8rem);
+  padding-top: 140px;
 }
-@media (max-height: 800px) {
-  .v-main__wrap {
-    padding-top: clamp(3rem, 17vh , 9rem);
-  }
-}
+// @media (max-height: 800px) {
+//   .v-main__wrap {
+//     padding-top: clamp(3rem, 17vh , 9rem);
+//   }
+// }
 .fondo {
   position: absolute;
   width: 100%;

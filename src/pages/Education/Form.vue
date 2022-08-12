@@ -1,182 +1,116 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col class="padd">
-        <aside class="divrow" style="gap: clamp(0.2em, 2.2vw, 1.25em)">
-          <button class="botonBack center" @click="$router.push('/nft-projects')">
-            <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
-          </button>
-          <h1 class="tituloBack p">PROJECT PROPOSAL EDIT</h1>
-        </aside>
+  <section id="formProposal" class="relative">
+    <v-col class="padd divrow" style="gap: clamp(0.2em, 2.2vw, 1.25em)">
+      <button class="botonBack center" @click="$router.push('/nft-projects')">
+        <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
+      </button>
+      <h1 class="tituloBack p">PROJECT PROPOSAL EDIT</h1>
+    </v-col>
 
-        <aside class="contenedor1 start">
-          <span class="h9-em">BUY FROM:</span>
-          <aside class="divrow">
-            <v-btn v-for="(item,i) in dataMarketplace" :key="i" icon disabled>
-              <img :src="item.market" alt="button">
-            </v-btn>
-          </aside>
-        </aside>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col class="col-xs-12 col-md-5 col-lg-4">
-        <v-row v-for="(item,i) in dataProjectProposal.lista" :key="i">
+    <section id="container-content">
+      <v-file-input
+        v-model="images"
+        class="custome file"
+        prepend-icon=""
+        solo
+      >
+        <template v-slot:label>
+          <!-- <img src="@/assets/icons/camera.svg" alt="upload files"> -->
+          <v-icon>camera</v-icon>
+          <span>UPLOAD</span>
+        </template>
+      </v-file-input>
+      
+      <v-text-field
+        v-model="collection.title"
+        class="custome"
+        solo dense
+      >
+        <template v-slot:prepend>
+          <label>TITLE</label>
+        </template>
+      </v-text-field>
+      
+      <v-text-field
+        v-model="collection.url"
+        class="custome"
+        solo dense
+      >
+        <template v-slot:prepend>
+          <label>URL</label>
+        </template>
+      </v-text-field>
+      
+      <v-text-field
+        v-model="collection.supply"
+        class="custome"
+        solo dense
+      >
+        <template v-slot:prepend>
+          <label>SUPPLY</label>
+        </template>
+      </v-text-field>
+      
+      <v-text-field
+        v-model="collection.website"
+        class="custome"
+        solo dense
+      >
+        <template v-slot:prepend>
+          <label>WEBSITE</label>
+        </template>
+      </v-text-field>
+      
+      <v-text-field
+        v-model="collection.twitter"
+        class="custome"
+        solo dense
+      >
+        <template v-slot:prepend>
+          <label>TWITTER</label>
+        </template>
+      </v-text-field>
+      
+      <v-text-field
+        v-model="collection.discord"
+        class="custome"
+        solo dense
+      >
+        <template v-slot:prepend>
+          <label>DISCORD</label>
+        </template>
+      </v-text-field>
+      
+      <v-text-field
+        v-model="collection.instagram"
+        class="custome"
+        solo dense
+      >
+        <template v-slot:prepend>
+          <label>INSTAGRAM</label>
+        </template>
+      </v-text-field>
+    </section>
+      
+    <div class="divcol desc">
+      <label>ABOUT DESCRIPTION</label>
+      <v-textarea
+        v-model="descriptions[0]"
+        solo
+        class="custome"
+      ></v-textarea>
+    </div>
 
-          <v-col class="col-2">
-            <img class="marker" :src="require(`@/assets/buttons/${item.market}.svg`)" alt="marker list">
-          </v-col>
-            
-          <v-col>
-            <span>Listen: {{ item.listen }}</span><br>
-            <span>Floor Price: {{ item.price }}
-              <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
-            </span><br>
-            <span>Monthly Volume: $ {{ item.volume}}</span><br>
-            <span>Total Volumen: $ {{ item.total }}</span><br>
-          </v-col>
-        </v-row>
-        <v-row>
-          <button class="button h9 btn2">
-            BUY NOW<v-icon medium>mdi-chevron-right</v-icon>
-          </button>
-        </v-row>
-      </v-col>
-    
-      <v-col class="d-none d-sm-flex col-12 col-md-1 container2"></v-col>
-      <v-col class="col-xs-12 col-md-6 col-lg-7">
-        <v-row class="pt-0 mt-0 pb-0 mb-0">
-          <v-col class="col-12 col-lg-3 pt-0 mt-0 pb-0 mb-0">
-            <v-file-input
-              v-model="images"
-              class="custome"
-              prepend-icon=""
-              solo
-            >
-              <template v-slot:label>
-                <!-- <img src="@/assets/icons/camera.svg" alt="upload files"> -->
-                <v-icon>camera</v-icon>
-                <span>UPLOAD</span>
-              </template>
-            </v-file-input>
-          </v-col>
-          <v-col class="col-12 col-lg-9 pt-0 mt-0 pb-0 mb-0">
-            <v-row class="pa-0 ma-0">
-              <v-col class="pt-0 mt-0 pb-0 mb-0">
-                <label>
-                  <span>TITLE</span>
-                </label>
-                <v-text-field
-                  v-model="collection.title"
-                  id="search"
-                  class="custome"
-                  solo
-                  dense
-                  background-color="transparent"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="pa-0 ma-0">
-              <v-col class="pt-0 mt-0 pb-0 mb-0">
-                <label>
-                  <span>SUPPLY</span>
-                </label>
-                <v-text-field
-                  v-model="collection.supply"
-                  id="search"
-                  class="custome"
-                  solo
-                  dense
-                  background-color="transparent"
-                ></v-text-field>
-              </v-col>
-              <v-col class="pt-0 mt-0 pb-0 mb-0">
-                <label>
-                  <span>WEBSITE</span>
-                </label>
-                <v-text-field
-                  v-model="collection.website"
-                  id="search"
-                  class="custome"
-                  solo
-                  dense
-                  background-color="transparent"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="pa-0 ma-0">
-              <v-col class="pt-0 mt-0 pb-0 mb-0">
-                <label>
-                  <span>TWITTER</span>
-                </label>
-                <v-text-field
-                  v-model="collection.twitter"
-                  id="search"
-                  class="custome"
-                  solo
-                  dense
-                  background-color="transparent"
-                ></v-text-field>
-              </v-col>
-              <v-col class="pt-0 mt-0 pb-0 mb-0">
-                <label>
-                  <span>DISCORD</span>
-                </label>
-                <v-text-field
-                  v-model="collection.discord"
-                  id="search"
-                  class="custome"
-                  solo
-                  dense
-                  background-color="transparent"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row class="pa-0 ma-0">
-              <v-col class="pt-0 mt-0 pb-0 mb-0">
-                <label>
-                  <span>INSTAGRAM</span>
-                </label>
-                <v-text-field
-                  v-model="collection.instagram"
-                  id="search"
-                  class="custome"
-                  solo
-                  dense
-                  background-color="transparent"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row class="pt-0 mt-0 pb-0 mb-0">
-          <v-col class="pt-0 mt-0 pb-0 mb-0">
-            <label class="">
-              <span>ABOUT DESCRIPTION</span>
-            </label>
-            <v-textarea
-              v-model="descriptions[0]"
-              id="search"
-              solo
-              class="custome"
-              background-color="transparent"
-            ></v-textarea>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <!-- <button class="button h9 btn2" @click="addForm()"> -->
-            <button v-show="!update" class="button h9 btn2" @click="addForm()">
-              SAVE
-            </button>
-            <button v-show="update" class="button h9 btn2" @click="updateForm()">
-              SAVE
-            </button>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-container>
+    <v-col class="center">
+      <!-- <button class="button h9 btn2" @click="addForm()"> -->
+      <button v-show="!update" class="button h9 btn2" @click="addForm()">
+        SAVE
+      </button>
+      <button v-show="update" class="button h9 btn2" @click="updateForm()">
+        SAVE
+      </button>
+    </v-col>
+  </section>
 </template>
 
 <script>
