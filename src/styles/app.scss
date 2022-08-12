@@ -83,8 +83,7 @@
       label {
         left: 0 !important;
         right: 0 !important;
-        top: 0 !important;
-        bottom: 40% !important;
+        transform: translateY(-20px);
         margin: auto;
         display: grid;
         place-items: center;
@@ -94,7 +93,6 @@
       }
     }
     .v-file-input__text {
-      width: clamp(9em, 11vw, 11em);
       aspect-ratio: 1 / 1
     }
   }
