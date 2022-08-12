@@ -21,6 +21,16 @@ export default new Router({
         component: () => import('@/pages/Home/Home'),
       },
       {
+        path: '/dialogMessage',
+        name: 'dialogMessage',
+        component: () => import('@/pages/Dialogs/DialogMessage'),
+      },
+      {
+        path: '/dialogLoad',
+        name: 'dialogLoad',
+        component: () => import('@/pages/Dialogs/DialogLoad'),
+      },
+      {
         path: '/buy/:id',
         name: 'buy',
         component: () => import('@/pages/Buy/Buy'),
