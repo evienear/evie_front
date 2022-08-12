@@ -65,12 +65,31 @@
         </aside>
       </section>
     </v-col>
-
+    <v-dialog
+      id="dialogo"
+      v-model="load"
+      max-width="200"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <span>Loading</span>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+        </v-col>
+      </section>
+    </v-dialog>
     <v-col cols="12" md="6" class="center">
       <button class="button h9 btn2">
         BUY NOW<v-icon medium>mdi-chevron-right</v-icon>
       </button>
     </v-col>
+    
   </section>
 </template>
 
@@ -124,15 +143,16 @@ export default {
         }
       },
       idForm: 0,
+      load: true,
     }
   },
   mounted() {
     this.idForm = parseInt(localStorage.idForm)
-    console.log(typeof(this.idForm))
     this.getFormId()
   },
   methods: {
     async getFormId() {
+      this.load = true
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
@@ -151,12 +171,38 @@ export default {
         this.dataNFTProjects = response
         this.dataProjectProposal.description = response
         console.log(this.dataProjectProposal.description)
+        this.load = false
       }).catch(err => {
         console.log(err)
       })
     },
     updateForm() {
       this.$router.push('/form')
+    },
+    async deleteFormId(item) {
+      // connect to NEAR
+      this.load = true
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        changeMethods: ["remove_form"],
+        sender: wallet.account(),
+      })
+      await contract.remove_form({
+        form_id: item.id
+      }, '85000000000000',
+      ).then((response) => {
+        // console.log(response);
+        this.collection = response.form
+        this.descriptions[0] = response.form.descriptions[0]
+        this.images[0] = response.form.images[0]
+        this.load = false
+      }).catch(err => {
+        console.log(err)
+      })
     },
     async deleteForm() {
 

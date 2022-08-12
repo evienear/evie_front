@@ -32,7 +32,7 @@
       </v-text-field>
       
       <v-text-field
-        v-model="collection.url"
+        v-model="images[0]"
         class="custome"
         solo dense
       >
@@ -110,6 +110,48 @@
         SAVE
       </button>
     </v-col>
+    <v-dialog
+      id="dialogo"
+      v-model="load"
+      max-width="200"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <span>Loading</span>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+        </v-col>
+      </section>
+    </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialogMessage"
+      max-width="400"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <span>
+            {{ titleDialog }}
+          </span>
+        </v-col>
+        <v-col cols="12" class="center">
+          <span>
+            {{ messageDialog }}
+          </span>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="dialogMessage = false">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
@@ -125,7 +167,7 @@ export default {
     return {
       collection: [],
       descriptions: [],
-      imagenes: ['https://ipfs.fleek.co/ipfs/bafybeihyxgz6xf5skpkcxmkpelnxqwywzc5ixofmznxuhn7ytljttrrnky'],
+      imagenes: [],
       images: [],
       dataMarketplace: [
         { market: require("@/assets/buttons/xdn.svg") },
@@ -169,6 +211,11 @@ export default {
       },
       idForm: null,
       update: false,
+      load: false,
+      dialogMessage: false,
+      titleDialog: '',
+      messageDialog: '',
+
     }
   },
   mounted() {
@@ -190,7 +237,7 @@ export default {
         discord: this.collection.discord,
         instagram: this.collection.instagram,
         descriptions: this.descriptions,
-        images: this.imagenes,
+        images: this.images,
       }
       console.log(EduForm)
       //connect to NEAR
@@ -208,12 +255,16 @@ export default {
       }, '85000000000000',
       ).then((response) => {
         console.log(response);
+        this.dialogMessage = true
+        this.titleDialog = "Successfully saved"
+        this.messageDialog = 'The data was saved successfully'
       }).catch(err => {
         console.log(err)
       })
     },
     async getFormId() {
       // connect to NEAR
+      this.load = true
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
@@ -228,9 +279,10 @@ export default {
       }, '85000000000000',
       ).then((response) => {
         // console.log(response);
-        this.dataNFTProjects = response
-        this.dataProjectProposal.description = response
-        console.log(this.dataProjectProposal.description)
+        this.collection = response.form
+        this.descriptions[0] = response.form.descriptions[0]
+        this.images[0] = response.form.images[0]
+        this.load = false
       }).catch(err => {
         console.log(err)
       })
@@ -255,7 +307,7 @@ export default {
         discord: this.collection.discord,
         instagram: this.collection.instagram,
         descriptions: this.descriptions,
-        images: this.imagenes,
+        images: this.images,
       }
 
       console.log(EduForm)
@@ -275,31 +327,13 @@ export default {
       }, '85000000000000',
       ).then((response) => {
         console.log(response);
+        this.dialogMessage = true
+        this.titleDialog = "Successfully modified"
+        this.messageDialog = 'The data was modified successfully'
       }).catch(err => {
         console.log(err)
       })
     },
-    // async getForm() {
-    //   // connect to NEAR
-    //   const near = await connect(
-    //     CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-    //   );
-    //   // create wallet connection
-    //   const wallet = new WalletConnection(near);
-    //   const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-    //     changeMethods: ["get_forms"],
-    //     sender: wallet.account(),
-    //   })
-    //   await contract.get_forms({
-    //     from_index: '0',
-    //     limit: 50
-    //   }, '85000000000000',
-    //   ).then((response) => {
-    //     console.log(response);
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
   }
 };
 </script>

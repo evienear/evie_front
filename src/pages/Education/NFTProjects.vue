@@ -19,6 +19,25 @@
     <button class="button h9 btn2" @click="viewForm()">
       PROJECT PROPOSAL<v-icon medium>mdi-chevron-right</v-icon>
     </button>
+    <v-dialog
+      id="dialogo"
+      v-model="load"
+      max-width="200"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <span>Loading</span>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
@@ -33,6 +52,7 @@ export default {
   data() {
     return {
       dataNFTProjects: [],
+      load: false
     }
   },
   mounted() {
@@ -45,6 +65,7 @@ export default {
       localStorage.removeItem('idForm')
     },
     async getForm() {
+      this.load = true
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
@@ -61,6 +82,7 @@ export default {
       }, '85000000000000',
       ).then((response) => {
         console.log(response);
+        this.load = false
         this.dataNFTProjects = response
       }).catch(err => {
         console.log(err)
