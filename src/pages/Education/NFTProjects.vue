@@ -37,7 +37,7 @@ export default {
   },
   mounted() {
     // this.collections()
-    this.getForm()
+    // this.getForm()
   },
   methods: {
     viewForm() {
