@@ -70,32 +70,11 @@
         BUY NOW<v-icon medium>mdi-chevron-right</v-icon>
       </button>
     </v-col>
-    <v-col cols="12">
-      <v-dialog
-        id="dialog"
-        v-model="load"
-        max-width="200"
-        style="position: absolute"
-      >
-        <section class="menuCollections colorCartas">
-          <v-col cols="12" class="center pa-0 ma-0">
-            <span>Loading</span>
-          </v-col>
-          <v-col cols="12" class="center">
-            <v-progress-circular
-              :size="70"
-              :width="7"
-              color="purple"
-              indeterminate
-            ></v-progress-circular>
-          </v-col>
-        </section>
-      </v-dialog>
-    </v-col>
   </section>
 </template>
 
 <script>
+
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
@@ -154,7 +133,7 @@ export default {
   },
   methods: {
     async getFormId() {
-      this.load = true
+      this.$store.commit('Load', true)
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
@@ -174,6 +153,7 @@ export default {
         this.dataProjectProposal.description = response
         console.log(this.dataProjectProposal.description)
         this.load = false
+        this.$store.commit('Load', false)
       }).catch(err => {
         console.log(err)
       })
@@ -183,7 +163,7 @@ export default {
     },
     async deleteFormId(item) {
       // connect to NEAR
-      this.load = true
+      this.$store.commit('Load', true)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
@@ -201,13 +181,13 @@ export default {
         this.collection = response.form
         this.descriptions[0] = response.form.descriptions[0]
         this.images[0] = response.form.images[0]
-        this.load = false
+        this.$store.commit('Load', false)
       }).catch(err => {
         console.log(err)
       })
     },
     async deleteForm() {
-      this.load = true
+      this.$store.commit('Load', true)
     },
   }
 };

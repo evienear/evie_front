@@ -1,6 +1,7 @@
 <template>
   <v-app >
     <Header ref="header" id="navbar" />
+    <DialogLoad />
     <v-main class="content center parent">
       <router-view></router-view>
     </v-main>
@@ -11,6 +12,7 @@
 <script>
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import DialogLoad from '@/components/Dialogs/DialogLoad.vue'
 import "./layout.scss";
 /*
 --Uso del GSAP:
@@ -61,7 +63,7 @@ v-animate-onscroll.repeat="'animHero'"
 */
 export default {
   name: "Layout",
-  components: { Footer, Header },
+  components: { Footer, Header, DialogLoad },
 }
 </script>
 

@@ -112,37 +112,20 @@
     </v-col>
     <v-dialog
       id="dialogo"
-      v-model="load"
-      max-width="200"
-    >
-      <section class="menuCollections colorCartas">
-        <v-col cols="12" class="center pa-0 ma-0">
-          <span>Loading</span>
-        </v-col>
-        <v-col cols="12" class="center">
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-        </v-col>
-      </section>
-    </v-dialog>
-    <v-dialog
-      id="dialogo"
       v-model="dialogMessage"
       max-width="400"
     >
       <section class="menuCollections colorCartas">
         <v-col cols="12" class="center pa-0 ma-0">
-          <span>
-            {{ titleDialog }}
-          </span>
+          <h5>
+            <span>
+              {{ titleDM }}
+            </span>
+          </h5>
         </v-col>
         <v-col cols="12" class="center">
           <span>
-            {{ messageDialog }}
+            {{ messageDM }}
           </span>
         </v-col>
         <v-col cols="12">
@@ -162,7 +145,7 @@ import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
 const CONTRACT_NAME = 'dev-1660244871256-92189441173983'
 export default {
-  name: "ProjectProposal",
+  name: "Form",
   data() {
     return {
       collection: [],
@@ -173,49 +156,11 @@ export default {
         { market: require("@/assets/buttons/xdn.svg") },
         { market: require("@/assets/buttons/dlt.svg") },
       ],
-      dataProjectProposal: {
-        lista: [
-          {
-            listen: "9",
-            price: "1068",
-            volume: "50,000",
-            total: "150,000",
-            market: "doge"
-          },
-          {
-            listen: "9",
-            price: "1068",
-            volume: "50,000",
-            total: "150,000",
-            market: "auto"
-          },
-          {
-            listen: "9",
-            price: "1068",
-            volume: "50,000",
-            total: "150,000",
-            market: "dlt"
-          },
-        ],
-        description: {
-          nft: require("@/assets/nft/monkeyA2.png"),
-          name: "MARA GEN 0",
-          supply: "101",
-          website: "maranft.art/",
-          twitter: "twitter.com/MaraNFT_DAO",
-          instagram: "instagram.com/mara_mtp",
-          discord: "discord:discord.gg/prT5pxKv",
-          about: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Deserunt ad quae ipsam qui debitis excepturi explicabo quas dolor, repellat itaque. In mollitia asperiores voluptate placeat ratione. Voluptas ipsum quibusdam quisquam.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas ipsum quibusdam quisquam.Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
-          img: require("@/assets/image1.png")
-        }
-      },
       idForm: null,
       update: false,
-      load: false,
       dialogMessage: false,
-      titleDialog: '',
-      messageDialog: '',
-
+      titleDM: '',
+      messageDM: '',
     }
   },
   mounted() {
@@ -229,6 +174,7 @@ export default {
   },
   methods: {
     async addForm() {
+      this.$store.commit('Load', true)
       var EduForm = {
         title: this.collection.title,
         supply: this.collection.supply,
@@ -255,16 +201,17 @@ export default {
       }, '85000000000000',
       ).then((response) => {
         console.log(response);
+        this.$store.commit('Load', false)
         this.dialogMessage = true
-        this.titleDialog = "Successfully saved"
-        this.messageDialog = 'The data was saved successfully'
+        this.titleDM = 'Successfully saved'
+        this.messageDM = 'The data was saved successfully'
       }).catch(err => {
         console.log(err)
       })
     },
     async getFormId() {
       // connect to NEAR
-      this.load = true
+      this.$store.commit('Load', true)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
@@ -282,23 +229,13 @@ export default {
         this.collection = response.form
         this.descriptions[0] = response.form.descriptions[0]
         this.images[0] = response.form.images[0]
-        this.load = false
+        this.$store.commit('Load', false)
       }).catch(err => {
         console.log(err)
       })
     },
     async updateForm() {
-      // localStorage.removeItem('idForm')
-      // var EduForm = {
-      //   title: 'Antisocial Ape Club',
-      //   supply: '813',
-      //   website: 'asac.art/',
-      //   twitter: 'twitter.com/AsacNFT_DAO',
-      //   discord: 'discord:discord.gg/prT5pxKv',
-      //   instagram: 'instagram.com/asac',
-      //   descriptions: ['A collection of 3333 pixel art ape NFTs stored on the NEAR blockchain.'],
-      //   images: ['https://ipfs.fleek.co/ipfs/bafybeigc6z74rtwmigcoo5eqcsc4gxwkganqs4uq5nuz4dwlhjhrurofeq'],
-      // }
+      this.$store.commit('Load', true)
       var EduForm = {
         title: this.collection.title,
         supply: this.collection.supply,
@@ -327,9 +264,10 @@ export default {
       }, '85000000000000',
       ).then((response) => {
         console.log(response);
+        this.$store.commit('Load', false)
         this.dialogMessage = true
-        this.titleDialog = "Successfully modified"
-        this.messageDialog = 'The data was modified successfully'
+        this.titleDM = 'Successfully modified'
+        this.messageDM = 'The data was modified successfully'
       }).catch(err => {
         console.log(err)
       })

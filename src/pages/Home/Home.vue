@@ -134,6 +134,7 @@ export default {
   },
   methods: {
     async collections () {
+      this.$store.commit('Load', true)
       await axios.get('https://evienode.juanenriqueenr4.repl.co/api/near/mainnet/getMostSelledCollections?5').then(response => {
         console.log(response.data.data.results)
         this.resultsCollection = response.data.data.results
@@ -145,6 +146,7 @@ export default {
         //     price: item.avg_price_usd.toFixed(2)
         //   })
         // })
+        this.$store.commit('Load', false)
       }).catch(err => console.log(err))
     },
     viewNft(item) {

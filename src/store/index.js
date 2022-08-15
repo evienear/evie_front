@@ -9,13 +9,31 @@ export default new Vuex.Store({
   state: {
     baseURL: process.env.BASE_URL,
     theme: "light",
-    overlay: { opacity: 0.2, color: "white" }
+    overlay: { opacity: 0.2, color: "white" },
+    load: false,
+    dialogMessage: false,
+    titleDM: '',
+    messageDM: '',
   },
   mutations: {
     CambiarTheme(state, theme) {state.theme = theme},
     OverlayMethod(state, theme) {
       if (theme == "dark") {state.overlay.opacity = "0.5";state.overlay.color = "black"}
       if (theme == "light") {state.overlay.opacity = "0.2";state.overlay.color = "white"}
+    },
+    Load(state, key) {
+      if(key == true) {state.load = true} else if(key == false) {state.load = false}
+    },
+    DialogMessage(state, key1, title, message) {
+      if(key1 == true) {
+        state.dialogMessage = true
+        state.titleDM = title
+        state.messageDM = message
+      } else if(key1 == false) {
+        state.dialogMessage = false
+        state.titleDM = ''
+        state.messageDM = ''
+      }
     },
   },
   actions: {
