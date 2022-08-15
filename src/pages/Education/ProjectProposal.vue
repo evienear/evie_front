@@ -58,38 +58,40 @@
               EDIT
             </button>
             <!-- <button class="button h9 btn2" @click="addForm()"> -->
-            <button class="button h9 btn2 ml-3" @click="updateForm()">
+            <button class="button h9 btn2 ml-3" @click="deleteForm()">
               DELETE
             </button>
           </v-col>
         </aside>
       </section>
     </v-col>
-    <v-dialog
-      id="dialogo"
-      v-model="load"
-      max-width="200"
-    >
-      <section class="menuCollections colorCartas">
-        <v-col cols="12" class="center pa-0 ma-0">
-          <span>Loading</span>
-        </v-col>
-        <v-col cols="12" class="center">
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-        </v-col>
-      </section>
-    </v-dialog>
     <v-col cols="12" md="6" class="center">
       <button class="button h9 btn2">
         BUY NOW<v-icon medium>mdi-chevron-right</v-icon>
       </button>
     </v-col>
-    
+    <v-col cols="12">
+      <v-dialog
+        id="dialog"
+        v-model="load"
+        max-width="200"
+        style="position: absolute"
+      >
+        <section class="menuCollections colorCartas">
+          <v-col cols="12" class="center pa-0 ma-0">
+            <span>Loading</span>
+          </v-col>
+          <v-col cols="12" class="center">
+            <v-progress-circular
+              :size="70"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
+          </v-col>
+        </section>
+      </v-dialog>
+    </v-col>
   </section>
 </template>
 
@@ -102,6 +104,7 @@ export default {
   name: "ProjectProposal",
   data() {
     return {
+      load: false,
       dataMarketplace: [
         { market: require("@/assets/buttons/xdn.svg") },
         { market: require("@/assets/buttons/dlt.svg") },
@@ -143,7 +146,6 @@ export default {
         }
       },
       idForm: 0,
-      load: true,
     }
   },
   mounted() {
@@ -205,7 +207,7 @@ export default {
       })
     },
     async deleteForm() {
-
+      this.load = true
     },
   }
 };
