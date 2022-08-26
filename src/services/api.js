@@ -6,7 +6,7 @@ const BASE_URL = process.env.VUE_APP_API_BASE_URL
 var NETWORK = ''
 
 function CONFIG(keyStores, networkId) {
-  if(networkId !== '') {
+  if(networkId) {
     NETWORK = networkId
   } else {
     NETWORK = process.env.NODE_ENV === 'development' ? 'testnet' : 'mainnet'

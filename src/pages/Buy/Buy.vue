@@ -196,7 +196,8 @@ export default {
   mounted() {
     this.collection = JSON.parse(localStorage.collections)
     if(this.collection.base_uri == null) {
-      this.base_uri_null = this.collection.iconcad.slice(0, -4);
+      console.log('aqui el null')
+      this.base_uri_null = this.collection.icon.slice(0, -6);
     }
     console.log(this.base_uri_null)
     // console.log(this.collection)
@@ -223,7 +224,7 @@ export default {
       // const CONTRACT = this.ownerId.toString();
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -248,6 +249,7 @@ export default {
       });
     },
     async viewTokens() {
+      var base_uri_nft = ''
       await axios.post('http://157.230.2.213:3071/api/v1/listnft', {
         'collection': this.ownerId,
         'limit': 50,
@@ -255,7 +257,12 @@ export default {
       }).then(response => {
         console.log(response.data)
         response.data.forEach(item => {
-          this.market(item.token_id, item.precio, item.base_uri)
+          if(this.collection.base_uri == null) {
+            base_uri_nft = this.base_uri_null
+          } else {
+            base_uri_nft = item.base_uri
+          }
+          this.market(item.token_id, item.precio, base_uri_nft)
         });
         this.totalNft = this.dataBuyTable.length
         console.log(this.dataBuyTable)
