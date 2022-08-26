@@ -121,9 +121,11 @@
 
                 <span class="marketplaceId btn2" style="bottom: -5% !important">
                   # {{ item.token_id}}
-                  <i class="center" style="margin-inline: 0.3125em">&bullet;</i>  
-                  {{ item.price.toFixed(2) }} 
-                  <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
+                  <i class="center" v-show="item.price !== 0" style="margin-inline: 0.3125em">&bullet;</i>  
+                  <span v-show="item.price !== 0">
+                    {{ item.price.toFixed(2) }} 
+                  </span>
+                  <img class="nearBalanceLogo" v-show="item.price !== 0" src="@/assets/logo/near.svg" alt="near">
                 </span>
 
                 <aside class="buttons">
@@ -213,7 +215,7 @@ export default {
       if(precio !== null) {
         price = utils.format.formatNearAmount((precio.toString()))
       } else {
-        price = precio
+        price = 0
       }
       
       var responseData = []
