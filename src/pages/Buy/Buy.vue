@@ -195,10 +195,6 @@ export default {
   },
   mounted() {
     this.collection = JSON.parse(localStorage.collections)
-    if(this.collection.base_uri == null) {
-      console.log('aqui el null')
-      this.base_uri_null = this.collection.icon.slice(0, -6);
-    }
     console.log(this.base_uri_null)
     // console.log(this.collection)
     this.viewTokens()
@@ -224,7 +220,7 @@ export default {
       // const CONTRACT = this.ownerId.toString();
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -236,10 +232,11 @@ export default {
         token_id: token_id
       }).then((response) => {
         responseData[0] = response
-        console.log(responseData)
-        var media = base_uri
+        // console.log(responseData)
         responseData.forEach(item => {
-          item.metadata.media = media + '/' + item.metadata.media
+          if (base_uri !== null) {
+            item.metadata.media = base_uri + '/' + item.metadata.media
+          }
           item.price = parseInt(price)
           this.dataBuyTable.push(item)
         });
@@ -249,7 +246,6 @@ export default {
       });
     },
     async viewTokens() {
-      var base_uri_nft = ''
       await axios.post('http://157.230.2.213:3071/api/v1/listnft', {
         'collection': this.ownerId,
         'limit': 50,
@@ -257,12 +253,7 @@ export default {
       }).then(response => {
         console.log(response.data)
         response.data.forEach(item => {
-          if(this.collection.base_uri == null) {
-            base_uri_nft = this.base_uri_null
-          } else {
-            base_uri_nft = item.base_uri
-          }
-          this.market(item.token_id, item.precio, base_uri_nft)
+          this.market(item.token_id, item.precio, item.base_uri)
         });
         this.totalNft = this.dataBuyTable.length
         console.log(this.dataBuyTable)
