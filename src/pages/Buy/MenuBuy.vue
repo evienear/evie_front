@@ -199,7 +199,7 @@ export default {
     },
     async getBalance() {
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -216,7 +216,7 @@ export default {
     async buy_nft(item) {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);

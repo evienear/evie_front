@@ -138,7 +138,7 @@ export default {
     scrollListener() {resizeThrottler(this.OcultarNavbar)},
     async loginNear() {
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       const wallet = new WalletConnection(near);
       if (!this.sesion) {
@@ -154,7 +154,7 @@ export default {
     async isSigned() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);

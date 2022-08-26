@@ -11,9 +11,6 @@ export default new Vuex.Store({
     theme: "light",
     overlay: { opacity: 0.2, color: "white" },
     load: false,
-    dialogMessage: false,
-    titleDM: '',
-    messageDM: '',
   },
   mutations: {
     CambiarTheme(state, theme) {state.theme = theme},
@@ -23,17 +20,6 @@ export default new Vuex.Store({
     },
     Load(state, key) {
       if(key == true) {state.load = true} else if(key == false) {state.load = false}
-    },
-    DialogMessage(state, key1, title, message) {
-      if(key1 == true) {
-        state.dialogMessage = true
-        state.titleDM = title
-        state.messageDM = message
-      } else if(key1 == false) {
-        state.dialogMessage = false
-        state.titleDM = ''
-        state.messageDM = ''
-      }
     },
   },
   actions: {

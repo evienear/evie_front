@@ -49,7 +49,7 @@ export default {
 
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);

@@ -74,11 +74,11 @@
                 @click="viewNft(item)"
               >
                 <aside class="divrow center" style="gap: 10px">
-                  <img class="nft images" :src="item.media" alt="token" />
-                  <span class="h8" style="font-weight: 400">{{ item.collection }}</span>
+                  <img class="nft images" :src="item.icon" alt="token" />
+                  <span class="h8" style="font-weight: 400">{{ item.name }}</span>
                 </aside>
                 <span class="h8">
-                  <strong>$ {{ item.avg_price_usd.toFixed(2) }}</strong>
+                  <strong>$ 502.22</strong>
                 </span>
               </button>
             </template>
@@ -100,61 +100,35 @@ export default {
       search: '',
       filter: [ 'foo', 'bar', 'fizz', 'buzz' ],
       resultsCollection: [],
-      dataMenuCollections: [
-        // {
-        //   nft: require("@/assets/nft/monkey1.png"),
-        //   name: "Antisocial Ape Club",
-        //   price: "1,953,504.15"
-        // },
-        // {
-        //   nft: require("@/assets/nft/monkey2.png"),
-        //   name: "NearNauts",
-        //   price: "9960,472.42"
-        // },
-        // {
-        //   nft: require("@/assets/nft/monkey3.png"),
-        //   name: "Secret Skellies Society",
-        //   price: "636,861.42"
-        // },
-        // {
-        //   nft: require("@/assets/nft/monkey4.png"),
-        //   name: "The MunkyMonkey",
-        //   price: "579,809.53"
-        // },
-        // {
-        //   nft: require("@/assets/nft/monkey5.png"),
-        //   name: "Near Kongz",
-        //   price: "481,256.38",
-        // },
-      ],
+      dataMenuCollections: [],
     }
   },
+  
   mounted() {
     this.collections()
   },
   methods: {
     async collections () {
       this.$store.commit('Load', true)
-      await axios.get('https://evienode.juanenriqueenr4.repl.co/api/near/mainnet/getMostSelledCollections?5').then(response => {
-        console.log(response.data.data.results)
-        this.resultsCollection = response.data.data.results
-        this.dataMenuCollections = this.resultsCollection
-        // this.resultsCollection.forEach(item => {
-        //   this.dataMenuCollections.push({
-        //     nft: item.media,
-        //     name: item.collection,
-        //     price: item.avg_price_usd.toFixed(2)
-        //   })
-        // })
+      await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
+        'limit': 20,
+        'index': 0,
+      }).then(response => {
+        console.log(response.data)
+        // this.dataMenuCollections = response.data
+        response.data.forEach(item => {
+          if(item.nft_contract === 'asac.near') { item.icon = 'https://paras-cdn.imgix.net/bafybeigc6z74rtwmigcoo5eqcsc4gxwkganqs4uq5nuz4dwlhjhrurofeq?w=800&auto=format,compress' }
+          this.dataMenuCollections.push(item)
+        })
         this.$store.commit('Load', false)
       }).catch(err => console.log(err))
     },
     viewNft(item) {
-      localStorage.collections = item.collection
+      localStorage.collections = JSON.stringify(item)
       this.$router.push({
         name: 'buy',
         params:{
-          id: item.creator_id,
+          id: item.nft_contract,
         }
       })
     },
