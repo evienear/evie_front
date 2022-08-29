@@ -113,7 +113,7 @@
           </v-row>
           <v-row>
             <v-col clas id="tableBuy" class="padd">
-              <div v-for="(item, index) in dataBuyTable" v-bind:key="index"
+              <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
                 class="containerMarketplace" :class="{active: item.select}"
                 @click="addCart(item)">
 
@@ -186,6 +186,7 @@ export default {
       ],
       buyTable: 0,
       dataBuyTable: [],
+      dataNftTokens: [],
       nftCart: [],
       dataPagination: [{ icon: 'left', active: false },{ icon: 'right', active: false },],
       cantCart: 0,
@@ -193,12 +194,12 @@ export default {
       totalNft: 0,
       cartMenuBuy: [],
       base_uri_null: '',
+      dataAtt: [],
+      dataAtt2: [],
     }
   },
   mounted() {
     this.collection = JSON.parse(localStorage.collections)
-    console.log(this.base_uri_null)
-    // console.log(this.collection)
     this.viewTokens()
     // this.clearCart()
     // this.getCartItems()
@@ -210,6 +211,23 @@ export default {
     // }
   },
   methods: {
+    async viewTokens() {
+      axios.post('http://157.230.2.213:3071/api/v1/listnft', {
+        'collection': this.ownerId,
+        'limit': 10,
+        'index': 0
+      }).then(response => {
+        // console.log(response.data)
+        response.data.forEach(item => {
+          this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
+        });
+        this.totalNft = this.dataBuyTable.length
+        // console.log(this.dataBuyTable.length)
+        console.log(Array.isArray(this.dataNftTokens))
+        this.armarAtributos()
+      }).catch(err => console.log(err))
+    },
+    // ver nft
     async market(token_id, precio, base_uri, marketplace) {
       var price = ''
       if(precio !== null) {
@@ -223,6 +241,7 @@ export default {
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        // CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -234,42 +253,103 @@ export default {
         token_id: token_id
       }).then((response) => {
         responseData[0] = response
-        // console.log(responseData)
-        responseData.forEach(item => {
-          if (item.metadata.extra == null) {
-            item.metadata.extra = base_uri + '/' + item.metadata.reference
-            axios.get(item.metadata.extra).then(res => {
-              // console.log(res.data.attributes)
-              item.attributes = res.data.attributes
-            }).catch(err => {
-              console.log(err)
-            })
-          }
-          if (base_uri !== null) {
-            item.metadata.media = base_uri + '/' + item.metadata.media
-          }
-          item.marketplace = marketplace
-          item.price = parseInt(price)
-          this.dataBuyTable.push(item)
-        });
+        
+        if (response.metadata.extra !== null) {
+          response.metadata.extra = JSON.parse(response.metadata.extra)
+          response.attributes = response.metadata.extra.atributos
+        } 
+        if (response.metadata.extra == null) {
+          // item.metadata.extra = base_uri + '/' + item.metadata.reference
+          axios.get(base_uri + '/' + response.metadata.reference).then(res => {
+            // console.log(res.data.attributes)
+            response.attributes = res.data.attributes
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+        if (base_uri !== null) {
+          response.metadata.media = base_uri + '/' + response.metadata.media
+        }
+        response.marketplace = marketplace
+        response.price = parseInt(price)
+        //console.log(response)
+        this.dataNftTokens.push(response)
+
+
+        // responseData.forEach(item => {
+        //   if (item.metadata.extra !== null) {
+        //     item.metadata.extra = JSON.parse(item.metadata.extra)
+        //     item.attributes = item.metadata.extra.atributos
+        //   } 
+        //   if (item.metadata.extra == null) {
+        //     // item.metadata.extra = base_uri + '/' + item.metadata.reference
+        //     axios.get(base_uri + '/' + item.metadata.reference).then(res => {
+        //       // console.log(res.data.attributes)
+        //       item.attributes = res.data.attributes
+        //     }).catch(err => {
+        //       console.log(err)
+        //     })
+        //   }
+        //   if (base_uri !== null) {
+        //     item.metadata.media = base_uri + '/' + item.metadata.media
+        //   }
+        //   item.marketplace = marketplace
+        //   item.price = parseInt(price)
+        //   console.log(item)
+        //   this.dataNftTokens.push(item)
+        // });
         
       }).catch(err => {
         console.log(err)
       });
     },
-    async viewTokens() {
-      await axios.post('http://157.230.2.213:3071/api/v1/listnft', {
-        'collection': this.ownerId,
-        'limit': 50,
-        'index': 0
-      }).then(response => {
-        console.log(response.data)
-        response.data.forEach(item => {
-          this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
+    armarAtributos() {
+      // const attributes = []
+      console.log('armar')
+      Object.keys(this.dataNftTokens).forEach(item => {
+        console.log(item, 'item')
+        // attributes.push(item.attributes)
+      });
+      // console.log(attributes, 'atributos de data buy table')
+    },
+    dataAttributeNft(attributes) {
+      const dataAttributes = []
+      attributes.forEach(item => {
+        item.forEach(data => {
+          dataAttributes.push(data)
+        })
+      })
+      console.log(dataAttributes, 'data atributos')
+
+      const datos = []
+      dataAttributes.forEach(item => {
+        datos.push({
+          name: item.trait_type,
+          open: false,
         });
-        this.totalNft = this.dataBuyTable.length
-        console.log(this.dataBuyTable)
-      }).catch(err => console.log(err))
+      });
+      console.log(datos, 'datos')
+      this.dataAtt2 = Object.values(datos.reduce((prev,next)=>Object.assign(prev,{[next.name]:next}),{}))
+      this.dataAtt = this.groupBy(dataAttributes)
+      console.log(this.dataAtt2)
+    },
+    groupBy(array) {
+      const result = {}
+      array.forEach(item => {
+        if (!result[item['trait_type']]){
+          result[item['trait_type']] = []
+        }
+        if(result[item['value']]) {
+          result[item['trait_type']] = []
+        }
+
+        result[item['trait_type']].push({
+          check: false,
+          name: item.value,
+        })
+        result[item['trait_type']] = Object.values(result[item['trait_type']].reduce((prev,next)=>Object.assign(prev,{[next.name]:next}),{}))
+      })
+      return result
     },
     addCart(item) {
       const index = this.nftCart.indexOf(item)
