@@ -11,6 +11,11 @@ export default new Router({
       component: () => import('@/components/Login/Login'),
     },
     {
+      path: '/coming-soon',
+      name: 'comingSoon',
+      component: () => import('@/pages/Error/ComingSoon'),
+    },
+    {
     path: '/',
     name: 'Layout',
     component: () => import('@/components/Layout/Layout'),

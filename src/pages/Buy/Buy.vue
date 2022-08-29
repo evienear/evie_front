@@ -210,7 +210,7 @@ export default {
     // }
   },
   methods: {
-    async market(token_id, precio, base_uri) {
+    async market(token_id, precio, base_uri, marketplace) {
       var price = ''
       if(precio !== null) {
         price = utils.format.formatNearAmount((precio.toString()))
@@ -236,9 +236,19 @@ export default {
         responseData[0] = response
         // console.log(responseData)
         responseData.forEach(item => {
+          if (item.metadata.extra == null) {
+            item.metadata.extra = base_uri + '/' + item.metadata.reference
+            axios.get(item.metadata.extra).then(res => {
+              // console.log(res.data.attributes)
+              item.attributes = res.data.attributes
+            }).catch(err => {
+              console.log(err)
+            })
+          }
           if (base_uri !== null) {
             item.metadata.media = base_uri + '/' + item.metadata.media
           }
+          item.marketplace = marketplace
           item.price = parseInt(price)
           this.dataBuyTable.push(item)
         });
@@ -255,7 +265,7 @@ export default {
       }).then(response => {
         console.log(response.data)
         response.data.forEach(item => {
-          this.market(item.token_id, item.precio, item.base_uri)
+          this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
         });
         this.totalNft = this.dataBuyTable.length
         console.log(this.dataBuyTable)
