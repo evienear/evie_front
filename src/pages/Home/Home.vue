@@ -110,7 +110,8 @@ export default {
   methods: {
     async collections () {
       this.$store.commit('Load', true)
-      await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
+      // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
+      await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
         'limit': 20,
         'index': 0,
       }).then(response => {

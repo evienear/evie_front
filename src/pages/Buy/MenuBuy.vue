@@ -148,10 +148,11 @@
 </template>
 
 <script>
+import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
-const CONTRACT_NAME = 'dev-1660244871256-92189441173983'
+const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "MenuBuy",
   props: ['nftCart', 'cantCart', 'priceTotal'],
@@ -214,7 +215,9 @@ export default {
       this.balance =  amountInNEAR.toFixed(2)
     },
     async buy_nft(item) {
+      console.log(utils.format.parseNearAmount((this.priceTotal).toString()), 'precio total')
       // connect to NEAR
+      localStorage.priceTotal
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
@@ -227,13 +230,9 @@ export default {
       console.log(item.token_id)
 
       await contract.buy_from_other_marketplaces({
-        user:wallet.getAccountId(),
-        item: '1604',
-        // item: item.token_id,
-        price: '50000000000000000000000000',
-        // price: utils.format.parseNearAmount((item.price).toString()),
-      }, '300000000000000',
-      '51000000000000000000000000').then((response) => {
+
+      },'300000000000000',
+      utils.format.parseNearAmount((this.priceTotal).toString())).then((response) => {
         console.log(response);
       }).catch(err => {
         console.log(err)
@@ -241,9 +240,33 @@ export default {
     },
     purchase() {
       console.log("purchase")
-      this.nftCart.forEach(item => {
-        this.buy_nft(item)
-      });
+      // this.nftCart.forEach(item => {
+      //   this.buy_nft(item)
+      // });
+      // signerid, signerprivateket
+      const key = localStorage.getItem("near-api-js:keystore:"+localStorage.walletAccountId+":testnet");
+      console.log(key, localStorage.walletAccountId)
+      axios.post('http://157.230.2.213:3072/api/v1/buynft', {
+        "signerid": localStorage.walletAccountId,
+        "signerprivateket": key,
+        "ft_token": "near"
+      }).then(response => {
+        console.log(response.data)
+      }).catch(err => {
+        console.log(err)
+      })
+
+      // var request = new XMLHttpRequest();
+      //   request.open(
+      //       "POST",
+      //         MAILAUTODISPUTE +this.mailowner
+      //           +","+this.mailsigner+"/"+this.$route.query.order+"/"+this.$route.query.type
+      //             +"/"+this.userInfo+"/"+key+"/"+process.env.VUE_APP_NETWORK
+      //             +"/"+process.env.VUE_APP_CONTRACT_NAME+"/"+process.env.VUE_APP_DISPUTE+"/"+this.time,
+      //     );
+      //   localStorage.setItem('AUTODISPUTE', true); 
+      //   request.send();
+        
       
     },
   },

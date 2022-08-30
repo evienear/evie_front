@@ -27,7 +27,7 @@
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
-const CONTRACT_NAME = 'dev-1660244871256-92189441173983'
+const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "NFTProjects",
   data() {
