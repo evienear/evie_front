@@ -195,7 +195,7 @@
     gap: 20px;
     &>aside:first-of-type {@include media(max, x-small) {font-size: 12px !important}}
     .educationText {
-      --corner-size: .25em;
+      --corner-size: 5px;
       padding: 1em !important;
       font-weight: bold;
       font-size: 0.8em;
@@ -223,17 +223,27 @@
     }
   }
   .containerDown {
-    #tableBuy {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(10em, 16vw, 16em)),1fr));
-      grid-gap: 1.5em 2em;
-      @include media(max, small) {grid-gap: 2em}
+    &-content {
+      // position: relative;
+      display: flex;
+      & > * {flex: 1 1}
+      gap: 1em;
+      #tableBuy {
+        display: grid;
+        width: calc(100% - 15.625em);
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(10em, 16vw, 16em)),1fr));
+        grid-gap: 1.5em 2em;
+        @include media(max, small) {
+          grid-gap: 2em;
+          width: 100%;
+        }
+      }
     }
     .containerPagination {
       margin-top: 2em;
       gap: 1em;
       .v-btn {
-        --corner-size: .25em;
+        --corner-size: 5px;
         --border-size: 3px;
         --size: 3.5em;
         max-width: var(--size);
@@ -249,7 +259,7 @@
       letter-spacing: 0.115em;
     }
     .rightButton {
-      --corner-size: .25em;
+      --corner-size: 5px;
       font-weight: 400;
       font-size: 0.8em;
       letter-spacing: 0.115em;
@@ -291,7 +301,7 @@
     z-index: 2;
   }
   .marketplaceId {
-    --corner-size: .25em;
+    --corner-size: 4px;
     --border-size: 3px;
     display: flex;
     align-items: center;
@@ -318,6 +328,66 @@
       }
     }
   }
+}
+
+.container-filter-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  &-head {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    a {color: #7BD7EB !important}
+    div:last-of-type {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5em;
+      & > * {flex: 1 1 4.375em}
+    }
+    .v-chip {
+      --corner-size: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 0;
+      background-color: var(--color) !important;
+      clip-path: $clip-path !important;
+      position: relative;
+      isolation: isolate;
+      padding: 0 !important;
+      max-width: 6.25em;
+      &__content {
+        font-size: .8em !important;
+        padding-inline: .5em;
+        &, button { color: var(--colorInverted) !important}}
+    }
+  }
+  &-body {
+    ::before {box-shadow: none !important}
+    .v-expansion-panel {
+      background: transparent !important;
+      button, i, .v-list-item__title {color: var(--color) !important}
+      &-content__wrap {padding-inline: 0 !important}
+      .v-list-item {
+        text-align: center;
+        clip-path: $clip-path !important;
+        &::before {border-radius: inherit}
+        &:hover {background-color: transparent !important}
+        &.selected {background-color: #7BD7EB !important;
+          .v-list-item__title {color: var(--colorInverted) !important}
+        }
+        & ~ .v-list-item {margin-top: .5em}
+      }
+      // lines
+      &::after {background-color: var(--color)}
+    }
+  }
+}
+#filterDrawer {
+  background-color: var(--colorCartas);
+  @include media(min, small) {display: none !important}
+  .container-filter-left {padding: 4em 1em}
 }
 
 #menuCheckout, #menuReview {
@@ -368,7 +438,7 @@
       filter: drop-shadow(4px 4px 10px rgba(0, 0, 0, 0.25))
     }
     .marketplaceNumber {
-      --corner-size: .25em;
+      --corner-size: 4px;
       display: flex;
       align-items: center;
       position: absolute;
@@ -377,7 +447,7 @@
       padding: .25rem .5rem !important;
     }
     .marketplaceAmount {
-      --corner-size: .25em;
+      --corner-size: 4px;
       display: flex;
       align-items: center;
       position: absolute;

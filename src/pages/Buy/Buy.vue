@@ -1,6 +1,7 @@
 <template>
   <section id="buy">
     <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal"></MenuBuy>
+    <DrawerFilterMobile :DataChips="dataChips" :DataFilterAtribute="dataFilterAtribute" ref="drawer"></DrawerFilterMobile>
     <h1 class="titulo h2mobile">BUY</h1>
     <v-row class="mt-3">
       <v-col class="containerUp divcol padd marginbottom">
@@ -81,78 +82,123 @@
         </aside>
       </v-col>
     </v-row>
-    <v-container>
-      <v-row>
-        <v-col class="containerDown padd">
-          <v-row>
-            <v-col class="space aendmobile divcolmobile" style="padding-block: 0 2em;gap: 1em">
-              <div class="fill-w jend">
-                <v-col v-for="(item,i) in dataFilter" :key="i" sm="6" md="4" lg="3"
-                  class="center paddvertical">
-                  <v-select
-                    :items="item.selection"
-                    :hide-details="true"
-                  >
-                    <template v-slot:label>
-                      <span class="titleAutocompleteBuy h8 color">{{ item.title }}</span>
-                    </template>
 
-                    <template v-slot:append>
-                      <v-icon large class="color">mdi-chevron-down</v-icon>
-                    </template>
-                  </v-select>
-                </v-col>
-              </div>
+    <v-col class="containerDown padd">
+      <v-row>
+        <v-col class="space aendmobile divcolmobile" style="padding-block: 0 2em;gap: 1em">
+          <div class="fill-w jend">
+            <v-col v-for="(item,i) in dataFilter" :key="i" sm="6" md="4" lg="3"
+              class="center paddvertical">
+              <v-select
+                :items="item.selection"
+                :hide-details="true"
+              >
+                <template v-slot:label>
+                  <span class="titleAutocompleteBuy h8 color">{{ item.title }}</span>
+                </template>
 
               <button class="rightButton btn2 fill-w paddleftmobile"
                 @click="$refs.menu.dialog=true, priceTotalNft()">
                 CART:{{ cantCart }}
                 <span class="acenter">{{ priceTotal }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
               </button>
+                <template v-slot:append>
+                  <v-icon large class="color">mdi-chevron-down</v-icon>
+                </template>
+              </v-select>
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col clas id="tableBuy" class="padd">
-              <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
-                class="containerMarketplace" :class="{active: item.select}"
-                @click="addCart(item)">
+          </div>
 
-                <v-img class="images" :src="item.metadata.media" alt="NFT Market Place" />
+          <div class="end gap">
+            <button class="vermobile" @click="$refs.drawer.drawer=true">
+              <v-icon style="color: var(--color) !important">mdi-filter</v-icon>
+            </button>
 
-                <span class="marketplaceId btn2" style="bottom: -5% !important">
-                  # {{ item.token_id}}
-                  <i class="center" v-show="item.price !== 0" style="margin-inline: 0.3125em">&bullet;</i>  
-                  <span v-show="item.price !== 0">
-                    {{ item.price.toFixed(2) }} 
-                  </span>
-                  <img class="nearBalanceLogo" v-show="item.price !== 0" src="@/assets/logo/near.svg" alt="near">
-                </span>
-
-                <aside class="buttons">
-                  <v-btn v-for="(item2,i) in item.market" :key="i" icon>
-                    <img :src="require(`@/assets/buttons/${item2.name}.svg`)" alt="marketplace">
-                  </v-btn>
-                </aside>
-              </div>
-            </v-col>  
-          </v-row>
-          <v-row>
-            <v-col class="containerPagination end">
-              <v-btn v-for="(item,i) in dataPagination" :key="i"
-                class="btn2" :class="{active: item.active}"
-                @click="dataPagination.forEach(e=>{e.active=false});item.active=true">
-                <v-icon large style="color:#58565b !important">mdi-chevron-{{item.icon}}</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
+            <button class="rightButton btn2 fill-w paddleftmobile"
+              @click="$refs.menu.dialog=true">
+              CART:{{ cantCart }}
+              <span class="acenter">{{ priceTotal }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
+            </button>
+          </div>
         </v-col>
       </v-row>
-    </v-container>
+
+      <section class="containerDown-content">
+        <aside class="container-filter-left eliminarmobile">
+          <div class="container-filter-left-head">
+            <div class="space gap">
+              <h5 class="p h10-em">Atribute filter</h5>
+              <a class="h11-em" @click="dataFilterAtribute.forEach(e=>e.list.forEach(e2=>e2.selected=false));dataChips=[]">Clear all</a>
+            </div>
+          
+            <div>
+              <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
+                dataChips.splice(dataChips.indexOf(item),1);
+                dataFilterAtribute.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});
+              ">
+                {{item.name}}
+              </v-chip>
+            </div>
+          </div>
+
+          <v-expansion-panels class="container-filter-left-body">
+            <v-expansion-panel v-for="(item,i) in dataFilterAtribute" :key="i">
+              <v-expansion-panel-header>{{item.title}}</v-expansion-panel-header>
+
+              <v-expansion-panel-content>
+                <v-list color="transparent">
+                  <v-list-item v-for="(item2,i2) in item.list" :key="i2" :class="{selected: item2.selected}" @click="
+                    item2.selected=!item2.selected; item2.selected?dataChips.push(item2):dataChips.splice(dataChips.indexOf(item2),1)
+                  ">
+                    <v-list-item-title>{{item2.name}}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </aside>
+
+        <v-col clas id="tableBuy" class="padd">
+          <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
+            class="containerMarketplace" :class="{active: item.select}"
+            @click="addCart(item)">
+
+            <v-img class="images" :src="item.metadata.media" alt="NFT Market Place" />
+
+            <span class="marketplaceId btn2" style="bottom: -5% !important">
+              # {{ item.token_id}}
+              <i class="center" v-show="item.price !== 0" style="margin-inline: 0.3125em">&bullet;</i>  
+              <span v-show="item.price !== 0">
+                {{ item.price.toFixed(2) }} 
+              </span>
+              <img class="nearBalanceLogo" v-show="item.price !== 0" src="@/assets/logo/near.svg" alt="near">
+            </span>
+
+            <aside class="buttons">
+              <v-btn v-for="(item2,i) in item.market" :key="i" icon>
+                <img :src="require(`@/assets/buttons/${item2.name}.svg`)" alt="marketplace">
+              </v-btn>
+            </aside>
+          </div>
+        </v-col>
+      </section>
+
+      <v-row>
+        <v-col class="containerPagination end">
+          <v-btn v-for="(item,i) in dataPagination" :key="i"
+            class="btn2" :class="{active: item.active}"
+            @click="dataPagination.forEach(e=>{e.active=false});item.active=true">
+            <v-icon large style="color:#58565b !important">mdi-chevron-{{item.icon}}</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-col>
   </section>
 </template>
 
 <script>
 import MenuBuy from './MenuBuy.vue'
+import DrawerFilterMobile from './DrawerFilterMobile.vue'
 import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
@@ -160,7 +206,7 @@ const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
 const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "Buy",
-  components: { MenuBuy },
+  components: { MenuBuy, DrawerFilterMobile },
   data() {
     return {
       collectionId: this.$route.params.id,
@@ -196,6 +242,33 @@ export default {
       base_uri_null: '',
       dataAtt: [],
       dataAtt2: [],
+      dataChips: [],
+      dataFilterAtribute: [
+        {
+          title: "atribute",
+          list: [
+            {name: "value", selected: false},
+            {name: "value", selected: false},
+            {name: "value", selected: false},
+          ],
+        },
+        {
+          title: "atribute",
+          list: [
+            {name: "value", selected: false},
+            {name: "value", selected: false},
+            {name: "value", selected: false},
+          ],
+        },
+        {
+          title: "atribute",
+          list: [
+            {name: "value", selected: false},
+            {name: "value", selected: false},
+            {name: "value", selected: false},
+          ],
+        },
+      ],
     }
   },
   mounted() {
