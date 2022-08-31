@@ -274,8 +274,12 @@ export default {
   mounted() {
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
-    // this.clearCart()
-    // this.getCartItems()
+    //this.clearCart()
+    //this.removeCartItem()
+    this.getCartItems()
+    setTimeout(function () {
+      console.log(this.dataNftTokens);
+    }, 10000)
   },
   computed: {
     // DataBuyTable() {
@@ -286,13 +290,16 @@ export default {
   methods: {
     async viewTokens() {
       console.log(this.collectionId)
-      // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
-      axios.post('http://157.230.2.213:3072/api/v1/listnft', {
+      axios.post('http://157.230.2.213:3071/api/v1/listnft', {
+      //axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
         'limit': 100,
-        'index': 0
+        'index': 0,
+        'sales': 'true',
+        'order': 'precio',
+        'type_order': 'asc'
       }).then(response => {
-        // console.log(response.data)
+        console.log(response.data)
         response.data.forEach(item => {
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
         });
@@ -314,8 +321,8 @@ export default {
       // const CONTRACT = this.ownerId.toString();
       // connect to NEAR
       const near = await connect(
-        // CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        //CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -328,41 +335,39 @@ export default {
       }).then((response) => {
         responseData[0] = response
         responseData.forEach(item => {
-          if (item.metadata.extra !== null) {
-            item.metadata.extra = JSON.parse(item.metadata.extra)
-            item.attributes = item.metadata.extra.atributos
-          } 
-          if (item.metadata.extra == null) {
-            // item.metadata.extra = base_uri + '/' + item.metadata.reference
-            axios.get(base_uri + '/' + item.metadata.reference).then(res => {
-              // console.log(res.data.attributes)
-              item.attributes = res.data.attributes
-            }).catch(err => {
-              console.log(err)
-            })
+          if(marketplace !== null) {
+            if (item.metadata.extra !== null) {
+              item.metadata.extra = JSON.parse(item.metadata.extra)
+              item.attributes = item.metadata.extra.atributos
+            } 
+            if (item.metadata.extra == null) {
+              // item.metadata.extra = base_uri + '/' + item.metadata.reference
+              axios.get(base_uri + '/' + item.metadata.reference).then(res => {
+                // console.log(res.data.attributes)
+                item.attributes = res.data.attributes
+              }).catch(err => {
+                console.log(err)
+              })
+            }
+            if (base_uri !== null) {
+              item.metadata.media = base_uri + '/' + item.metadata.media
+            }
+            item.marketplace = marketplace
+            item.price = parseFloat(price)
+      
+            this.dataNftTokens.push(item)
           }
-          if (base_uri !== null) {
-            item.metadata.media = base_uri + '/' + item.metadata.media
-          }
-          item.marketplace = marketplace
-          item.price = parseInt(price)
-          this.dataNftTokens.push({
-            approved_account_ids: item.approved_account_ids,
-            attributes: item.attributes,
-            marketplace: item.marketplace,
-            metadata: item.metadata,
-            owner_id: item.owner_id,
-            price: item.price,
-            token_id: item.token_id,
-          })
         });
-        
       }).catch(err => {
         console.log(err)
       });
     },
-    armarAtributos() {
+    async armarAtributos() {
       // console.log(this.dataNftTokens)
+      console.log(this.dataNftTokens)
+      await this.dataNftTokens.forEach((item, index) => {
+        console.log(item, index)
+      })
     },
     dataAttributeNft(attributes) {
       const dataAttributes = []
@@ -404,8 +409,10 @@ export default {
       return result
     },
     addCart(item) {
-      const index = this.nftCart.indexOf(item)
+      console.log(this.nftCart, 'en addCart options')
+      const index = this.nftCart.indexOf(item.token_id)
       if (index > -1) {
+        console.log(item, 'para eliminar')
         this.nftCart.splice(index, 1);
         item.select = false
         // console.log(this.nftCart)
@@ -413,16 +420,14 @@ export default {
         this.priceTotal = this.priceTotal - item.price
         this.removeCartItem(item)
       } else {
-        this.nftCart.push(item)
+        // this.nftCart.push(item)
         item.select = true
         this.cantCart = this.nftCart.length
-        this.priceTotal = this.priceTotal + item.price
         // console.log(this.nftCart)
         this.addCartItem(item)
       }
     },
     async addCartItem(item) {
-      console.log(item)
       // connect to NEAR
       var price = utils.format.parseNearAmount((item.price).toString())
       var itemNft = {
@@ -430,6 +435,7 @@ export default {
         contract_id: this.collectionId,
         contract_market: item.marketplace,
         price: price,
+        base_uri: item.metadata.media,
       }
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
@@ -441,10 +447,10 @@ export default {
         sender: wallet.account(),
       })
       await contract.add_item({
-        user: wallet.getAccountId(),
         item: itemNft,
       }, '85000000000000').then((response) => {
-        console.log(response);
+        console.log(response, 'response addCart');
+        //console.log(this.nftCart)
         this.getCartItems()
       }).catch(err => {
         console.log(err)
@@ -452,9 +458,13 @@ export default {
     },
     async removeCartItem(item) {
       // connect to NEAR
+      var price = utils.format.parseNearAmount((item.price).toString())
       var itemNft = {
         token_id: item.token_id,
-        contract_id: 'paras-token-v2.testnet',
+        contract_id: this.collectionId,
+        contract_market: item.marketplace,
+        price: price,
+        base_uri: item.media,
       }
 
       const near = await connect(
@@ -467,7 +477,6 @@ export default {
         sender: wallet.account(),
       })
       await contract.remove_item({
-        user: wallet.getAccountId(),
         item: itemNft
       }, '85000000000000',
       ).then((response) => {
@@ -488,9 +497,7 @@ export default {
         changeMethods: ["clear_cart"],
         sender: wallet.account(),
       })
-      await contract.clear_cart({
-        user: wallet.getAccountId(),
-      }, '85000000000000',
+      await contract.clear_cart({}, '85000000000000',
       ).then((response) => {
         console.log(response);
         this.getCartItems()
@@ -512,7 +519,17 @@ export default {
       await contract.get_cart_items({
         user: wallet.getAccountId(),
       }).then((response) => {
-        console.log(response);
+        var precio = 0
+        //console.log(response, 'getCartItems');
+        this.nftCart = response
+        this.priceTotal = 0
+        this.nftCart.forEach(element => {
+          precio = utils.format.formatNearAmount((element.price.toString()))
+          element.precio = parseFloat(precio)
+          this.priceTotal = this.priceTotal + element.precio
+        });
+        // console.log(this.nftCart, 'nftCartr getCartItems')
+        this.cantCart = this.nftCart.length
       }).catch(err => {
         console.log(err)
       })

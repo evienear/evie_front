@@ -37,14 +37,14 @@
                 style="display: flex"
                 class="containerMarketplace relative"
               >
-                <img class="images" :src="item.metadata.media" alt="NFT Market Place">
+                <img class="images" :src="item.base_uri" alt="NFT Market Place">
 
                 <span class="marketplaceId btn2">
                   # {{ item.token_id }} 
                   <i class="center" style="margin-inline: 0.3125rem">
                     &bullet;
                   </i> 
-                  {{ item.price}}
+                  {{ item.precio}}
                   <img class="nearBalanceLogo" src="@/assets/logo/near.png" alt="near">
                 </span>
 
@@ -105,14 +105,14 @@
                 style="display: flex"
                 class="containerMarketplace relative"
               >
-                <img class="images" :src="item.metadata.media" alt="NFT">
+                <img class="images" :src="item.base_uri" alt="NFT">
 
                 <span class="marketplaceNumber btn2">
                   # {{ item.token_id }}
                 </span>
 
                 <span class="marketplaceAmount btn2 center">
-                  {{ item.price}}
+                  {{ item.precio}}
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
 
@@ -148,7 +148,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
@@ -178,7 +178,15 @@ export default {
     this.OverlayMethod(theme);
   },
   mounted() {
+    var price = 0
     this.dataMenuBuy = []
+    this.nftCart.forEach(element => {
+      price = utils.format.formatNearAmount((element.precio.toString()))
+      price = parseFloat(price)
+      element.price = price
+      console.log(element, 'element price')
+      
+    });
     this.dataMenuBuy = this.nftCart
     this.getBalance()
     //console.log(this.dataMenuBuy)
@@ -243,31 +251,26 @@ export default {
       // this.nftCart.forEach(item => {
       //   this.buy_nft(item)
       // });
-      // signerid, signerprivateket
       const key = localStorage.getItem("near-api-js:keystore:"+localStorage.walletAccountId+":testnet");
       console.log(key, localStorage.walletAccountId)
-      axios.post('http://157.230.2.213:3072/api/v1/buynft', {
-        "signerid": localStorage.walletAccountId,
-        "signerprivateket": key,
-        "ft_token": "near"
-      }).then(response => {
-        console.log(response.data)
-      }).catch(err => {
-        console.log(err)
-      })
+      //axios.post('http://157.230.2.213:3071/api/v1/buynft', {
+      // axios.post('http://157.230.2.213:3072/api/v1/buynft', {
+      //   "signerid": localStorage.walletAccountId,
+      //   "signerprivateket": key,
+      //   "ft_token": "near"
+      // }).then(response => {
+      //   console.log(response.data)
+      // }).catch(err => {
+      //   console.log(err)
+      // })
 
-      // var request = new XMLHttpRequest();
-      //   request.open(
-      //       "POST",
-      //         MAILAUTODISPUTE +this.mailowner
-      //           +","+this.mailsigner+"/"+this.$route.query.order+"/"+this.$route.query.type
-      //             +"/"+this.userInfo+"/"+key+"/"+process.env.VUE_APP_NETWORK
-      //             +"/"+process.env.VUE_APP_CONTRACT_NAME+"/"+process.env.VUE_APP_DISPUTE+"/"+this.time,
-      //     );
-      //   localStorage.setItem('AUTODISPUTE', true); 
-      //   request.send();
-        
-      
+
+      var request = new XMLHttpRequest();
+      request.open(
+          "POST",
+            'http://157.230.2.213:3072/api/v1/buynft/' + localStorage.walletAccountId +'/ed25519:4y1TUBspFie5xnsUXojtmJDSDmcVkC9azToASfCAxUDqyaziJbLRpcnQ858ptTwwHu7ETqyRkzZNBjBWUFjZUhbL/near',
+        );
+      request.send();
     },
   },
 };

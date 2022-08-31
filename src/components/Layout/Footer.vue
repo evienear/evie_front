@@ -21,7 +21,8 @@
           </button>
 
           <span class="center" style="font-weight: bold; cursor: pointer">
-            EN <v-icon medium>mdi-menu-down</v-icon>
+            <v-icon v-show="themeButton" medium>mdi-weather-night</v-icon>
+            <v-icon v-show="!themeButton" medium>mdi-white-balance-sunny</v-icon>
           </span>
         </aside>
       </v-col>
