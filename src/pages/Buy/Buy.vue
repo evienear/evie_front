@@ -277,9 +277,6 @@ export default {
     //this.clearCart()
     //this.removeCartItem()
     this.getCartItems()
-    setTimeout(function () {
-      console.log(this.dataNftTokens);
-    }, 10000)
   },
   computed: {
     // DataBuyTable() {
@@ -290,8 +287,8 @@ export default {
   methods: {
     async viewTokens() {
       console.log(this.collectionId)
-      axios.post('http://157.230.2.213:3071/api/v1/listnft', {
-      //axios.post('http://157.230.2.213:3072/api/v1/listnft', {
+      // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
+      axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
         'limit': 100,
         'index': 0,
@@ -301,7 +298,9 @@ export default {
       }).then(response => {
         console.log(response.data)
         response.data.forEach(item => {
-          this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
+          if(item.precio !== null && item.marketplace !== null) {
+            this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
+          }
         });
         this.totalNft = this.dataNftTokens.length
         this.armarAtributos()
@@ -321,8 +320,8 @@ export default {
       // const CONTRACT = this.ownerId.toString();
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-        //CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        // CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -335,28 +334,26 @@ export default {
       }).then((response) => {
         responseData[0] = response
         responseData.forEach(item => {
-          if(marketplace !== null) {
-            if (item.metadata.extra !== null) {
-              item.metadata.extra = JSON.parse(item.metadata.extra)
-              item.attributes = item.metadata.extra.atributos
-            } 
-            if (item.metadata.extra == null) {
-              // item.metadata.extra = base_uri + '/' + item.metadata.reference
-              axios.get(base_uri + '/' + item.metadata.reference).then(res => {
-                // console.log(res.data.attributes)
-                item.attributes = res.data.attributes
-              }).catch(err => {
-                console.log(err)
-              })
-            }
-            if (base_uri !== null) {
-              item.metadata.media = base_uri + '/' + item.metadata.media
-            }
-            item.marketplace = marketplace
-            item.price = parseFloat(price)
-      
-            this.dataNftTokens.push(item)
+          if (item.metadata.extra !== null) {
+            item.metadata.extra = JSON.parse(item.metadata.extra)
+            item.attributes = item.metadata.extra.atributos
+          } 
+          if (item.metadata.extra == null) {
+            // item.metadata.extra = base_uri + '/' + item.metadata.reference
+            axios.get(base_uri + '/' + item.metadata.reference).then(res => {
+              // console.log(res.data.attributes)
+              item.attributes = res.data.attributes
+            }).catch(err => {
+              console.log(err)
+            })
           }
+          if (base_uri !== null) {
+            item.metadata.media = base_uri + '/' + item.metadata.media
+          }
+          item.marketplace = marketplace
+          item.price = parseFloat(price)
+    
+          this.dataNftTokens.push(item)
         });
       }).catch(err => {
         console.log(err)
@@ -364,10 +361,7 @@ export default {
     },
     async armarAtributos() {
       // console.log(this.dataNftTokens)
-      console.log(this.dataNftTokens)
-      await this.dataNftTokens.forEach((item, index) => {
-        console.log(item, index)
-      })
+      console.log(this.dataNftTokens, 'aqui')
     },
     dataAttributeNft(attributes) {
       const dataAttributes = []

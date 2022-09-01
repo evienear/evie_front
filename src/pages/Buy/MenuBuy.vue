@@ -246,7 +246,7 @@ export default {
         console.log(err)
       });
     },
-    purchase() {
+    async purchase() {
       console.log("purchase")
       // this.nftCart.forEach(item => {
       //   this.buy_nft(item)
@@ -265,12 +265,23 @@ export default {
       // })
 
 
-      var request = new XMLHttpRequest();
-      request.open(
-          "POST",
-            'http://157.230.2.213:3072/api/v1/buynft/' + localStorage.walletAccountId +'/ed25519:4y1TUBspFie5xnsUXojtmJDSDmcVkC9azToASfCAxUDqyaziJbLRpcnQ858ptTwwHu7ETqyRkzZNBjBWUFjZUhbL/near',
-        );
-      request.send();
+      // var request = new XMLHttpRequest();
+      // request.open(
+      //     "POST",
+      //       'http://157.230.2.213:3072/api/v1/buynft/' + localStorage.walletAccountId +'/ed25519:4y1TUBspFie5xnsUXojtmJDSDmcVkC9azToASfCAxUDqyaziJbLRpcnQ858ptTwwHu7ETqyRkzZNBjBWUFjZUhbL/near',
+      //   );
+      // request.send();
+
+      // console.log('batch add_request & confirm', ...args, request_id)
+      // var res = await Contract.account.signAndSendTransaction(contractName, [
+      //   nearAPI.transactions.functionCall('add_request', args1, BOATLOAD_OF_GAS),
+      //   nearAPI.transactions.functionCall('confirm', args2, BOATLOAD_OF_GAS),
+      // ]).catch((e) => {
+      //   console.log(e)
+      // })
+      // console.log(res)
+
+      
     },
   },
 };

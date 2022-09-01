@@ -58,9 +58,9 @@
               EDIT
             </button>
             <!-- <button class="button h9 btn2" @click="addForm()"> -->
-            <button class="button h9 btn2 ml-3" @click="deleteForm()">
+            <!-- <button class="button h9 btn2 ml-3" @click="deleteForm()">
               DELETE
-            </button>
+            </button> -->
           </v-col>
         </aside>
       </section>
