@@ -1,7 +1,8 @@
 <template>
   <section id="buy">
     <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal"></MenuBuy>
-    <DrawerFilterMobile :DataChips="dataChips" :DataFilterAtribute="dataFilterAtribute" ref="drawer"></DrawerFilterMobile>
+    <!-- <DrawerFilterMobile :DataChips="dataChips" :DataFilterAtribute="dataAtt2" ref="drawer"></DrawerFilterMobile> -->
+    
     <h1 class="titulo h2mobile">BUY</h1>
     <v-row class="mt-3">
       <v-col class="containerUp divcol padd marginbottom">
@@ -17,24 +18,24 @@
             <div class="contenidoInfo divrow eliminarmobile">
               <template v-for="(item,i) in dataBuy">
                 <p :key="i" class="p space">
-                  Minted 
+                  Minted
                   <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.minted }}</strong>
                 <i class="center color">&bullet;</i>
                 </p>
                 <p :key="i" class="p space">
-                  Owners 
+                  Owners
                   <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.owners }}</strong>
                 <i class="center color">&bullet;</i>
                 </p>
                 <p :key="i" class="p space">
-                  Floor Prince 
+                  Floor Prince
                   <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.floor }}
                     <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
                   </strong>
                 <i class="center color">&bullet;</i>
                 </p>
                 <p :key="i" class="p space">
-                  Daily Volume 
+                  Daily Volume
                   <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.daily }}</strong>
                 </p>
               </template>
@@ -53,24 +54,24 @@
           <div class="contenidoInfo divrow divwrapmobile vermobile">
             <template v-for="(item,i) in dataBuy">
               <p :key="i" class="p space">
-                Minted 
+                Minted
                 <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.minted }}</strong>
               <i class="center color">&bullet;</i>
               </p>
               <p :key="i" class="p space">
-                Owners 
+                Owners
                 <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.owners }}</strong>
               <i class="center color">&bullet;</i>
               </p>
               <p :key="i" class="p space">
-                Floor Prince 
+                Floor Prince
                 <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.floor }}
                   <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
                 </strong>
               <i class="center color">&bullet;</i>
               </p>
               <p :key="i" class="p space">
-                Daily Volume 
+                Daily Volume
                 <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.daily }}</strong>
               </p>
             </template>
@@ -130,7 +131,7 @@
               <h5 class="p h10-em">Atribute filter</h5>
               <a class="h11-em" @click="dataFilterAtribute.forEach(e=>e.list.forEach(e2=>e2.selected=false));dataChips=[]">Clear all</a>
             </div>
-          
+
             <div>
               <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
                 dataChips.splice(dataChips.indexOf(item),1);
@@ -167,9 +168,9 @@
 
             <span class="marketplaceId btn2" style="bottom: -5% !important">
               # {{ item.token_id}}
-              <i class="center" v-show="item.price !== 0" style="margin-inline: 0.3125em">&bullet;</i>  
+              <i class="center" v-show="item.price !== 0" style="margin-inline: 0.3125em">&bullet;</i>
               <span v-show="item.price !== 0">
-                {{ item.price.toFixed(2) }} 
+                {{ item.price.toFixed(2) }}
               </span>
               <img class="nearBalanceLogo" v-show="item.price !== 0" src="@/assets/logo/near.svg" alt="near">
             </span>
@@ -193,12 +194,50 @@
         </v-col>
       </v-row>
     </v-col>
+
+
+    <v-navigation-drawer v-model="drawer" fixed id="filterDrawer" width="300px">
+    <aside class="container-filter-left">
+      <div class="container-filter-left-head">
+        <div class="space gap">
+          <h5 class="p h10-em">Atribute filter</h5>
+          <!-- <a class="h11-em" @click="$parent.dataAtt2.forEach(e=>e.list.forEach(e2=>e2.selected=false));$parent.dataChips=[]">Clear all</a> -->
+          <a class="h11-em" @click="console.log(dataAtt2)">Clear all</a>
+        </div>
+      
+        <div>
+          <v-chip v-for="(item,i) in DataChips" :key="i" close close-icon="mdi-close" @click:close="
+            $parent.dataChips.splice($parent.dataChips.indexOf(item),1);
+            $parent.dataFilterAtribute.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});
+          ">
+            {{item.name}}
+          </v-chip>
+        </div>
+      </div>
+
+      <v-expansion-panels class="container-filter-left-body">
+        <v-expansion-panel v-for="(item, i) in dataAtt2" :key="i">
+          <v-expansion-panel-header>{{item.name}}</v-expansion-panel-header>
+
+          <v-expansion-panel-content>
+            <v-list color="transparent">
+              <v-list-item v-for="(item2,i2) in dataAtt[item.name]" :key="i2" :class="{selected: item2.check}" @click="
+                item2.check=!item2.check; item2.check?$parent.dataChips.push(item2):$parent.dataChips.splice($parent.dataChips.indexOf(item2),1)
+              ">
+                <v-list-item-title>{{item2.name}}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </aside>
+  </v-navigation-drawer>
   </section>
 </template>
 
 <script>
 import MenuBuy from './MenuBuy.vue'
-import DrawerFilterMobile from './DrawerFilterMobile.vue'
+//import DrawerFilterMobile from './DrawerFilterMobile.vue'
 import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
@@ -206,9 +245,10 @@ const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
 const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "Buy",
-  components: { MenuBuy, DrawerFilterMobile },
+  components: { MenuBuy, /*DrawerFilterMobile*/ },
   data() {
     return {
+      drawer: false,
       collectionId: this.$route.params.id,
       collection: [],
       dataBuy: [
@@ -243,40 +283,42 @@ export default {
       dataAtt: [],
       dataAtt2: [],
       dataChips: [],
+      dataFilterAtribute2: [],
       dataFilterAtribute: [
-        {
-          title: "atribute",
-          list: [
-            {name: "value", selected: false},
-            {name: "value", selected: false},
-            {name: "value", selected: false},
-          ],
-        },
-        {
-          title: "atribute",
-          list: [
-            {name: "value", selected: false},
-            {name: "value", selected: false},
-            {name: "value", selected: false},
-          ],
-        },
-        {
-          title: "atribute",
-          list: [
-            {name: "value", selected: false},
-            {name: "value", selected: false},
-            {name: "value", selected: false},
-          ],
-        },
+        // {
+        //   title: "atribute",
+        //   list: [
+        //     {name: "value", selected: false},
+        //     {name: "value", selected: false},
+        //     {name: "value", selected: false},
+        //   ],
+        // },
+        // {
+        //   title: "atribute",
+        //   list: [
+        //     {name: "value", selected: false},
+        //     {name: "value", selected: false},
+        //     {name: "value", selected: false},
+        //   ],
+        // },
+        // {
+        //   title: "atribute",
+        //   list: [
+        //     {name: "value", selected: false},
+        //     {name: "value", selected: false},
+        //     {name: "value", selected: false},
+        //   ],
+        // },
       ],
     }
   },
   mounted() {
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
-    //this.clearCart()
+    this.clearCart()
     //this.removeCartItem()
     this.getCartItems()
+    // setTimeout(this.armarAtributos(), 10000)
   },
   computed: {
     // DataBuyTable() {
@@ -290,20 +332,22 @@ export default {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
-        'limit': 100,
+        'limit': 500,
         'index': 0,
         'sales': 'true',
         'order': 'precio',
         'type_order': 'asc'
       }).then(response => {
-        console.log(response.data)
+        //console.log(response.data)
         response.data.forEach(item => {
           if(item.precio !== null && item.marketplace !== null) {
             this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
           }
         });
-        this.totalNft = this.dataNftTokens.length
+        
         this.armarAtributos()
+        // setTimeout(this.armarAtributos(), 10000)
+
       }).catch(err => console.log(err))
     },
     // ver nft
@@ -315,7 +359,7 @@ export default {
       } else {
         price = 0
       }
-      
+
       var responseData = []
       // const CONTRACT = this.ownerId.toString();
       // connect to NEAR
@@ -337,7 +381,7 @@ export default {
           if (item.metadata.extra !== null) {
             item.metadata.extra = JSON.parse(item.metadata.extra)
             item.attributes = item.metadata.extra.atributos
-          } 
+          }
           if (item.metadata.extra == null) {
             // item.metadata.extra = base_uri + '/' + item.metadata.reference
             axios.get(base_uri + '/' + item.metadata.reference).then(res => {
@@ -352,16 +396,25 @@ export default {
           }
           item.marketplace = marketplace
           item.price = parseFloat(price)
-    
-          this.dataNftTokens.push(item)
+          var object = item
+          this.dataNftTokens.push(object)
         });
       }).catch(err => {
         console.log(err)
       });
     },
     async armarAtributos() {
-      // console.log(this.dataNftTokens)
-      console.log(this.dataNftTokens, 'aqui')
+      // this.dataNftTokens2.push(item)
+      var attributes = []
+      setTimeout(() => {
+        this.totalNft = this.dataNftTokens.length
+        this.dataNftTokens.forEach(item => {
+          console.log(item)
+          attributes.push(item.attributes)
+        })
+        this.dataAttributeNft(attributes)
+      }, 1000)
+
     },
     dataAttributeNft(attributes) {
       const dataAttributes = []
@@ -382,7 +435,8 @@ export default {
       console.log(datos, 'datos')
       this.dataAtt2 = Object.values(datos.reduce((prev,next)=>Object.assign(prev,{[next.name]:next}),{}))
       this.dataAtt = this.groupBy(dataAttributes)
-      console.log(this.dataAtt2)
+      console.log(this.dataAtt, 'attributes format')
+      console.log(this.dataAtt2, 'attributes format')
     },
     groupBy(array) {
       const result = {}
@@ -400,6 +454,7 @@ export default {
         })
         result[item['trait_type']] = Object.values(result[item['trait_type']].reduce((prev,next)=>Object.assign(prev,{[next.name]:next}),{}))
       })
+      // console.log(result, 'result')
       return result
     },
     addCart(item) {

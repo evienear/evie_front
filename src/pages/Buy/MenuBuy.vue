@@ -149,9 +149,9 @@
 
 <script>
 // import axios from 'axios'
-import * as nearAPI from "near-api-js";
+import * as nearApi from "near-api-js";
 import { CONFIG } from "@/services/api";
-const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
+const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ } = nearApi;
 const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "MenuBuy",
@@ -190,6 +190,7 @@ export default {
     this.dataMenuBuy = this.nftCart
     this.getBalance()
     //console.log(this.dataMenuBuy)
+    this.getCartItems()
   },
   methods: {
     changeToReview() {
@@ -248,40 +249,60 @@ export default {
     },
     async purchase() {
       console.log("purchase")
-      // this.nftCart.forEach(item => {
-      //   this.buy_nft(item)
-      // });
-      const key = localStorage.getItem("near-api-js:keystore:"+localStorage.walletAccountId+":testnet");
-      console.log(key, localStorage.walletAccountId)
-      //axios.post('http://157.230.2.213:3071/api/v1/buynft', {
-      // axios.post('http://157.230.2.213:3072/api/v1/buynft', {
-      //   "signerid": localStorage.walletAccountId,
-      //   "signerprivateket": key,
-      //   "ft_token": "near"
-      // }).then(response => {
-      //   console.log(response.data)
-      // }).catch(err => {
-      //   console.log(err)
-      // })
-
-
-      // var request = new XMLHttpRequest();
-      // request.open(
-      //     "POST",
-      //       'http://157.230.2.213:3072/api/v1/buynft/' + localStorage.walletAccountId +'/ed25519:4y1TUBspFie5xnsUXojtmJDSDmcVkC9azToASfCAxUDqyaziJbLRpcnQ858ptTwwHu7ETqyRkzZNBjBWUFjZUhbL/near',
-      //   );
-      // request.send();
-
-      // console.log('batch add_request & confirm', ...args, request_id)
-      // var res = await Contract.account.signAndSendTransaction(contractName, [
-      //   nearAPI.transactions.functionCall('add_request', args1, BOATLOAD_OF_GAS),
-      //   nearAPI.transactions.functionCall('confirm', args2, BOATLOAD_OF_GAS),
-      // ]).catch((e) => {
-      //   console.log(e)
-      // })
-      // console.log(res)
-
+      console.log(this.nftCart)
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+      );
       
+
+//       base_uri: "https://ipfs.fleek.co/ipfs/bafkreigbfbwbrwakiiquwsg2ntikyjbegdkr7ean6ez7ybxaozassr27bm"
+// contract_id: "paras-token-v2.testnet"
+// contract_market: "paras-marketplace-v2.testnet"
+// precio: 0.01
+// price: "10000000000000000000000"
+// token_id: "40:126"
+      // this.nftCart.forEach(async item => {
+  
+
+      //   const account = await near.account(localStorage.walletAccountId);
+      //   await account.signAndSendTransaction({
+      //       receiverId: item.contract_market,
+      //       actions: [
+      //         transactions.functionCall(
+      //           "buy",
+      //           Buffer.from(JSON.stringify({
+      //             nft_contract_id: item.contract_id,
+      //             token_id: item.token_id,
+      //             ft_token_id: 'near',
+      //             price: item.price
+      //           })),
+      //           300000000000000,
+      //           utils.format.parseNearAmount(('1.389272590243619376326952').toString())
+      //         ),
+      //       ],
+      //   }).then(res => {
+      //     console.log(res)
+      //   }).catch(err => {
+      //     console.log(err)
+      //   });
+      // });
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), this.nftCart[0].contract_market, {
+        changeMethods: ["buy"],
+        sender: wallet.account(),
+      })
+
+      await contract.buy({
+        nft_contract_id: this.nftCart[0].contract_id,
+        token_id: this.nftCart[0].token_id,
+        ft_token_id: 'near',
+        price: this.nftCart[0].price
+      },'300000000000000',
+      this.nftCart[0].price).then((response) => {
+        console.log(response);
+      }).catch(err => {
+        console.log(err)
+      })
     },
   },
 };

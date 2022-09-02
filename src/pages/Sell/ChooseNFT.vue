@@ -34,7 +34,7 @@
         <v-card v-for="(item,i) in dataChooseNFTTable" :key="i" color="transparent"
           class="containerMarketplace relative" :class="{active: item.selected}">
 
-          <img class="images" :src="item.metadata.media" alt="NFT Market Place" @click="item.selected=!item.selected">
+          <img class="images" :src="item.metadata.media" alt="NFT Market Place" @click="item.selected=!item.selected, viewMarketplace(item)">
 
           <span class="marketplaceId btn2 h8">
             #{{ item.token_id }}
@@ -58,16 +58,18 @@
         <v-select
           v-model="selectedItem"
           :items="marketplace"
-          multiple attach
         >
           <template v-slot:selection="slotProps">
-            <img :src="slotProps.item.img" alt="button">
+            <img :src="slotProps.item.img" :alt="item.marketplace">
           </template>
 
           <template v-slot:item="slotProps">
             <v-col :class="{ colActive: slotProps.item.active }"
               @click="slotProps.item.active=!slotProps.item.active">
-              <img :src="slotProps.item.img" alt="button">
+              <img :src="slotProps.item.img">
+              <span>
+                {{ slotProps.item.marketplace }}
+              </span>
             </v-col>
           </template>
         </v-select>
@@ -149,12 +151,13 @@ export default {
         }
       ],
       marketplace: [
-        {img: require("@/assets/buttons/auto.svg"), active: false},
-        {img: require("@/assets/buttons/doge.svg"), active: false},
-        {img: require("@/assets/buttons/dlt.svg"), active: false},
-        {img: require("@/assets/buttons/xdn.svg"), active: false}
+        // {img: require("@/assets/buttons/auto.svg"), active: false},
+        // {img: require("@/assets/buttons/doge.svg"), active: false},
+        // {img: require("@/assets/buttons/dlt.svg"), active: false},
+        // {img: require("@/assets/buttons/xdn.svg"), active: false}
       ],
       selectedItem: [],
+      data: [],
     }
   },
   mounted() {
@@ -225,7 +228,7 @@ export default {
             }
             item.marketplace = marketplace
             item.price = parseFloat(price)
-      
+            item.collection = collection
             this.dataChooseNFTTable.push(item)
           }
         });
@@ -233,15 +236,34 @@ export default {
         console.log(err)
       });
     },
-    async approval () {
-      const CONTRACT_NAME = 'market.venixcon.testnet'
+    async storageDeposit(contractName) {
       // connect to NEAR
       const near = await connect(
           CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+      const walletId = wallet.getAccountId()
+      const contract = new Contract(wallet.account(), contractName, {
+          changeMethods: ["storage_deposit"],
+          sender: wallet.account(),
+      })
+      await contract.storage_deposit({
+          account_id: walletId,
+      }, "300000000000000", // attached GAS (optional)
+      "8590000000000000000000").then((response) => {
+        console.log(response)
+          this.approval(contractName)
+      });
+    },
+    async approval (contractName) {
+      // connect to NEAR
+      const near = await connect(
+          CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), contractName, {
           changeMethods: ["add_approved_nft_contract_ids"],
           sender: wallet.account(),
       })
@@ -251,6 +273,23 @@ export default {
       "1").then((response) => {
           console.log(response);
       });
+    },
+    async viewMarketplace(item) {
+      // axios.post('http://157.230.2.213:3071/api/v1/listmarketplacecollection', {
+      axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
+        "collection": item.collection
+      }).then(response => {
+        console.log(response.data)
+        response.data.forEach(item => {
+          this.marketplace.push({
+          marketplace: item.marketplace,
+          img: '',
+          active: false,
+        })
+        });
+      }).catch(err => console.log(err))
+      this.data.push(item)
+      console.log(this.data)
     },
   }
 };
