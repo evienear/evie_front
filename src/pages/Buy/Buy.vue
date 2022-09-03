@@ -1,7 +1,6 @@
 <template>
   <section id="buy">
     <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal"></MenuBuy>
-    <!-- <DrawerFilterMobile :DataChips="dataChips" :DataFilterAtribute="dataAtt2" ref="drawer"></DrawerFilterMobile> -->
     
     <h1 class="titulo h2mobile">BUY</h1>
     <v-row class="mt-3">
@@ -143,7 +142,7 @@
           </div>
 
           <v-expansion-panels class="container-filter-left-body">
-            <v-expansion-panel v-for="(item,i) in dataFilterAtribute" :key="i">
+            <v-expansion-panel v-for="(item,i) in dataAtt2" :key="i">
               <v-expansion-panel-header>{{item.title}}</v-expansion-panel-header>
 
               <v-expansion-panel-content>
@@ -201,14 +200,13 @@
       <div class="container-filter-left-head">
         <div class="space gap">
           <h5 class="p h10-em">Atribute filter</h5>
-          <!-- <a class="h11-em" @click="$parent.dataAtt2.forEach(e=>e.list.forEach(e2=>e2.selected=false));$parent.dataChips=[]">Clear all</a> -->
-          <a class="h11-em" @click="console.log(dataAtt2)">Clear all</a>
+          <a class="h11-em" @click="dataAtt2.forEach(e=>e.list.forEach(e2=>e2.selected=false));dataChips=[];dataAttr = [];dataNftTokens = dataNftTokens2">Clear all</a>
         </div>
       
         <div>
-          <v-chip v-for="(item,i) in DataChips" :key="i" close close-icon="mdi-close" @click:close="
-            $parent.dataChips.splice($parent.dataChips.indexOf(item),1);
-            $parent.dataFilterAtribute.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});
+          <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
+            dataChips.splice(dataChips.indexOf(item),1);
+            dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});
           ">
             {{item.name}}
           </v-chip>
@@ -216,13 +214,14 @@
       </div>
 
       <v-expansion-panels class="container-filter-left-body">
-        <v-expansion-panel v-for="(item, i) in dataAtt2" :key="i">
-          <v-expansion-panel-header>{{item.name}}</v-expansion-panel-header>
+        <v-expansion-panel v-for="(item,i) in dataAtt2" :key="i">
+          <v-expansion-panel-header>{{item.title}}</v-expansion-panel-header>
 
           <v-expansion-panel-content>
             <v-list color="transparent">
-              <v-list-item v-for="(item2,i2) in dataAtt[item.name]" :key="i2" :class="{selected: item2.check}" @click="
-                item2.check=!item2.check; item2.check?$parent.dataChips.push(item2):$parent.dataChips.splice($parent.dataChips.indexOf(item2),1)
+              <v-list-item v-for="(item2,i2) in item.list" :key="i2" :class="{selected: item2.selected}" @click="
+                filterAttr(item.title, item2.name)
+                item2.selected=!item2.selected; item2.selected?dataChips.push(item2):dataChips.splice($parent.dataChips.indexOf(item2),1)
               ">
                 <v-list-item-title>{{item2.name}}</v-list-item-title>
               </v-list-item>
@@ -232,12 +231,13 @@
       </v-expansion-panels>
     </aside>
   </v-navigation-drawer>
+
+
   </section>
 </template>
 
 <script>
 import MenuBuy from './MenuBuy.vue'
-//import DrawerFilterMobile from './DrawerFilterMobile.vue'
 import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
@@ -245,7 +245,7 @@ const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
 const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "Buy",
-  components: { MenuBuy, /*DrawerFilterMobile*/ },
+  components: { MenuBuy },
   data() {
     return {
       drawer: false,
@@ -283,33 +283,7 @@ export default {
       dataAtt: [],
       dataAtt2: [],
       dataChips: [],
-      dataFilterAtribute2: [],
-      dataFilterAtribute: [
-        // {
-        //   title: "atribute",
-        //   list: [
-        //     {name: "value", selected: false},
-        //     {name: "value", selected: false},
-        //     {name: "value", selected: false},
-        //   ],
-        // },
-        // {
-        //   title: "atribute",
-        //   list: [
-        //     {name: "value", selected: false},
-        //     {name: "value", selected: false},
-        //     {name: "value", selected: false},
-        //   ],
-        // },
-        // {
-        //   title: "atribute",
-        //   list: [
-        //     {name: "value", selected: false},
-        //     {name: "value", selected: false},
-        //     {name: "value", selected: false},
-        //   ],
-        // },
-      ],
+      dataAttr: [],
     }
   },
   mounted() {
@@ -329,8 +303,8 @@ export default {
   methods: {
     async viewTokens() {
       console.log(this.collectionId)
-      // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
-      axios.post('http://157.230.2.213:3072/api/v1/listnft', {
+      axios.post('http://157.230.2.213:3071/api/v1/listnft', {
+      // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
         'limit': 500,
         'index': 0,
@@ -346,7 +320,6 @@ export default {
         });
         
         this.armarAtributos()
-        // setTimeout(this.armarAtributos(), 10000)
 
       }).catch(err => console.log(err))
     },
@@ -364,8 +337,8 @@ export default {
       // const CONTRACT = this.ownerId.toString();
       // connect to NEAR
       const near = await connect(
-        // CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        // CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -404,12 +377,12 @@ export default {
       });
     },
     async armarAtributos() {
-      // this.dataNftTokens2.push(item)
       var attributes = []
       setTimeout(() => {
         this.totalNft = this.dataNftTokens.length
+        this.dataNftTokens2 = this.dataNftTokens
         this.dataNftTokens.forEach(item => {
-          console.log(item)
+          // console.log(item)
           attributes.push(item.attributes)
         })
         this.dataAttributeNft(attributes)
@@ -423,20 +396,17 @@ export default {
           dataAttributes.push(data)
         })
       })
-      console.log(dataAttributes, 'data atributos')
-
       const datos = []
       dataAttributes.forEach(item => {
         datos.push({
-          name: item.trait_type,
-          open: false,
+          title: item.trait_type,
         });
       });
-      console.log(datos, 'datos')
-      this.dataAtt2 = Object.values(datos.reduce((prev,next)=>Object.assign(prev,{[next.name]:next}),{}))
+      this.dataAtt2 = Object.values(datos.reduce((prev,next)=>Object.assign(prev,{[next.title]:next}),{}))
       this.dataAtt = this.groupBy(dataAttributes)
-      console.log(this.dataAtt, 'attributes format')
-      console.log(this.dataAtt2, 'attributes format')
+      this.dataAtt2.forEach(element => {
+        element.list = this.dataAtt[element.title]
+      });
     },
     groupBy(array) {
       const result = {}
@@ -449,13 +419,38 @@ export default {
         }
 
         result[item['trait_type']].push({
-          check: false,
           name: item.value,
+          selected: false,
         })
         result[item['trait_type']] = Object.values(result[item['trait_type']].reduce((prev,next)=>Object.assign(prev,{[next.name]:next}),{}))
       })
-      // console.log(result, 'result')
       return result
+    },
+    filterAttr(filter, name) {
+      console.log(filter, name, 'function filter')
+      if (filter !== '' && name !== '') {
+        this.dataAttr.push({
+          filter: filter,
+          name: name,
+        })
+      }
+      this.dataNftTokens = []
+      var data = []
+      try {
+        this.dataAttr.forEach(filter => {
+          this.dataNftTokens2.forEach(nft => {
+            nft.attributes.forEach(tag => {
+              if (filter.filter === tag.trait_type && filter.name === tag.value){
+                data.push(nft)
+              }
+            })
+          })
+        })
+      } catch (e) {
+        console.log(e)
+      }
+      this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
+      console.log(this.dataNftTokens)
     },
     addCart(item) {
       console.log(this.nftCart, 'en addCart options')

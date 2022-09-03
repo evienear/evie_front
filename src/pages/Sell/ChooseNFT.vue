@@ -236,42 +236,56 @@ export default {
         console.log(err)
       });
     },
-    async storageDeposit(contractName) {
+    async storage() {
+      const CONTRACT_NAME = 'market.venixcon.testnet'
       // connect to NEAR
       const near = await connect(
-          CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const walletId = wallet.getAccountId()
-      const contract = new Contract(wallet.account(), contractName, {
-          changeMethods: ["storage_deposit"],
-          sender: wallet.account(),
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        changeMethods: ["storage_deposit"],
+        sender: wallet.account(),
       })
       await contract.storage_deposit({
-          account_id: walletId,
-      }, "300000000000000", // attached GAS (optional)
-      "8590000000000000000000").then((response) => {
-        console.log(response)
-          this.approval(contractName)
+        account_id: wallet.getAccountId()
+      },
+      '85000000000000',
+      utils.format.parseNearAmount((this.amountStorage).toString())
+      ).then((response) => {
+        console.log(response);
+      }).catch(err => {
+        console.log(err)
       });
     },
-    async approval (contractName) {
+    async approve() {
+      const msg = JSON.stringify({
+        market_type: "sale", price: this.price, ft_token_id: "near"
+      })
+      console.log(msg)
+      const CONTRACT_NAME = this.contract_id
       // connect to NEAR
       const near = await connect(
-          CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), contractName, {
-          changeMethods: ["add_approved_nft_contract_ids"],
-          sender: wallet.account(),
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        changeMethods: ["nft_approve"],
+        sender: wallet.account(),
       })
-      await contract.add_approved_nft_contract_ids({
-          nft_contract_ids: [this.collections.contract]
-      }, "300000000000000", // attached GAS (optional)
-      "1").then((response) => {
-          console.log(response);
+      await contract.nft_approve({
+        token_id: this.idNft,
+        account_id: 'market.venixcon.testnet',
+        msg: msg,
+      },
+      '85000000000000',
+      '350000000000000000000'
+      ).then((response) => {
+        console.log(response);
+      }).catch(err => {
+        console.log(err)
       });
     },
     async viewMarketplace(item) {
