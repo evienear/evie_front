@@ -128,13 +128,14 @@
           <div class="container-filter-left-head">
             <div class="space gap">
               <h5 class="p h10-em">Atribute filter</h5>
-              <a class="h11-em" @click="dataFilterAtribute.forEach(e=>e.list.forEach(e2=>e2.selected=false));dataChips=[]">Clear all</a>
+              <a class="h11-em" @click="dataAtt2.forEach(e=>e.list.forEach(e2=>e2.selected=false));dataChips=[];dataAttr=[];dataNftTokens = dataNftTokens2">Clear all</a>
             </div>
 
             <div>
               <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
                 dataChips.splice(dataChips.indexOf(item),1);
-                dataFilterAtribute.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});
+                dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', '')
+                
               ">
                 {{item.name}}
               </v-chip>
@@ -148,7 +149,7 @@
               <v-expansion-panel-content>
                 <v-list color="transparent">
                   <v-list-item v-for="(item2,i2) in item.list" :key="i2" :class="{selected: item2.selected}" @click="
-                    item2.selected=!item2.selected; item2.selected?dataChips.push(item2):dataChips.splice(dataChips.indexOf(item2),1)
+                    item2.selected=!item2.selected; item2.selected?dataChips.push(item2):dataChips.splice(dataChips.indexOf(item2),1);filterAttr(item.title, item2.name)
                   ">
                     <v-list-item-title>{{item2.name}}</v-list-item-title>
                   </v-list-item>
@@ -157,6 +158,42 @@
             </v-expansion-panel>
           </v-expansion-panels>
         </aside>
+
+        <v-navigation-drawer v-model="drawer" fixed id="filterDrawer" width="300px">
+          <aside class="container-filter-left">
+            <div class="container-filter-left-head">
+              <div class="space gap">
+                <h5 class="p h10-em">Atribute filter</h5>
+                <a class="h11-em" @click="dataAtt2.forEach(e=>e.list.forEach(e2=>e2.selected=false));dataChips=[];dataAttr=[];dataNftTokens = dataNftTokens2">Clear all</a>
+              </div>
+            
+              <div>
+                <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
+                  dataChips.splice(dataChips.indexOf(item),1);
+                  dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', '')
+                ">
+                  {{item.name}}
+                </v-chip>
+              </div>
+            </div>
+
+            <v-expansion-panels class="container-filter-left-body">
+              <v-expansion-panel v-for="(item,i) in dataAtt2" :key="i">
+                <v-expansion-panel-header>{{item.title}}</v-expansion-panel-header>
+
+                <v-expansion-panel-content>
+                  <v-list color="transparent">
+                    <v-list-item v-for="(item2,i2) in item.list" :key="i2" :class="{selected: item2.selected}" @click="
+                      item2.selected=!item2.selected;item2.selected?dataChips.push(item2):dataChips.splice(dataChips.indexOf(item2),1);filterAttr(item.title, item2.name)
+                    ">
+                      <v-list-item-title>{{item2.name}}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </aside>
+        </v-navigation-drawer>
 
         <v-col clas id="tableBuy" class="padd">
           <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
@@ -193,43 +230,6 @@
         </v-col>
       </v-row>
     </v-col>
-
-
-    <v-navigation-drawer v-model="drawer" fixed id="filterDrawer" width="300px">
-    <aside class="container-filter-left">
-      <div class="container-filter-left-head">
-        <div class="space gap">
-          <h5 class="p h10-em">Atribute filter</h5>
-          <a class="h11-em" @click="dataAtt2.forEach(e=>e.list.forEach(e2=>e2.selected=false));dataChips=[];dataAttr = [];dataNftTokens = dataNftTokens2">Clear all</a>
-        </div>
-      
-        <div>
-          <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
-            dataChips.splice(dataChips.indexOf(item),1);
-            dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});
-          ">
-            {{item.name}}
-          </v-chip>
-        </div>
-      </div>
-
-      <v-expansion-panels class="container-filter-left-body">
-        <v-expansion-panel v-for="(item,i) in dataAtt2" :key="i">
-          <v-expansion-panel-header>{{item.title}}</v-expansion-panel-header>
-
-          <v-expansion-panel-content>
-            <v-list color="transparent">
-              <v-list-item v-for="(item2,i2) in item.list" :key="i2" :class="{selected: item2.selected}" @click="
-                item2.selected=!item2.selected;item2.selected?dataChips.push(item2):dataChips.splice(dataChips.indexOf(item2),1);filterAttr(item.title, item2.name)
-              ">
-                <v-list-item-title>{{item2.name}}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </aside>
-  </v-navigation-drawer>
 
 
   </section>
@@ -427,13 +427,24 @@ export default {
       return result
     },
     filterAttr(filter, name) {
-      console.log(filter, name, 'function filter')
-      if (filter !== '' && name !== '') {
+      console.log('llego al filter Attr')
+      // if (filter !== '' && name !== '') {
+      const index = this.dataAttr.findIndex(i =>
+        i.filter === filter && i.name === name
+      )
+      console.log(index)
+      if (index > -1) {
+        console.log('mayor a -1')
+        this.dataAttr.splice(index, 1)
+      } else {
+        console.log('normal')
         this.dataAttr.push({
           filter: filter,
           name: name,
         })
       }
+        
+      // }
       this.dataNftTokens = []
       var data = []
       try {
