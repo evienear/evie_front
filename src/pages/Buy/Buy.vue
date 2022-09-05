@@ -220,8 +220,7 @@
           <v-expansion-panel-content>
             <v-list color="transparent">
               <v-list-item v-for="(item2,i2) in item.list" :key="i2" :class="{selected: item2.selected}" @click="
-                filterAttr(item.title, item2.name)
-                item2.selected=!item2.selected; item2.selected?dataChips.push(item2):dataChips.splice($parent.dataChips.indexOf(item2),1)
+                item2.selected=!item2.selected;item2.selected?dataChips.push(item2):dataChips.splice(dataChips.indexOf(item2),1);filterAttr(item.title, item2.name)
               ">
                 <v-list-item-title>{{item2.name}}</v-list-item-title>
               </v-list-item>
@@ -248,7 +247,7 @@ export default {
   components: { MenuBuy },
   data() {
     return {
-      drawer: false,
+      drawer: true,
       collectionId: this.$route.params.id,
       collection: [],
       dataBuy: [
@@ -289,7 +288,7 @@ export default {
   mounted() {
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
-    this.clearCart()
+    // this.clearCart()
     //this.removeCartItem()
     this.getCartItems()
     // setTimeout(this.armarAtributos(), 10000)
@@ -407,6 +406,7 @@ export default {
       this.dataAtt2.forEach(element => {
         element.list = this.dataAtt[element.title]
       });
+      console.log(this.dataAtt2)
     },
     groupBy(array) {
       const result = {}
@@ -580,7 +580,7 @@ export default {
     },
     priceTotalNft() {
       localStorage.priceTotal = this.priceTotal.toString()
-    }
+    },
   }
 };
 </script>

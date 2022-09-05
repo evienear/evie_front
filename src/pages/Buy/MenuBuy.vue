@@ -9,7 +9,7 @@
       :overlay-color="overlay_color"
     >
       <!-- checkout dialog-->
-      <section v-if="checkout" id="menuCheckout" class="colorCartas relative" style="min-height: 550.5px">
+      <!-- <section v-if="checkout" id="menuCheckout" class="colorCartas relative" style="min-height: 550.5px">
         <button class="buttonClose center">
           <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
         </button>
@@ -74,10 +74,10 @@
             REVIEW<v-icon medium>mdi-chevron-right</v-icon>
           </button>
         </v-col>
-      </section>
+      </section> -->
 
       <!-- review dialog-->
-      <section v-if="review" id="menuReview" class="colorCartas relative" style="min-height: 550.5px">
+      <section id="menuReview" class="colorCartas relative" style="min-height: 550.5px">
         <button class="buttonClose center">
           <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
         </button>
@@ -116,10 +116,14 @@
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
 
-                <aside class="buttons">
-                  <v-btn v-for="(item2,i) in item.market" :key="i" icon>
+                <aside class="mt-10">
+                  <!-- class="buttons" -->
+                  <!-- <v-btn v-for="(item2,i) in item.market" :key="i" icon>
                     <img class="filter" :src="require(`@/assets/buttons/${item2.name}.svg`)" alt="marketplace">
-                  </v-btn>
+                  </v-btn> -->
+                  <button class="button btn2 pa-2 ma-2" @click="purchase(item)">
+                    BUY
+                  </button>
                 </aside>
               </v-card>
             </v-slide-item>
@@ -138,9 +142,9 @@
             </span>
           </aside>
 
-          <button class="button btn2" @click="purchase()">
+          <!-- <button class="button btn2" @click="purchase()">
             COMPLETE PURCHASE<v-icon medium>mdi-chevron-right</v-icon>
-          </button>
+          </button> -->
         </v-col>
       </section>
     </v-dialog>
@@ -152,7 +156,7 @@
 import * as nearApi from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ } = nearApi;
-const CONTRACT_NAME = 'backend.evie.testnet'
+// const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "MenuBuy",
   props: ['nftCart', 'cantCart', 'priceTotal'],
@@ -223,82 +227,26 @@ export default {
       amountInNEAR = parseFloat(amountInNEAR)-parseFloat(0.05)
       this.balance =  amountInNEAR.toFixed(2)
     },
-    async buy_nft(item) {
-      console.log(utils.format.parseNearAmount((this.priceTotal).toString()), 'precio total')
-      // connect to NEAR
-      localStorage.priceTotal
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["buy_from_other_marketplaces"],
-        sender: wallet.account(),
-      })
-      console.log(item.token_id)
-
-      await contract.buy_from_other_marketplaces({
-
-      },'300000000000000',
-      utils.format.parseNearAmount((this.priceTotal).toString())).then((response) => {
-        console.log(response);
-      }).catch(err => {
-        console.log(err)
-      });
-    },
-    async purchase() {
+    async purchase(item) {
       console.log("purchase")
       console.log(this.nftCart)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       
-
-//       base_uri: "https://ipfs.fleek.co/ipfs/bafkreigbfbwbrwakiiquwsg2ntikyjbegdkr7ean6ez7ybxaozassr27bm"
-// contract_id: "paras-token-v2.testnet"
-// contract_market: "paras-marketplace-v2.testnet"
-// precio: 0.01
-// price: "10000000000000000000000"
-// token_id: "40:126"
-      // this.nftCart.forEach(async item => {
-  
-
-      //   const account = await near.account(localStorage.walletAccountId);
-      //   await account.signAndSendTransaction({
-      //       receiverId: item.contract_market,
-      //       actions: [
-      //         transactions.functionCall(
-      //           "buy",
-      //           Buffer.from(JSON.stringify({
-      //             nft_contract_id: item.contract_id,
-      //             token_id: item.token_id,
-      //             ft_token_id: 'near',
-      //             price: item.price
-      //           })),
-      //           300000000000000,
-      //           utils.format.parseNearAmount(('1.389272590243619376326952').toString())
-      //         ),
-      //       ],
-      //   }).then(res => {
-      //     console.log(res)
-      //   }).catch(err => {
-      //     console.log(err)
-      //   });
-      // });
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), this.nftCart[0].contract_market, {
+      const contract = new Contract(wallet.account(), item.contract_market, {
         changeMethods: ["buy"],
         sender: wallet.account(),
       })
 
       await contract.buy({
-        nft_contract_id: this.nftCart[0].contract_id,
-        token_id: this.nftCart[0].token_id,
+        nft_contract_id: item.contract_id ,
+        token_id: item.token_id,
         ft_token_id: 'near',
-        price: this.nftCart[0].price
+        price: item.price
       },'300000000000000',
-      this.nftCart[0].price).then((response) => {
+      item.price).then((response) => {
         console.log(response);
       }).catch(err => {
         console.log(err)

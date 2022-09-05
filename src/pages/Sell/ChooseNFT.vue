@@ -9,6 +9,11 @@
         </button>
         <h3 class="tituloBack p">CHOOSE NFT's</h3>
       </aside>
+      <aside class="end">
+        <button class="button btn2" @click="dialog=true">
+          Deposit
+        </button>
+      </aside>
 
       <aside class="start">
         <v-col v-for="(item, index) in dataFilter" v-bind:key="index"
@@ -27,20 +32,23 @@
           </v-select>
         </v-col>
       </aside>
+      
     </v-col>
     <!-- AQUI COMIENZAN LOD NFT -->
+    
     <section class="wrapperContent gapmobile">
       <v-col class="containerLeft" style="padding-top: 0">
         <v-card v-for="(item,i) in dataChooseNFTTable" :key="i" color="transparent"
           class="containerMarketplace relative" :class="{active: item.selected}">
 
-          <img class="images" :src="item.metadata.media" alt="NFT Market Place" @click="item.selected=!item.selected, viewMarketplace(item)">
+          <img class="images" :src="item.metadata.media" alt="NFT Market Place" @click="item.selected=!item.selected, viewMarketplace(item), dataNftSell(item)">
 
           <span class="marketplaceId btn2 h8">
             #{{ item.token_id }}
           </span>
         </v-card>
       </v-col>
+
       <!-- HASTA AQUI -->
       <v-col class="containerRight" style="padding-top: 0">
         <aside class="option space divwrap">
@@ -56,49 +64,101 @@
         </aside>
 
         <v-select
-          v-model="selectedItem"
-          :items="marketplace"
-        >
-          <template v-slot:selection="slotProps">
-            <img :src="slotProps.item.img" :alt="item.marketplace">
-          </template>
+            v-model="selectedItem"
+            :items="marketplace"
+          >
+            <template v-slot:label>
+              <span class="titleAutocompleteBuy h8 color">Select Marketplace</span>
+            </template>
 
-          <template v-slot:item="slotProps">
-            <v-col :class="{ colActive: slotProps.item.active }"
-              @click="slotProps.item.active=!slotProps.item.active">
-              <img :src="slotProps.item.img">
-              <span>
-                {{ slotProps.item.marketplace }}
-              </span>
-            </v-col>
-          </template>
-        </v-select>
+            <template v-slot:append>
+              <v-icon medium class="color">mdi-chevron-down</v-icon>
+            </template>
+          </v-select>
 
-        <section class="containerSellSettings">
-          <v-card v-for="(item,i) in dataSellSettings" :key="i" color="transparent">
+        <section class="containerSellSettings mt-2">
+          <v-card v-for="(item, i) in dataSellSettings" :key="i" color="transparent">
             <aside class="divrow" style="gap:clamp(.5em, 1vw, 1em)">
-              <img class="images" src="@/assets/nft/monkeyA2.png" alt="nft" style="--border-size: 4px">
+              <v-img class="images" :src="item.metadata.media" alt="nft" style="--border-size: 4px; width:10% !important" />
               <div class="divcol astart jcenter">
-                <span class="h7" style="font-weight: 500">{{ item.title}}</span>
-                <span class="marketplaceId btn2 h7">#{{ item.number }}</span>
+                <span class="h7" style="font-weight: 500">{{ item.metadata.title}}</span>
+                <span class="marketplaceId btn2 h7">#{{ item.token_id }}</span>
               </div>
             </aside>
 
-            <aside class="center marginright" style="gap: 3px">
-              <span style="font-size: clamp(1.2em, 1.5vw, 1.5em)">{{ item.amount }}</span>
+            <aside v-show="sameSellPrice" class="center marginright" style="gap: 3px">
+              <span style="font-size: clamp(1.2em, 1.5vw, 1.5em)">{{ item.price.toFixed(2) }}</span>
               <img class="filter" src="@/assets/logo/near.svg" alt="near"
                 style="width:1.5em; height:1.5em">
             </aside>
           </v-card>
+          <aside v-show="!sameSellPrice && dataSellSettings.length" class="center marginright" style="gap: 3px">
+            <v-text-field
+              v-model="price"
+              class="custome"
+              solo dense
+            >
+              <template v-slot:prepend>
+                <label>Amount in Near</label>
+              </template>
+            </v-text-field>
+          </aside>
         </section>
 
         <v-col class="center">
-          <button class="button btn2" @click="$router.push('/review-sell')">
+          <!-- <button class="button btn2" @click="$router.push('/review-sell')">
             REVIEW<v-icon medium>mdi-chevron-right</v-icon>
+          </button> -->
+          <button class="button btn2" @click="approve()">
+            SELL
           </button>
         </v-col>
       </v-col>
     </section>
+    <v-dialog
+      id="dialog"
+      v-model="dialog"
+      max-width="832.49px"
+      :overlay-opacity="$store.state.overlay.opacity"
+      :overlay-color="$store.state.overlay.color"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <span>Desposit</span>
+        </v-col>
+        <v-col cols="6" class="center">
+          <v-select
+            v-model="marketplaceDeposit"
+            :items="selectionMarket"
+            hide-details="true"
+          >
+            <template v-slot:label>
+              <span class="titleAutocompleteBuy h8 color">Select Marketplace</span>
+            </template>
+
+            <template v-slot:append>
+              <v-icon medium class="color">mdi-chevron-down</v-icon>
+            </template>
+          </v-select>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-text-field
+            v-model="amountStorage"
+            class="custome"
+            solo dense
+          >
+            <template v-slot:prepend>
+              <label>Amount in Near</label>
+            </template>
+          </v-text-field>
+        </v-col>
+        <v-col cols="12" class="center">
+          <button class="button btn2" @click="storage()">
+            save
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
@@ -112,6 +172,10 @@ export default {
   name: "ChooseNFT",
   data() {
     return {
+      marketplaceDeposit: '',
+      price: '',
+      dialog: false,
+      amountStorage: 0,
       dataFilter: [
         {
           title: "COLLECTIONS",
@@ -122,33 +186,34 @@ export default {
           selection: [ 'foo', 'bar', 'fizz', 'buzz' ]
         }
       ],
+      selectionMarket: [],
       dataChooseNFTTable: [],
       sameSellPrice: false,
       dataSellSettings: [
-        {
-          nft: require("@/assets/nft/monkeyA1.png"),
-          title: "NEARNAUT",
-          number: "3706",
-          amount: "0,00",
-        },
-        {
-          nft: require("@/assets/nft/monkeyA1.png"),
-          title: "NEARNAUT",
-          number: "3706",
-          amount: "0,00",
-        },
-        {
-          nft: require("@/assets/nft/monkeyA1.png"),
-          title: "NEARNAUT",
-          number: "3706",
-          amount: "0,00",
-        },
-        {
-          nft: require("@/assets/nft/monkeyA1.png"),
-          title: "NEARNAUT",
-          number: "3706",
-          amount: "0,00",
-        }
+        // {
+        //   nft: require("@/assets/nft/monkeyA1.png"),
+        //   title: "NEARNAUT",
+        //   number: "3706",
+        //   amount: "0,00",
+        // },
+        // {
+        //   nft: require("@/assets/nft/monkeyA1.png"),
+        //   title: "NEARNAUT",
+        //   number: "3706",
+        //   amount: "0,00",
+        // },
+        // {
+        //   nft: require("@/assets/nft/monkeyA1.png"),
+        //   title: "NEARNAUT",
+        //   number: "3706",
+        //   amount: "0,00",
+        // },
+        // {
+        //   nft: require("@/assets/nft/monkeyA1.png"),
+        //   title: "NEARNAUT",
+        //   number: "3706",
+        //   amount: "0,00",
+        // }
       ],
       marketplace: [
         // {img: require("@/assets/buttons/auto.svg"), active: false},
@@ -156,12 +221,13 @@ export default {
         // {img: require("@/assets/buttons/dlt.svg"), active: false},
         // {img: require("@/assets/buttons/xdn.svg"), active: false}
       ],
-      selectedItem: [],
+      selectedItem: '',
       data: [],
     }
   },
   mounted() {
     this.viewTokens()
+    this.listMarkets()
   },
   methods: {
     async viewTokens() {
@@ -182,7 +248,7 @@ export default {
       }).catch(err => console.log(err))
     },
     async market(token_id, precio, base_uri, marketplace, collection) {
-      console.log(token_id)
+      // console.log(token_id)
       this.dataNftTokens = []
       var price = ''
       if(precio !== null) {
@@ -190,9 +256,7 @@ export default {
       } else {
         price = 0
       }
-      
       var responseData = []
-      // const CONTRACT = this.ownerId.toString();
       // connect to NEAR
       const near = await connect(
         //CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
@@ -228,6 +292,7 @@ export default {
             }
             item.marketplace = marketplace
             item.price = parseFloat(price)
+            item.precio = precio
             item.collection = collection
             this.dataChooseNFTTable.push(item)
           }
@@ -236,15 +301,22 @@ export default {
         console.log(err)
       });
     },
+    async listMarkets() {
+      // axios.post('http://157.230.2.213:3071/api/v1/listmarketplace').then(response => {
+      axios.post('http://157.230.2.213:3072/api/v1/listmarketplace').then(response => {
+        response.data.forEach(item => {
+          this.selectionMarket.push(item.marketplace)
+        });
+      }).catch(err => console.log(err))
+    },
     async storage() {
-      const CONTRACT_NAME = 'market.venixcon.testnet'
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+      const contract = new Contract(wallet.account(), this.marketplaceDeposit, {
         changeMethods: ["storage_deposit"],
         sender: wallet.account(),
       })
@@ -259,34 +331,49 @@ export default {
         console.log(err)
       });
     },
+    dataNftSell(item) {
+      this.dataSellSettings.push(item)
+    },
     async approve() {
-      const msg = JSON.stringify({
-        market_type: "sale", price: this.price, ft_token_id: "near"
+      console.log(this.selectedItem, 'market a vender')
+      var msg = ''
+      var price = 0
+      if(!this.sameSellPrice) {
+        price = utils.format.parseNearAmount((this.price).toString())
+        msg = JSON.stringify({
+        market_type: "sale", price: price, ft_token_id: "near"
       })
+      } else if(this.sameSellPrice) {
+        msg = JSON.stringify({
+          market_type: "sale", price: this.dataSellSettings[0].precio, ft_token_id: "near"
+        })
+      }
+      
       console.log(msg)
-      const CONTRACT_NAME = this.contract_id
       // connect to NEAR
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["nft_approve"],
-        sender: wallet.account(),
-      })
-      await contract.nft_approve({
-        token_id: this.idNft,
-        account_id: 'market.venixcon.testnet',
-        msg: msg,
-      },
-      '85000000000000',
-      '350000000000000000000'
-      ).then((response) => {
-        console.log(response);
-      }).catch(err => {
-        console.log(err)
-      });
+      // const near = await connect(
+      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+      // );
+      // // create wallet connection
+      // const wallet = new WalletConnection(near);
+      // const contract = new Contract(wallet.account(), this.selectedItem, {
+      //   changeMethods: ["nft_on_approve"],
+      //   //changeMethods: ["nft_approve"],
+      //   sender: wallet.account(),
+      // })
+      // // await contract.nft_approve({
+      // await contract.nft_on_approve({
+      //   token_id: this.dataSellSettings[0].token_id,
+      //   account_id: this.selectedItem,
+      //   msg: msg,
+      // },
+      // '85000000000000',
+      // '350000000000000000000'
+      // ).then((response) => {
+      //   console.log(response);
+      // }).catch(err => {
+      //   console.log(err)
+      // });
     },
     async viewMarketplace(item) {
       // axios.post('http://157.230.2.213:3071/api/v1/listmarketplacecollection', {
@@ -295,11 +382,7 @@ export default {
       }).then(response => {
         console.log(response.data)
         response.data.forEach(item => {
-          this.marketplace.push({
-          marketplace: item.marketplace,
-          img: '',
-          active: false,
-        })
+          this.marketplace.push(item.marketplace)
         });
       }).catch(err => console.log(err))
       this.data.push(item)

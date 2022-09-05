@@ -115,7 +115,7 @@ export default {
         'limit': 20,
         'index': 0,
       }).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         // this.dataMenuCollections = response.data
         response.data.forEach(item => {
           if(item.nft_contract === 'asac.near') { item.icon = 'https://paras-cdn.imgix.net/bafybeigc6z74rtwmigcoo5eqcsc4gxwkganqs4uq5nuz4dwlhjhrurofeq?w=800&auto=format,compress' }
