@@ -428,6 +428,7 @@ export default {
     },
     filterAttr(filter, name) {
       console.log('llego al filter Attr')
+      var data = []
       // if (filter !== '' && name !== '') {
       const index = this.dataAttr.findIndex(i =>
         i.filter === filter && i.name === name
@@ -436,31 +437,53 @@ export default {
       if (index > -1) {
         console.log('mayor a -1')
         this.dataAttr.splice(index, 1)
+        console.log(this.dataAttr.length)
+        this.dataNftTokens = []
+        try {
+          this.dataAttr.forEach(filter => {
+            this.dataNftTokens2.forEach(nft => {
+              nft.attributes.forEach(tag => {
+                if (filter.filter === tag.trait_type && filter.name === tag.value){
+                  data.push(nft)
+                }
+              })
+            })
+          })
+        } catch (e) {
+          console.log(e)
+        }
+        this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
+
+        if (this.dataAttr.length == 0) {
+          console.log('paso el lenthg 0')
+          this.dataAttr = []
+          console.log(this.dataNftTokens2)
+          this.dataNftTokens = this.dataNftTokens2
+        }
       } else {
         console.log('normal')
         this.dataAttr.push({
           filter: filter,
           name: name,
         })
+        this.dataNftTokens = []
+        try {
+          this.dataAttr.forEach(filter => {
+            this.dataNftTokens2.forEach(nft => {
+              nft.attributes.forEach(tag => {
+                if (filter.filter === tag.trait_type && filter.name === tag.value){
+                  data.push(nft)
+                }
+              })
+            })
+          })
+        } catch (e) {
+          console.log(e)
+        }
+        this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
       }
         
       // }
-      this.dataNftTokens = []
-      var data = []
-      try {
-        this.dataAttr.forEach(filter => {
-          this.dataNftTokens2.forEach(nft => {
-            nft.attributes.forEach(tag => {
-              if (filter.filter === tag.trait_type && filter.name === tag.value){
-                data.push(nft)
-              }
-            })
-          })
-        })
-      } catch (e) {
-        console.log(e)
-      }
-      this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
       console.log(this.dataNftTokens)
     },
     addCart(item) {
