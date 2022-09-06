@@ -260,13 +260,13 @@ export default {
       ],
       dataFilter: [
         {
-          title: "LOWEST PRICE",
-          selection: [ 'foo', 'bar', 'fizz', 'buzz' ]
+          title: "FILTER",
+          selection: [ 'Lowest Price', 'Highest Price', ]
         },
-        {
-          title: "ATTRIBUTE",
-          selection: [ 'foo', 'bar', 'fizz', 'buzz' ]
-        }
+        // {
+        //   title: "ATTRIBUTE",
+        //   selection: [ 'foo', 'bar', 'fizz', 'buzz' ]
+        // }
       ],
       buyTable: 0,
       dataBuyTable: [],
@@ -427,7 +427,6 @@ export default {
       return result
     },
     filterAttr(filter, name) {
-      console.log('llego al filter Attr')
       var data = []
       // if (filter !== '' && name !== '') {
       const index = this.dataAttr.findIndex(i =>

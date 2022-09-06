@@ -23,9 +23,13 @@
               <span>{{user}}</span>
             </button>
 
+
             <button class="vermobile" @click="MenuHeaderMobile()">
               <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/toggle.svg`" alt="toggle navbar">
             </button>
+          </aside>
+          <aside @click="logout()" style="cursor:pointer">
+            <v-icon>mdi-logout</v-icon>
           </aside>
         </v-col>
       </v-row>
@@ -167,6 +171,11 @@ export default {
         localStorage.walletAccountId = walletAccountId
       }
     },
+    logout() {
+      console.log('logout')
+      localStorage.login = 'false'
+      this.$router.push('/login')
+    }
   },
   mounted() {
     this.isSigned()

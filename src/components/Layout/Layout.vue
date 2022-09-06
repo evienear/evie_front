@@ -64,6 +64,11 @@ v-animate-onscroll.repeat="'animHero'"
 export default {
   name: "Layout",
   components: { Footer, Header, DialogLoad },
+  mounted() {
+    if (localStorage.login === 'false' || localStorage.login == undefined) {
+      this.$router.push('/login')
+    }
+  },
 }
 </script>
 
