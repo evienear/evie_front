@@ -22,6 +22,7 @@
                 :type="item.type"
                 class="custome"
                 solo
+                @keyup.enter="login()"
               >
               <template v-slot:label>
                 <span class="h7">{{ item.label }}</span>

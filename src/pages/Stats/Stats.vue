@@ -56,6 +56,8 @@ export default {
       ]
     }
   },
+  mounted() {
+  },
   methods: {
   }
 };
