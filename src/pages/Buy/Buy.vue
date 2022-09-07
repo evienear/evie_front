@@ -363,7 +363,7 @@ export default {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
-        'limit': 300,
+        'limit': 50,
         'index': this.indexNftCollection,
         'sales': 'true',
         'order': 'precio',
@@ -632,11 +632,11 @@ export default {
       localStorage.priceTotal = this.priceTotal.toString()
     },
     nextItems() {
-      this.indexNftCollection = this.indexNftCollection + 300
+      this.indexNftCollection = this.indexNftCollection + 50
       this.viewTokens()
     },
     prevItems() {
-      this.indexNftCollection = this.indexNftCollection - 300
+      this.indexNftCollection = this.indexNftCollection - 50
       this.viewTokens()
     },
     filterPrice() {
