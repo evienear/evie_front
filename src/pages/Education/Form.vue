@@ -20,8 +20,53 @@
           <span>UPLOAD</span>
         </template>
       </v-file-input>
+
+      <v-autocomplete
+        v-model="collection.contract"
+        :items="dataMenuCollections"
+        chips
+        label="TITLE"
+        item-text="name"
+        item-value="nft_contract"
+        class="custome"
+        solo
+        @change="dataCollection()"
+      >
+        <template v-slot:selection="data">
+          <!-- <v-chip
+            v-bind="data.attrs"
+            :input-value="data.selected"
+            close
+            @click="data.select"
+            @click:close="remove(data.item)"
+          >
+            <v-avatar left>
+              <v-img :src="data.item.icon"></v-img>
+            </v-avatar>
+            {{ data.item.name }}
+          </v-chip> -->
+          <template>
+            <v-list-item-avatar class="ml-3">
+              <v-img :src="data.item.icon" /> 
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title v-html="data.item.name"></v-list-item-title>
+            </v-list-item-content>
+          </template>
+        </template>
+        <template v-slot:item="data">
+          <template>
+            <v-list-item-avatar>
+              <v-img :src="data.item.icon" /> 
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title v-html="data.item.name"></v-list-item-title>
+            </v-list-item-content>
+          </template>
+        </template>        
+      </v-autocomplete>
       
-      <v-text-field
+      <!-- <v-text-field
         v-model="collection.title"
         class="custome"
         solo dense
@@ -29,7 +74,7 @@
         <template v-slot:prepend>
           <label>TITLE</label>
         </template>
-      </v-text-field>
+      </v-text-field> -->
       
       <v-text-field
         v-model="images[0]"
@@ -143,8 +188,8 @@ import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
-const CONTRACT_NAME = 'backend.evie.testnet'
-// const CONTRACT_NAME = 'backend.eviepro.near'
+// const CONTRACT_NAME = 'backend.evie.testnet'
+const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "Form",
   data() {
@@ -162,21 +207,24 @@ export default {
       dialogMessage: false,
       titleDM: '',
       messageDM: '',
+      dataMenuCollections: [],
     }
   },
   mounted() {
-    console.log(localStorage.idForm)
+    // console.log(localStorage.idForm)
     if(localStorage.idForm) {
       this.idForm = parseInt(localStorage.idForm)
       this.update = true
       this.getFormId()
     }
-    // this.getForm()
+    this.collections()
   },
   methods: {
     async collections () {
-      this.$store.commit('Load', true)
-      await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
+      // this.$store.commit('Load', true)
+      
+      await axios.post('https://evie.pro:3070/api/v1/listcollections', {
+      // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
       // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
         'limit': 20,
         'index': 0,
@@ -187,7 +235,7 @@ export default {
           if(item.nft_contract === 'asac.near') { item.icon = 'https://paras-cdn.imgix.net/bafybeigc6z74rtwmigcoo5eqcsc4gxwkganqs4uq5nuz4dwlhjhrurofeq?w=800&auto=format,compress' }
           this.dataMenuCollections.push(item)
         })
-        this.$store.commit('Load', false)
+        // this.$store.commit('Load', false)
         console.log(this.dataMenuCollections)
       }).catch(err => console.log(err))
     },
@@ -203,7 +251,7 @@ export default {
         descriptions: this.descriptions,
         images: this.images,
       }
-      console.log(EduForm)
+      // console.log(EduForm)
       //connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
@@ -290,6 +338,17 @@ export default {
         console.log(err)
       })
     },
+    dataCollection() {
+      console.log(this.collection.contract)
+      this.dataMenuCollections.forEach(item => {
+        if (item.nft_contract === this.collection.contract) {
+          console.log(item)
+          this.images[0] = item.icon
+          this.collection.title = item.name
+        }
+      });
+      // 
+    }
   }
 };
 </script>

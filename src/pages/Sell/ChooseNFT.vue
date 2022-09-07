@@ -234,8 +234,8 @@ export default {
   methods: {
     async viewTokens() {
       // console.log(this.collectionId)
-      // axios.post('http://157.230.2.213:3071/api/v1/listnftowner', {
-      axios.post('http://157.230.2.213:3072/api/v1/listnftowner', {
+      axios.post('http://157.230.2.213:3071/api/v1/listnftowner', {
+      // axios.post('http://157.230.2.213:3072/api/v1/listnftowner', {
         "owner": localStorage.walletAccountId,
         "limit": 1000,
         "index": 0
@@ -304,8 +304,8 @@ export default {
       });
     },
     async listMarkets() {
-      // axios.post('http://157.230.2.213:3071/api/v1/listmarketplace').then(response => {
-      axios.post('http://157.230.2.213:3072/api/v1/listmarketplace').then(response => {
+      axios.post('http://157.230.2.213:3071/api/v1/listmarketplace').then(response => {
+      // axios.post('http://157.230.2.213:3072/api/v1/listmarketplace').then(response => {
         response.data.forEach(item => {
           this.selectionMarket.push(item.marketplace)
         });
@@ -378,8 +378,9 @@ export default {
       // });
     },
     async viewMarketplace(item) {
+      axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
       // axios.post('http://157.230.2.213:3071/api/v1/listmarketplacecollection', {
-      axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
+      // axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
         "collection": item.collection
       }).then(response => {
         console.log(response.data)

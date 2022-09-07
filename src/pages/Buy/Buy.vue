@@ -292,8 +292,8 @@ import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
-const CONTRACT_NAME = 'backend.evie.testnet'
-// const CONTRACT_NAME = 'backend.eviepro.near'
+// const CONTRACT_NAME = 'backend.evie.testnet'
+const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "Buy",
   components: { MenuBuy },
@@ -359,7 +359,8 @@ export default {
   methods: {
     async viewTokens() {
       console.log(this.collectionId)
-      axios.post('http://157.230.2.213:3071/api/v1/listnft', {
+      axios.post('https://evie.pro:3070/api/v1/listnft', {
+      // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
         'limit': 300,
