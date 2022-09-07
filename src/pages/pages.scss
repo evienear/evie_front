@@ -562,25 +562,25 @@
   }
   .wrapperContent {
     display: grid;
+    gap: 4em 1em;
     @include media(min, small) {grid-template-columns: repeat(2, 1fr)}
   }
   .containerLeft {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px),1fr));
-    grid-gap: 1.25rem 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 225px),1fr));
+    grid-gap: 1.25rem 1em;
     place-items: center;
-    height: 458.4px !important;
+    max-height: 458.4px !important;
     overflow-y: scroll;
     overflow-x: hidden;
     .containerMarketplace {
       display: grid;
-      width: max-content;
-      place-content: center;
-      &.active:after {width: 1.875em !important}
-      .images {
-        width: 10.4375em !important;
-        aspect-ratio: 1 / 1;
-      }
+      &:only-of-type {width: min(100%, 20em)}
+      &.active:after {width: 13.5% !important}
+      // .images {
+      //   width: 10.4375em !important;
+      //   aspect-ratio: 1 / 1;
+      // }
       .marketplaceId {
         --corner-size: .25em;
         padding-block: .4em !important;
@@ -598,7 +598,6 @@
     }
   }
   .containerRight {
-    margin-inline: auto;
     @include media(max, small) {min-width: 100% !important}
     .option {font-weight: 600}
     .v-select {
@@ -641,10 +640,10 @@
   .v-card {
     position: relative;
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
+    flex-direction: column;
     padding-bottom: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    gap: .5em;
     &::before {
       content: '';
       background-color: var(--colorCartasInverted);
@@ -661,12 +660,14 @@
     width: 5rem;
     height: 5rem;
   }
+  .name {
+    max-width: 30ch;
+  }
   .marketplaceId {
     --corner-size: .2em;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
     padding: .1rem .5rem !important;
   }
 }
