@@ -359,7 +359,8 @@ export default {
   methods: {
     async viewTokens() {
       console.log(this.collectionId)
-      axios.post('http://157.230.2.213:3071/api/v1/listnft', {
+      axios.post('http://evie.pro:3070/api/v1/listnft', {
+      // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
         'limit': 300,
