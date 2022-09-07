@@ -173,7 +173,7 @@ export default {
       }
     },
     logout() {
-      console.log('logout')
+      // console.log('logout')
       localStorage.login = 'false'
       this.$router.push('/login')
     }

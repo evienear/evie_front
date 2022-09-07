@@ -358,7 +358,7 @@ export default {
   },
   methods: {
     async viewTokens() {
-      console.log(this.collectionId)
+      // console.log(this.collectionId)
       axios.post('https://evie.pro:3070/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
@@ -490,10 +490,10 @@ export default {
       const index = this.dataAttr.findIndex(i =>
         i.filter === filter && i.name === name
       )
-      console.log(index)
+      // console.log(index)
       if (index > -1) {
         this.dataAttr.splice(index, 1)
-        console.log(this.dataAttr.length)
+        // console.log(this.dataAttr.length)
         this.dataNftTokens = []
         try {
           this.dataAttr.forEach(filter => {
@@ -512,7 +512,7 @@ export default {
 
         if (this.dataAttr.length == 0) {
           this.dataAttr = []
-          console.log(this.dataNftTokens2)
+          // console.log(this.dataNftTokens2)
           this.dataNftTokens = this.dataNftTokens2
         }
       } else {
@@ -536,7 +536,7 @@ export default {
         }
         this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
       }
-      console.log(this.dataNftTokens)
+      // console.log(this.dataNftTokens)
     },
     //FIN DE FILTROS
 

@@ -61,7 +61,7 @@ export default {
     }
   },
   mounted() {
-    console.log(localStorage.login)
+    // console.log(localStorage.login)
   },
   methods: {
     login() {

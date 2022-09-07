@@ -241,13 +241,13 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(item => {
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace, item.collection)
         });
         // this.totalNft = this.dataNftTokens.length
         // this.armarAtributos()
-        console.log(this.dataChooseNFTTable)
+        // console.log(this.dataChooseNFTTable)
       }).catch(err => console.log(err))
     },
     async market(token_id, precio, base_uri, marketplace, collection) {
@@ -339,7 +339,7 @@ export default {
       this.dataSellSettings.push(item)
     },
     async approve() {
-      console.log(this.selectedItem, 'market a vender')
+      // console.log(this.selectedItem, 'market a vender')
       var msg = ''
       var price = 0
       if(!this.sameSellPrice) {
@@ -360,7 +360,7 @@ export default {
       // axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
         "collection": item.collection
       }).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(item => {
           this.marketplace.push(item.marketplace)
         });

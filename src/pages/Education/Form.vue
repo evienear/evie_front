@@ -236,7 +236,7 @@ export default {
           this.dataMenuCollections.push(item)
         })
         // this.$store.commit('Load', false)
-        console.log(this.dataMenuCollections)
+        // console.log(this.dataMenuCollections)
       }).catch(err => console.log(err))
     },
     async addForm() {
@@ -339,7 +339,7 @@ export default {
       })
     },
     dataCollection() {
-      console.log(this.collection.contract)
+      // console.log(this.collection.contract)
       this.dataMenuCollections.forEach(item => {
         if (item.nft_contract === this.collection.contract) {
           console.log(item)

@@ -247,7 +247,7 @@ export default {
       price = utils.format.formatNearAmount((element.precio.toString()))
       price = parseFloat(price)
       element.price = price
-      console.log(element, 'element price')
+      // console.log(element, 'element price')
       
     });
     this.dataMenuBuy = this.nftCart
@@ -290,7 +290,7 @@ export default {
       this.dialogAdd = true
       this.titleAdd = 'Removing item'
       // connect to NEAR
-      console.log(item)
+      // console.log(item)
       var price = utils.format.parseNearAmount((item.precio).toString())
       var itemNft = {
         token_id: item.token_id,
@@ -349,8 +349,8 @@ export default {
       })
     },
     async purchase(item) {
-      console.log("purchase")
-      console.log(this.nftCart)
+      // console.log("purchase")
+      // console.log(this.nftCart)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );

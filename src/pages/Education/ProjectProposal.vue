@@ -209,7 +209,7 @@ export default {
         // console.log(response);
         this.dataNFTProjects = response
         this.dataProjectProposal.description = response
-        console.log(this.dataProjectProposal.description)
+        // console.log(this.dataProjectProposal.description)
         this.load = false
         this.$store.commit('Load', false)
       }).catch(err => {

@@ -63,7 +63,7 @@ export default {
         limit: 50
       }, '85000000000000',
       ).then((response) => {
-        console.log(response);
+        // console.log(response);
         this.$store.commit('Load', false)
         this.dataNFTProjects = response
       }).catch(err => {
@@ -71,7 +71,7 @@ export default {
       })
     },
     viewEducation(item) {
-      console.log(item)
+      // console.log(item)
       localStorage.idForm = item.id
       this.$router.push('/project-proposal')
     },
