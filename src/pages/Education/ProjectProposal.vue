@@ -57,10 +57,9 @@
             <button class="button h9 btn2" @click="updateForm()">
               EDIT
             </button>
-            <!-- <button class="button h9 btn2" @click="addForm()"> -->
-            <!-- <button class="button h9 btn2 ml-3" @click="deleteForm()">
+            <button class="button h9 btn2 ml-3" @click="deleteForm()">
               DELETE
-            </button> -->
+            </button>
           </v-col>
         </aside>
       </section>
@@ -70,6 +69,35 @@
         BUY NOW<v-icon medium>mdi-chevron-right</v-icon>
       </button>
     </v-col>
+
+    <v-dialog
+      id="dialogo"
+      v-model="dialogDelete"
+      max-width="400"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              Are you sure?
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <span>
+            Are you sure you want to delete this form education?
+          </span>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="deleteFormId()">
+            YES
+          </button>
+          <button  class="button h9 btn2" @click="dialogDelete = false">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
@@ -125,6 +153,7 @@ export default {
         }
       },
       idForm: 0,
+      dialogDelete: false,
     }
   },
   mounted() {
@@ -161,7 +190,8 @@ export default {
     updateForm() {
       this.$router.push('/form')
     },
-    async deleteFormId(item) {
+    async deleteFormId() {
+      this.dialogDelete = false
       // connect to NEAR
       this.$store.commit('Load', true)
       const near = await connect(
@@ -174,7 +204,7 @@ export default {
         sender: wallet.account(),
       })
       await contract.remove_form({
-        form_id: item.id
+        form_id: this.idForm
       }, '85000000000000',
       ).then((response) => {
         // console.log(response);
@@ -187,7 +217,7 @@ export default {
       })
     },
     async deleteForm() {
-      this.$store.commit('Load', true)
+      this.dialogDelete = true
     },
   }
 };

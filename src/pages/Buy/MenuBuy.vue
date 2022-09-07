@@ -124,6 +124,9 @@
                   <button class="button btn2 pa-2 ma-2" @click="purchase(item)">
                     BUY
                   </button>
+                  <button class="button btn2 pa-2 ma-2" title="Delete item to cart" @click="removeCartItem(item)">
+                    <v-icon color="red">mdi-trash-can-outline</v-icon>
+                  </button>
                 </aside>
               </v-card>
             </v-slide-item>
@@ -145,6 +148,56 @@
           <!-- <button class="button btn2" @click="purchase()">
             COMPLETE PURCHASE<v-icon medium>mdi-chevron-right</v-icon>
           </button> -->
+          
+        </v-col>
+        <v-col class="center mt-5">
+          <button class="button btn2" @click="clearCart()">
+            Delete All Items
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialogMessage"
+      max-width="400"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              {{ titleDM }}
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <span>
+            {{ messageDM }}
+          </span>
+        </v-col>
+      </section>
+    </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialogAdd"
+      max-width="400"
+      persistent
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              {{ titleAdd }}
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
         </v-col>
       </section>
     </v-dialog>
@@ -156,7 +209,7 @@
 import * as nearApi from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ } = nearApi;
-// const CONTRACT_NAME = 'backend.evie.testnet'
+const CONTRACT_NAME = 'backend.evie.testnet'
 export default {
   name: "MenuBuy",
   props: ['nftCart', 'cantCart', 'priceTotal'],
@@ -175,6 +228,11 @@ export default {
       cantNft: this.nftCart.length,
       balance: 0,
       accountId: '',
+      dialogMessage: false,
+      titleDM: '',
+      messageDM:'',
+      dialogAdd: false,
+      titleAdd: '',
     }
   },
   created() {
@@ -226,6 +284,68 @@ export default {
       var amountInNEAR = utils.format.formatNearAmount(balanceYocto)
       amountInNEAR = parseFloat(amountInNEAR)-parseFloat(0.05)
       this.balance =  amountInNEAR.toFixed(2)
+    },
+    async removeCartItem(item) {
+      this.dialogAdd = true
+      this.titleAdd = 'Removing item'
+      // connect to NEAR
+      console.log(item)
+      var price = utils.format.parseNearAmount((item.precio).toString())
+      var itemNft = {
+        token_id: item.token_id,
+        contract_id: item.contract_id,
+        contract_market: item.contract_market,
+        price: price,
+        base_uri: item.base_uri,
+      }
+
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        changeMethods: ["remove_item"],
+        sender: wallet.account(),
+      })
+      await contract.remove_item({
+        item: itemNft
+      }, '85000000000000',
+      ).then((response) => {
+        console.log(response);
+        this.dialogAdd = false
+        this.dialogMessage = true
+        this.titleDM = 'Successful'
+        this.messageDM = 'Delete item successful'
+        setTimeout(() => this.$router.go(0), 3000)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    async clearCart() {
+      this.dialogAdd = true
+      this.titleAdd = 'Removing all items'
+      // connect to NEAR
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        changeMethods: ["clear_cart"],
+        sender: wallet.account(),
+      })
+      await contract.clear_cart({}, '85000000000000',
+      ).then((response) => {
+        console.log(response)
+        this.dialogAdd = false
+        this.dialogMessage = true
+        this.titleDM = 'Successful'
+        this.messageDM = 'Delete all items successful'
+        setTimeout(() => this.$router.go(0), 3000)
+      }).catch(err => {
+        console.log(err)
+      })
     },
     async purchase(item) {
       console.log("purchase")

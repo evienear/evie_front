@@ -90,8 +90,10 @@
             <v-col v-for="(item,i) in dataFilter" :key="i" sm="6" md="4" lg="3"
               class="center paddvertical">
               <v-select
+                v-model="priceFilter"
                 :items="item.selection"
                 :hide-details="true"
+                @change="filterPrice()"
               >
                 <template v-slot:label>
                   <span class="titleAutocompleteBuy h8 color">{{ item.title }}</span>
@@ -222,16 +224,65 @@
 
       <v-row>
         <v-col class="containerPagination end">
-          <v-btn v-for="(item,i) in dataPagination" :key="i"
-            class="btn2" :class="{active: item.active}"
-            @click="dataPagination.forEach(e=>{e.active=false});item.active=true">
-            <v-icon large style="color:#58565b !important">mdi-chevron-{{item.icon}}</v-icon>
+          <v-btn class="btn2" :disabled="indexNftCollection == 0" @click="prevItems()">
+            <v-icon large style="color:#58565b !important">mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-btn class="btn2" @click="nextItems()">
+            <v-icon large style="color:#58565b !important">mdi-chevron-right</v-icon>
           </v-btn>
         </v-col>
       </v-row>
     </v-col>
 
-
+    <v-dialog
+      id="dialogo"
+      v-model="dialogMessage"
+      max-width="400"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              {{ titleDM }}
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <span>
+            {{ messageDM }}
+          </span>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="dialogMessage = false">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialogAdd"
+      max-width="400"
+      persistent
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              {{ titleAdd }}
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
@@ -283,15 +334,20 @@ export default {
       dataAtt2: [],
       dataChips: [],
       dataAttr: [],
+      dialogMessage: false,
+      titleDM: '',
+      messageDM:'',
+      dialogAdd: false,
+      titleAdd: '',
+      indexNftCollection: 0,
+      priceFilter: '',
+      filterSelect: 'asc'
     }
   },
   mounted() {
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
-    // this.clearCart()
-    //this.removeCartItem()
     this.getCartItems()
-    // setTimeout(this.armarAtributos(), 10000)
   },
   computed: {
     // DataBuyTable() {
@@ -305,11 +361,11 @@ export default {
       axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
-        'limit': 500,
-        'index': 0,
+        'limit': 300,
+        'index': this.indexNftCollection,
         'sales': 'true',
         'order': 'precio',
-        'type_order': 'asc'
+        'type_order': this.filterSelect
       }).then(response => {
         //console.log(response.data)
         response.data.forEach(item => {
@@ -317,9 +373,7 @@ export default {
             this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
           }
         });
-        
         this.armarAtributos()
-
       }).catch(err => console.log(err))
     },
     // ver nft
@@ -368,6 +422,7 @@ export default {
           }
           item.marketplace = marketplace
           item.price = parseFloat(price)
+          item.select = false
           var object = item
           this.dataNftTokens.push(object)
         });
@@ -375,6 +430,7 @@ export default {
         console.log(err)
       });
     },
+    // COMIENZAN LOS FILTROS
     async armarAtributos() {
       var attributes = []
       setTimeout(() => {
@@ -406,7 +462,7 @@ export default {
       this.dataAtt2.forEach(element => {
         element.list = this.dataAtt[element.title]
       });
-      console.log(this.dataAtt2)
+      // console.log(this.dataAtt2)
     },
     groupBy(array) {
       const result = {}
@@ -434,7 +490,6 @@ export default {
       )
       console.log(index)
       if (index > -1) {
-        console.log('mayor a -1')
         this.dataAttr.splice(index, 1)
         console.log(this.dataAttr.length)
         this.dataNftTokens = []
@@ -454,13 +509,11 @@ export default {
         this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
 
         if (this.dataAttr.length == 0) {
-          console.log('paso el lenthg 0')
           this.dataAttr = []
           console.log(this.dataNftTokens2)
           this.dataNftTokens = this.dataNftTokens2
         }
       } else {
-        console.log('normal')
         this.dataAttr.push({
           filter: filter,
           name: name,
@@ -481,31 +534,29 @@ export default {
         }
         this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
       }
-        
-      // }
       console.log(this.dataNftTokens)
     },
+    //FIN DE FILTROS
+
+    // COMIENZA EL CARRITO
     addCart(item) {
-      console.log(this.nftCart, 'en addCart options')
-      const index = this.nftCart.indexOf(item.token_id)
+      const index = this.nftCart.findIndex(i =>
+        i.token_id === item.token_id
+      )
       if (index > -1) {
-        console.log(item, 'para eliminar')
-        this.nftCart.splice(index, 1);
-        item.select = false
-        // console.log(this.nftCart)
-        this.cantCart = this.cantCart - 1
-        this.priceTotal = this.priceTotal - item.price
-        this.removeCartItem(item)
+        this.dialogMessage = true
+        this.titleDM = 'Already exists'
+        this.messageDM = 'The token already exists in the cart'
       } else {
-        // this.nftCart.push(item)
-        item.select = true
-        this.cantCart = this.nftCart.length
-        // console.log(this.nftCart)
         this.addCartItem(item)
       }
     },
     async addCartItem(item) {
+      
+      item.select = true
       // connect to NEAR
+      this.dialogAdd = true
+      this.titleAdd = 'Adding NFT to cart'
       var price = utils.format.parseNearAmount((item.price).toString())
       var itemNft = {
         token_id: item.token_id,
@@ -527,61 +578,15 @@ export default {
         item: itemNft,
       }, '85000000000000').then((response) => {
         console.log(response, 'response addCart');
-        //console.log(this.nftCart)
         this.getCartItems()
+        item.select = true
+        this.dialogAdd = false
       }).catch(err => {
         console.log(err)
       })
+      
     },
-    async removeCartItem(item) {
-      // connect to NEAR
-      var price = utils.format.parseNearAmount((item.price).toString())
-      var itemNft = {
-        token_id: item.token_id,
-        contract_id: this.collectionId,
-        contract_market: item.marketplace,
-        price: price,
-        base_uri: item.media,
-      }
-
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["remove_item"],
-        sender: wallet.account(),
-      })
-      await contract.remove_item({
-        item: itemNft
-      }, '85000000000000',
-      ).then((response) => {
-        console.log(response);
-        this.getCartItems()
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    async clearCart() {
-      // connect to NEAR
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["clear_cart"],
-        sender: wallet.account(),
-      })
-      await contract.clear_cart({}, '85000000000000',
-      ).then((response) => {
-        console.log(response);
-        this.getCartItems()
-      }).catch(err => {
-        console.log(err)
-      })
-    },
+    
     async getCartItems() {
       // connect to NEAR
       const near = await connect(
@@ -589,31 +594,57 @@ export default {
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["get_cart_items"],
-        sender: wallet.account(),
-      })
-      await contract.get_cart_items({
-        user: wallet.getAccountId(),
-      }).then((response) => {
-        var precio = 0
-        //console.log(response, 'getCartItems');
-        this.nftCart = response
-        this.priceTotal = 0
-        this.nftCart.forEach(element => {
-          precio = utils.format.formatNearAmount((element.price.toString()))
-          element.precio = parseFloat(precio)
-          this.priceTotal = this.priceTotal + element.precio
-        });
-        // console.log(this.nftCart, 'nftCartr getCartItems')
-        this.cantCart = this.nftCart.length
-      }).catch(err => {
-        console.log(err)
-      })
+      if (wallet.isSignedIn()) {
+        this.$store.commit('Load', true)
+      
+        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+          changeMethods: ["get_cart_items"],
+          sender: wallet.account(),
+        })
+        await contract.get_cart_items({
+          user: wallet.getAccountId(),
+        }).then((response) => {
+          var precio = 0
+          this.nftCart = response
+          this.priceTotal = 0
+          this.nftCart.forEach(element => {
+            precio = utils.format.formatNearAmount((element.price.toString()))
+            element.precio = parseFloat(precio)
+            this.priceTotal = this.priceTotal + element.precio
+            this.dataNftTokens.forEach(item => {
+              if (item.token_id === element.token_id) {
+                item.select = true
+              }
+            })
+          });
+          
+          this.cantCart = this.nftCart.length
+          this.$store.commit('Load', false)
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
+    //TERMINA EL CARRITO
     priceTotalNft() {
       localStorage.priceTotal = this.priceTotal.toString()
     },
+    nextItems() {
+      this.indexNftCollection = this.indexNftCollection + 300
+      this.viewTokens()
+    },
+    prevItems() {
+      this.indexNftCollection = this.indexNftCollection - 300
+      this.viewTokens()
+    },
+    filterPrice() {
+      if (this.priceFilter === 'Lowest Price') {
+        this.filterSelect = 'asc'
+      } else if (this.priceFilter === 'Highest Price') {
+        this.filterSelect = 'desc'
+      }
+      this.viewTokens()
+    }
   }
 };
 </script>
