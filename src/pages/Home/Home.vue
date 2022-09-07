@@ -78,7 +78,7 @@
                   <span class="h8" style="font-weight: 400">{{ item.name }}</span>
                 </aside>
                 <span class="h8">
-                  <strong>$ 502.22</strong>
+                  <strong></strong>
                 </span>
               </button>
             </template>
@@ -113,7 +113,7 @@ export default {
       await axios.post('https://evie.pro:3070/api/v1/listcollections', {
       // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
       // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
-        'limit': 20,
+        'limit': 20000,
         'index': 0,
       }).then(response => {
         // console.log(response.data)
