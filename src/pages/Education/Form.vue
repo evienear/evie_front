@@ -139,12 +139,12 @@
 </template>
 
 <script>
-// import axios from 'axios'
+import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
-// const CONTRACT_NAME = 'backend.evie.testnet'
-const CONTRACT_NAME = 'backend.eviepro.near'
+const CONTRACT_NAME = 'backend.evie.testnet'
+// const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "Form",
   data() {
@@ -174,6 +174,23 @@ export default {
     // this.getForm()
   },
   methods: {
+    async collections () {
+      this.$store.commit('Load', true)
+      await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
+      // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
+        'limit': 20,
+        'index': 0,
+      }).then(response => {
+        // console.log(response.data)
+        // this.dataMenuCollections = response.data
+        response.data.forEach(item => {
+          if(item.nft_contract === 'asac.near') { item.icon = 'https://paras-cdn.imgix.net/bafybeigc6z74rtwmigcoo5eqcsc4gxwkganqs4uq5nuz4dwlhjhrurofeq?w=800&auto=format,compress' }
+          this.dataMenuCollections.push(item)
+        })
+        this.$store.commit('Load', false)
+        console.log(this.dataMenuCollections)
+      }).catch(err => console.log(err))
+    },
     async addForm() {
       this.$store.commit('Load', true)
       var EduForm = {

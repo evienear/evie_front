@@ -209,8 +209,8 @@
 import * as nearApi from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ } = nearApi;
-// const CONTRACT_NAME = 'backend.evie.testnet'
-const CONTRACT_NAME = 'backend.eviepro.near'
+const CONTRACT_NAME = 'backend.evie.testnet'
+//const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "MenuBuy",
   props: ['nftCart', 'cantCart', 'priceTotal'],
