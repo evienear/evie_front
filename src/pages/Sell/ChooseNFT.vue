@@ -304,7 +304,8 @@ export default {
       });
     },
     async listMarkets() {
-      axios.post('http://157.230.2.213:3071/api/v1/listmarketplace').then(response => {
+      axios.post('https://evie.pro:3070/api/v1/listmarketplace').then(response => {
+      // axios.post('http://157.230.2.213:3071/api/v1/listmarketplace').then(response => {
       // axios.post('http://157.230.2.213:3072/api/v1/listmarketplace').then(response => {
         response.data.forEach(item => {
           this.selectionMarket.push(item.marketplace)
