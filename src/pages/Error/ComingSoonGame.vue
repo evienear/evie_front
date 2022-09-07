@@ -2,9 +2,9 @@
   <v-app>
     <v-container fluid class="error-page">
       <v-row justify="center" align="center">
-        <v-col cols="12" sm="12" md="12" id="containerNotFound">
+        <v-col id="containerNotFound">
           <!-- <span class="text404">Coming soon</span> -->
-          <v-img src="@/assets/game_logo_3_transparent.png" alt="Game" />
+          <v-img src="@/assets/game_logo_3_transparent.png" alt="Game" width="min(100%, 1000px)" />
           <v-col style="display: flex; justify-content: center; padding-top: 0">
             <span class="textNotFound">Coming soon</span>
           </v-col>
