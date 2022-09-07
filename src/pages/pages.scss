@@ -360,6 +360,12 @@
       &__content {
         font-size: .8em !important;
         padding-inline: .5em;
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: var(--colorInverted);
+        }
         &, button { color: var(--colorInverted) !important}}
     }
   }

@@ -139,7 +139,7 @@
                 dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', '')
                 
               ">
-                {{item.name}}
+                <span>{{item.name}}</span>
               </v-chip>
             </div>
           </div>
@@ -174,7 +174,7 @@
                   dataChips.splice(dataChips.indexOf(item),1);
                   dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', '')
                 ">
-                  {{item.name}}
+                  <span>{{item.name}}</span>
                 </v-chip>
               </div>
             </div>
