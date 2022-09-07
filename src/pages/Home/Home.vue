@@ -78,7 +78,7 @@
                   <span class="h8" style="font-weight: 400">{{ item.name }}</span>
                 </aside>
                 <span class="h8">
-                  <strong>$ 502.22</strong>
+                  <strong></strong>
                 </span>
               </button>
             </template>
