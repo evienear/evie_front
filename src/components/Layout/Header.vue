@@ -90,7 +90,7 @@ export default {
           key: "stats",
           state: "-outline",
           name: "Stats",
-          to: "/stats"
+          to: "/coming-soon"
         },
         {
           key: "education",
@@ -102,7 +102,7 @@ export default {
           key: "games",
           state: "-outline",
           name: "Games",
-          to: "/coming-soon"
+          to: "/coming-soon-game"
         },
         {
           key: "calendar",

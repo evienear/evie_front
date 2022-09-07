@@ -98,6 +98,31 @@
         </v-col>
       </section>
     </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialogMessage"
+      max-width="400"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              {{ titleDM }}
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <span>
+            {{ messageDM }}
+          </span>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="dialogMessage = false">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
@@ -154,6 +179,9 @@ export default {
       },
       idForm: 0,
       dialogDelete: false,
+      dialogMessage: false,
+      titleDM: '',
+      messageDM: '',
     }
   },
   mounted() {
@@ -207,11 +235,11 @@ export default {
         form_id: this.idForm
       }, '85000000000000',
       ).then((response) => {
-        // console.log(response);
-        this.collection = response.form
-        this.descriptions[0] = response.form.descriptions[0]
-        this.images[0] = response.form.images[0]
         this.$store.commit('Load', false)
+        console.log(response)
+        this.dialogMessage = true
+        this.titleDM = 'Successful'
+        this.messageDM = 'Delete form education successful'
       }).catch(err => {
         console.log(err)
       })

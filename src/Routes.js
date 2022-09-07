@@ -10,11 +10,7 @@ export default new Router({
       name: 'Login',
       component: () => import('@/components/Login/Login'),
     },
-    {
-      path: '/coming-soon',
-      name: 'comingSoon',
-      component: () => import('@/pages/Error/ComingSoon'),
-    },
+    
     {
     path: '/',
     name: 'Layout',
@@ -79,6 +75,16 @@ export default new Router({
         path: '/mint-calendar',
         name: 'mintCalendar',
         component: () => import('@/pages/MintCalendar/MintCalendar'),
+      },
+      {
+        path: '/coming-soon',
+        name: 'comingSoon',
+        component: () => import('@/pages/Error/ComingSoon'),
+      },
+      {
+        path: '/coming-soon-game',
+        name: 'comingSoonGame',
+        component: () => import('@/pages/Error/ComingSoonGame'),
       },
     ],
   },
