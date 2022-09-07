@@ -143,7 +143,8 @@
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
-const CONTRACT_NAME = 'backend.evie.testnet'
+// const CONTRACT_NAME = 'backend.evie.testnet'
+const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "Form",
   data() {
