@@ -91,7 +91,7 @@
 
 <script>
 import axios from 'axios'
-//const contarct = 'evie.jeph.testnet'
+
 export default {
   name: "Home",
   data() {
