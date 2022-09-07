@@ -36,8 +36,8 @@
     </v-col>
     <!-- AQUI COMIENZAN LOD NFT -->
     
-    <section class="wrapperContent gapmobile">
-      <v-col class="containerLeft" style="padding-top: 0">
+    <section class="wrapperContent">
+      <section class="containerLeft">
         <v-card v-for="(item,i) in dataChooseNFTTable" :key="i" color="transparent"
           class="containerMarketplace relative" :class="{active: item.selected}">
 
@@ -47,10 +47,10 @@
             #{{ item.token_id }}
           </span>
         </v-card>
-      </v-col>
+      </section>
 
       <!-- HASTA AQUI -->
-      <v-col class="containerRight" style="padding-top: 0">
+      <section class="containerRight">
         <aside class="option space divwrap">
           <span class="h5">SELL SETTINGS</span>
 
@@ -78,22 +78,24 @@
 
         <section class="containerSellSettings mt-2">
           <v-card v-for="(item, i) in dataSellSettings" :key="i" color="transparent">
-            <aside class="divrow" style="gap:clamp(.5em, 1vw, 1em)">
-              <v-img class="images" :src="item.metadata.media" alt="nft" style="--border-size: 4px; width:10% !important" />
-              <div class="divcol astart jcenter">
-                <span class="h7" style="font-weight: 500">{{ item.metadata.title}}</span>
-                <span class="marketplaceId btn2 h7">#{{ item.token_id }}</span>
+            <aside class="space fill-w" style="gap:clamp(.5em, 1vw, 1em)">
+              <div class="acenter" style="gap:clamp(.5em, 1vw, 1em)">
+                <v-img class="images" width="clamp(5.5em, 7vw, 7em)" height="clamp(5.5em, 7vw, 7em)" :src="item.metadata.media" alt="nft" style="--border-size: 4px" />
+                <div class="divcol astart jcenter" style="gap:.5em">
+                  <span class="name h8-em" style="font-weight: 500">{{ item.metadata.title}}</span>
+                  <span class="marketplaceId btn2 h8-em">#{{ item.token_id }}</span>
+                </div>
+              </div>
+              
+              <div v-show="!sameSellPrice" class="center marginright" style="gap: 3px">
+                <span style="font-size: clamp(1.2em, 1.5vw, 1.5em)">{{ item.price.toFixed(2) }}</span>
+                <img class="filter" src="@/assets/logo/near.svg" alt="near"
+                  style="width:1.5em; height:1.5em">
               </div>
             </aside>
-
-            <aside v-show="sameSellPrice" class="center marginright" style="gap: 3px">
-              <span style="font-size: clamp(1.2em, 1.5vw, 1.5em)">{{ item.price.toFixed(2) }}</span>
-              <img class="filter" src="@/assets/logo/near.svg" alt="near"
-                style="width:1.5em; height:1.5em">
-            </aside>
-          </v-card>
-          <aside v-show="!sameSellPrice && dataSellSettings.length" class="center marginright" style="gap: 3px">
+            
             <v-text-field
+              v-show="!sameSellPrice && dataSellSettings.length"
               v-model="price"
               class="custome"
               solo dense
@@ -102,19 +104,18 @@
                 <label>Amount in Near</label>
               </template>
             </v-text-field>
-          </aside>
+          </v-card>
         </section>
 
         <v-col class="center">
-          <!-- <button class="button btn2" @click="$router.push('/review-sell')">
-            REVIEW<v-icon medium>mdi-chevron-right</v-icon>
-          </button> -->
           <button class="button btn2" @click="approve()">
             SELL
           </button>
         </v-col>
-      </v-col>
+      </section>
     </section>
+
+
     <v-dialog
       id="dialog"
       v-model="dialog"
