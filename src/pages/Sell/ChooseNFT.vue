@@ -377,7 +377,7 @@ export default {
       // });
     },
     async viewMarketplace(item) {
-      axios.post('http://evie.pro:3070/api/v1/listmarketplacecollection', {
+      axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
       // axios.post('http://157.230.2.213:3071/api/v1/listmarketplacecollection', {
       // axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
         "collection": item.collection
