@@ -234,7 +234,8 @@ export default {
   methods: {
     async viewTokens() {
       // console.log(this.collectionId)
-      axios.post('http://157.230.2.213:3071/api/v1/listnftowner', {
+      axios.post('https://evie.pro:3070/api/v1/listnftowner', {
+      // axios.post('http://157.230.2.213:3071/api/v1/listnftowner', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnftowner', {
         "owner": localStorage.walletAccountId,
         "limit": 1000,
@@ -351,32 +352,7 @@ export default {
           market_type: "sale", price: this.dataSellSettings[0].precio, ft_token_id: "near"
         })
       }
-      
       console.log(msg)
-      // connect to NEAR
-      // const near = await connect(
-      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-      // );
-      // // create wallet connection
-      // const wallet = new WalletConnection(near);
-      // const contract = new Contract(wallet.account(), this.selectedItem, {
-      //   changeMethods: ["nft_on_approve"],
-      //   //changeMethods: ["nft_approve"],
-      //   sender: wallet.account(),
-      // })
-      // // await contract.nft_approve({
-      // await contract.nft_on_approve({
-      //   token_id: this.dataSellSettings[0].token_id,
-      //   account_id: this.selectedItem,
-      //   msg: msg,
-      // },
-      // '85000000000000',
-      // '350000000000000000000'
-      // ).then((response) => {
-      //   console.log(response);
-      // }).catch(err => {
-      //   console.log(err)
-      // });
     },
     async viewMarketplace(item) {
       axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
