@@ -147,7 +147,7 @@ export default {
           this.dataMenuCollections.push(item)
         })
         this.$store.commit('Load', false)
-        console.log(this.dataMenuCollections)
+        //console.log(this.dataMenuCollections)
       }).catch(err => console.log(err))
     },
     viewNft(item) {

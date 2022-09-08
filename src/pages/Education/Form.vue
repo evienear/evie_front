@@ -25,26 +25,16 @@
         v-model="collection.contract"
         :items="dataMenuCollections"
         chips
-        label="TITLE"
         item-text="name"
         item-value="nft_contract"
         class="custome"
         solo
         @change="dataCollection()"
       >
+        <template v-slot:prepend>
+          <label>COLLECTION</label>
+        </template>
         <template v-slot:selection="data">
-          <!-- <v-chip
-            v-bind="data.attrs"
-            :input-value="data.selected"
-            close
-            @click="data.select"
-            @click:close="remove(data.item)"
-          >
-            <v-avatar left>
-              <v-img :src="data.item.icon"></v-img>
-            </v-avatar>
-            {{ data.item.name }}
-          </v-chip> -->
           <template>
             <v-list-item-avatar class="ml-3">
               <v-img :src="data.item.icon" /> 
@@ -76,7 +66,7 @@
         </template>
       </v-text-field> -->
       
-      <v-text-field
+      <!-- <v-text-field
         v-model="images[0]"
         class="custome"
         solo dense
@@ -84,7 +74,7 @@
         <template v-slot:prepend>
           <label>URL</label>
         </template>
-      </v-text-field>
+      </v-text-field> -->
       
       <v-text-field
         v-model="collection.supply"
@@ -222,21 +212,27 @@ export default {
   methods: {
     async collections () {
       // this.$store.commit('Load', true)
-      
+      var data = []
       await axios.post('https://evie.pro:3070/api/v1/listcollections', {
       // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
       // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
-        'limit': 20,
+        'limit': 20000,
         'index': 0,
       }).then(response => {
-        // console.log(response.data)
-        // this.dataMenuCollections = response.data
         response.data.forEach(item => {
-          if(item.nft_contract === 'asac.near') { item.icon = 'https://paras-cdn.imgix.net/bafybeigc6z74rtwmigcoo5eqcsc4gxwkganqs4uq5nuz4dwlhjhrurofeq?w=800&auto=format,compress' }
+          if(item.icon == null) {
+            axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
+              // console.log(res.data.data.results)
+              data = res.data.data.results
+              data.forEach(element => {
+                if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+                  item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+                }
+              });
+            })
+          }
           this.dataMenuCollections.push(item)
         })
-        // this.$store.commit('Load', false)
-        // console.log(this.dataMenuCollections)
       }).catch(err => console.log(err))
     },
     async addForm() {

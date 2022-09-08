@@ -371,7 +371,7 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
-        //console.log(response.data)
+        console.log(response.data)
         response.data.forEach(item => {
           if(item.precio !== null && item.marketplace !== null) {
             this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
