@@ -14,11 +14,21 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 .text404 {
   font-style: normal;
   font-weight: bold !important;
   font-size: clamp(10rem, 22vw, 22rem) !important;
+  background-color: #7BD7EB;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+.comming-soon {
+  font-style: normal;
+  font-weight: bold !important;
+  font-size: clamp(5rem, 7vw, 7rem) !important;
   background-color: #7BD7EB;
   color: transparent;
   background-clip: text;
