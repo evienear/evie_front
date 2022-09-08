@@ -94,6 +94,7 @@
                 :items="item.selection"
                 :hide-details="true"
                 @change="filterPrice()"
+                multiple
               >
                 <template v-slot:label>
                   <span class="titleAutocompleteBuy h8 color">{{ item.title }}</span>
@@ -313,7 +314,7 @@ export default {
       dataFilter: [
         {
           title: "FILTER",
-          selection: [ 'Lowest Price', 'Highest Price', ]
+          selection: [ 'Lowest Price', 'Highest Price', 'On sale', 'Not sale', 'All']
         },
         // {
         //   title: "ATTRIBUTE",
@@ -342,7 +343,8 @@ export default {
       titleAdd: '',
       indexNftCollection: 0,
       priceFilter: '',
-      filterSelect: 'asc'
+      filterSelect: '',
+      sales: '%',
     }
   },
   mounted() {
@@ -365,7 +367,7 @@ export default {
         'collection': this.collectionId,
         'limit': 50,
         'index': this.indexNftCollection,
-        'sales': 'true',
+        'sales': this.sales,
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
@@ -642,9 +644,20 @@ export default {
     filterPrice() {
       if (this.priceFilter === 'Lowest Price') {
         this.filterSelect = 'asc'
-      } else if (this.priceFilter === 'Highest Price') {
+      } 
+      if (this.priceFilter === 'Highest Price') {
         this.filterSelect = 'desc'
       }
+      if (this.priceFilter === 'On sales') {
+        this.sales = 'true'
+      }
+      if (this.priceFilter === 'Not sales') {
+        this.sales = 'false'
+      }
+      if (this.priceFilter === 'All') {
+        this.sales = '%'
+      }
+
       this.viewTokens()
     }
   }
