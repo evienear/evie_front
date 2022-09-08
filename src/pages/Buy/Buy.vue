@@ -348,6 +348,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.collectionId)
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
     this.getCartItems()
@@ -371,12 +372,13 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
-        //console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(item => {
-          if(item.precio !== null && item.marketplace !== null) {
+          //if(item.precio !== null && item.marketplace !== null) {
             this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
-          }
+          //}
         });
+        // console.log(this.dataNftTokens)
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
@@ -438,12 +440,14 @@ export default {
     async armarAtributos() {
       var attributes = []
       setTimeout(() => {
+        // console.log(this.dataNftTokens)
         this.totalNft = this.dataNftTokens.length
         this.dataNftTokens2 = this.dataNftTokens
         this.dataNftTokens.forEach(item => {
           // console.log(item)
           attributes.push(item.attributes)
         })
+        //console.log(attributes)
         this.dataAttributeNft(attributes)
       }, 1000)
 
@@ -608,21 +612,24 @@ export default {
         await contract.get_cart_items({
           user: wallet.getAccountId(),
         }).then((response) => {
-          var precio = 0
-          this.nftCart = response
-          this.priceTotal = 0
-          this.nftCart.forEach(element => {
-            precio = utils.format.formatNearAmount((element.price.toString()))
-            element.precio = parseFloat(precio)
-            this.priceTotal = this.priceTotal + element.precio
-            this.dataNftTokens.forEach(item => {
-              if (item.token_id === element.token_id) {
-                item.select = true
-              }
-            })
-          });
+          if (response.length) {
+            var precio = 0
+            this.nftCart = response
+            this.priceTotal = 0
+            this.nftCart.forEach(element => {
+              precio = utils.format.formatNearAmount((element.price.toString()))
+              element.precio = parseFloat(precio)
+              this.priceTotal = this.priceTotal + element.precio
+              this.dataNftTokens.forEach(item => {
+                if (item.token_id === element.token_id) {
+                  item.select = true
+                }
+              })
+            
+            });
           
-          this.cantCart = this.nftCart.length
+            this.cantCart = this.nftCart.length
+          }
           this.$store.commit('Load', false)
         }).catch(err => {
           console.log(err)
@@ -642,20 +649,23 @@ export default {
       this.viewTokens()
     },
     filterPrice() {
-      if (this.priceFilter === 'Lowest Price') {
-        this.filterSelect = 'asc'
-      } 
-      if (this.priceFilter === 'Highest Price') {
-        this.filterSelect = 'desc'
-      }
-      if (this.priceFilter === 'On sales') {
-        this.sales = 'true'
-      }
-      if (this.priceFilter === 'Not sales') {
-        this.sales = 'false'
-      }
-      if (this.priceFilter === 'All') {
-        this.sales = '%'
+      console.log(this.priceFilter.length)
+      for (var i = 0; i < this.priceFilter.length; i++) {
+        if (this.priceFilter[i] === 'Lowest Price') {
+          this.filterSelect = 'asc'
+        } 
+        if (this.priceFilter[i] === 'Highest Price') {
+          this.filterSelect = 'desc'
+        }
+        if (this.priceFilter[i] === 'On sales') {
+          this.sales = 'true'
+        }
+        if (this.priceFilter[i] === 'Not sales') {
+          this.sales = 'false'
+        }
+        if (this.priceFilter[i] === 'All') {
+          this.sales = '%'
+        }
       }
 
       this.viewTokens()

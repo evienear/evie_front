@@ -29,6 +29,7 @@
             :search="search"
             item-key="name"
             hide-default-footer
+            :items-per-page="20"
             mobile-breakpoint="-1"
             class="colorCartas"
           >
@@ -53,7 +54,7 @@
                 </v-col>
 
                 <v-col cols="4" class="center">
-                  <v-select
+                  <!-- <v-select
                     :items="filter"
                     :hide-details="true"
                     append-icon="mdi-chevron-down"
@@ -61,7 +62,7 @@
                     <template v-slot:label>
                       <span style="font-weight: 600">ALL TIME VOLUME</span>
                     </template>
-                  </v-select>
+                  </v-select> -->
                 </v-col>
               </v-col>
             </template>
@@ -84,6 +85,16 @@
             </template>
           </v-data-table>
         </v-col>
+        <v-row>
+        <v-col class="containerPagination end">
+          <v-btn class="btn2" :disabled="indexPag == 0" @click="prevItems()">
+            <v-icon large style="color:#58565b !important">mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-btn class="btn2" @click="nextItems()">
+            <v-icon large style="color:#58565b !important">mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
       </section>
     </v-dialog>
   </section>
@@ -101,6 +112,7 @@ export default {
       filter: [ 'foo', 'bar', 'fizz', 'buzz' ],
       resultsCollection: [],
       dataMenuCollections: [],
+      indexPag: 0,
     }
   },
   
@@ -109,21 +121,33 @@ export default {
   },
   methods: {
     async collections () {
+      this.dataMenuCollections = []
+      var data = []
       this.$store.commit('Load', true)
       await axios.post('https://evie.pro:3070/api/v1/listcollections', {
       // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
       // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
-        'limit': 20000,
-        'index': 0,
+        'limit': 20,
+        'index': this.indexPag,
       }).then(response => {
         // console.log(response.data)
         // this.dataMenuCollections = response.data
         response.data.forEach(item => {
-          if(item.nft_contract === 'asac.near') { item.icon = 'https://paras-cdn.imgix.net/bafybeigc6z74rtwmigcoo5eqcsc4gxwkganqs4uq5nuz4dwlhjhrurofeq?w=800&auto=format,compress' }
+          if(item.icon == null) {
+            axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
+              // console.log(res.data.data.results)
+              data = res.data.data.results
+              data.forEach(element => {
+                if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+                  item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+                }
+              });
+            })
+          }
           this.dataMenuCollections.push(item)
         })
         this.$store.commit('Load', false)
-        console.log(this.dataMenuCollections)
+        //console.log(this.dataMenuCollections)
       }).catch(err => console.log(err))
     },
     viewNft(item) {
@@ -134,6 +158,14 @@ export default {
           id: item.nft_contract,
         }
       })
+    },
+    nextItems() {
+      this.indexPag = this.indexPag + 20
+      this.collections()
+    },
+    prevItems() {
+      this.indexPag = this.indexPag - 20
+      this.collections()
     },
   },
   computed: {

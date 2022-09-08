@@ -78,6 +78,25 @@
     }
     input, textarea {padding-inline: 1em}
   }
+  .v-select__slot {
+    box-shadow: none !important;
+    background-color: var(--color) !important;
+    clip-path: $clip-path !important;
+    position: relative;
+    isolation: isolate;
+    padding: 0 !important;
+    &::before {
+      display: block !important;
+      content: "";
+      @include absoluteCenter;
+      width: calc(100% - var(--corner-size));
+      height: calc(100% - (var(--corner-size)));
+      background-color: var(--colorBtn2) !important;
+      clip-path: $clip-path !important;
+      z-index: -1;
+    }
+    input {padding-inline: 1em}
+  }
   &.v-file-input {
     .v-text-field__slot {
       label {
