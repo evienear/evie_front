@@ -4,7 +4,8 @@
       <button class="boton btn2 center" @click="$refs.calendar.prev()">
         <v-icon large class="i1">mdi-chevron-left</v-icon>
       </button>
-      <span v-if="$refs.calendar">{{ $refs.calendar.title }}</span>
+      <span v-if="$refs.calendar" style="text-transform:capitalize">{{ $refs.calendar.title }}</span>
+      <span v-else style="text-transform:capitalize">select date</span>
       <button class="boton btn2 center" @click="$refs.calendar.next()">
         <v-icon large class="i2">mdi-chevron-right</v-icon>
       </button>
