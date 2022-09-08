@@ -608,21 +608,24 @@ export default {
         await contract.get_cart_items({
           user: wallet.getAccountId(),
         }).then((response) => {
-          var precio = 0
-          this.nftCart = response
-          this.priceTotal = 0
-          this.nftCart.forEach(element => {
-            precio = utils.format.formatNearAmount((element.price.toString()))
-            element.precio = parseFloat(precio)
-            this.priceTotal = this.priceTotal + element.precio
-            this.dataNftTokens.forEach(item => {
-              if (item.token_id === element.token_id) {
-                item.select = true
-              }
-            })
-          });
+          if (response.length) {
+            var precio = 0
+            this.nftCart = response
+            this.priceTotal = 0
+            this.nftCart.forEach(element => {
+              precio = utils.format.formatNearAmount((element.price.toString()))
+              element.precio = parseFloat(precio)
+              this.priceTotal = this.priceTotal + element.precio
+              this.dataNftTokens.forEach(item => {
+                if (item.token_id === element.token_id) {
+                  item.select = true
+                }
+              })
+            
+            });
           
-          this.cantCart = this.nftCart.length
+            this.cantCart = this.nftCart.length
+          }
           this.$store.commit('Load', false)
         }).catch(err => {
           console.log(err)
@@ -642,20 +645,23 @@ export default {
       this.viewTokens()
     },
     filterPrice() {
-      if (this.priceFilter === 'Lowest Price') {
-        this.filterSelect = 'asc'
-      } 
-      if (this.priceFilter === 'Highest Price') {
-        this.filterSelect = 'desc'
-      }
-      if (this.priceFilter === 'On sales') {
-        this.sales = 'true'
-      }
-      if (this.priceFilter === 'Not sales') {
-        this.sales = 'false'
-      }
-      if (this.priceFilter === 'All') {
-        this.sales = '%'
+      console.log(this.priceFilter.length)
+      for (var i = 0; i < this.priceFilter.length; i++) {
+        if (this.priceFilter[i] === 'Lowest Price') {
+          this.filterSelect = 'asc'
+        } 
+        if (this.priceFilter[i] === 'Highest Price') {
+          this.filterSelect = 'desc'
+        }
+        if (this.priceFilter[i] === 'On sales') {
+          this.sales = 'true'
+        }
+        if (this.priceFilter[i] === 'Not sales') {
+          this.sales = 'false'
+        }
+        if (this.priceFilter[i] === 'All') {
+          this.sales = '%'
+        }
       }
 
       this.viewTokens()
