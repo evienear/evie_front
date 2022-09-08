@@ -348,6 +348,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.collectionId)
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
     this.getCartItems()
@@ -371,12 +372,13 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(item => {
-          if(item.precio !== null && item.marketplace !== null) {
+          //if(item.precio !== null && item.marketplace !== null) {
             this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
-          }
+          //}
         });
+        // console.log(this.dataNftTokens)
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
@@ -438,12 +440,14 @@ export default {
     async armarAtributos() {
       var attributes = []
       setTimeout(() => {
+        // console.log(this.dataNftTokens)
         this.totalNft = this.dataNftTokens.length
         this.dataNftTokens2 = this.dataNftTokens
         this.dataNftTokens.forEach(item => {
           // console.log(item)
           attributes.push(item.attributes)
         })
+        //console.log(attributes)
         this.dataAttributeNft(attributes)
       }, 1000)
 
