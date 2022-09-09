@@ -127,7 +127,7 @@
       </v-row>
 
       <section class="containerDown-content">
-        <aside class="container-filter-left eliminarmobile">
+        <aside v-show="menuFilter" class="container-filter-left eliminarmobile">
           <div class="container-filter-left-head">
             <div class="space gap">
               <h5 class="p h10-em">Atribute filter</h5>
@@ -300,7 +300,8 @@ export default {
   components: { MenuBuy },
   data() {
     return {
-      drawer: true,
+      menuFilter: false,
+      drawer: false,
       collectionId: this.$route.params.id,
       collection: [],
       dataBuy: [
@@ -488,6 +489,7 @@ export default {
         })
         result[item['trait_type']] = Object.values(result[item['trait_type']].reduce((prev,next)=>Object.assign(prev,{[next.name]:next}),{}))
       })
+      this.menuFilter = true
       return result
     },
     filterAttr(filter, name) {
@@ -651,24 +653,30 @@ export default {
     },
     filterPrice() {
       console.log(this.priceFilter.length)
+      console.log(this.priceFilter)
       for (var i = 0; i < this.priceFilter.length; i++) {
         if (this.priceFilter[i] === 'Lowest Price') {
           this.filterSelect = 'asc'
-        } 
-        if (this.priceFilter[i] === 'Highest Price') {
+        } else if (this.priceFilter[i] === 'Highest Price') {
           this.filterSelect = 'desc'
+        } else {
+          this.filterSelect = ''
         }
-        if (this.priceFilter[i] === 'On sales') {
+        
+        if (this.priceFilter[i] === 'On sale') {
           this.sales = 'true'
-        }
-        if (this.priceFilter[i] === 'Not sales') {
+        } else if (this.priceFilter[i] === 'Not sale') {
           this.sales = 'false'
-        }
-        if (this.priceFilter[i] === 'All') {
+        } else if (this.priceFilter[i] === 'All') {
+          this.sales = '%'
+        } else {
           this.sales = '%'
         }
       }
-
+      if (this.priceFilter.length == 0) {
+        this.filterSelect = ''
+        this.sales = '%'
+      }
       this.viewTokens()
     }
   }

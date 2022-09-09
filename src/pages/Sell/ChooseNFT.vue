@@ -241,7 +241,7 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
-        // console.log(response.data)
+        console.log(response.data)
         response.data.forEach(item => {
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace, item.collection)
         });
