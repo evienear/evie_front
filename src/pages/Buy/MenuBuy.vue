@@ -84,9 +84,9 @@
 
         <v-col cols="11">
           <aside class="divrow" style="gap: 6px; margin-bottom: -2px">
-            <button class="botonBack center" @click="checkout=true;review=false">
+            <!-- <button class="botonBack center" @click="checkout=true;review=false">
               <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
-            </button>
+            </button> -->
             <h3 class="tituloBack p">REVIEW</h3>
           </aside>
           <span class="subtitleBack">SELECT MARKETPLACE</span>
@@ -277,76 +277,84 @@ export default {
       // create wallet connection
       const wallet = new WalletConnection(near);
 
-      var walletAccountId = wallet.getAccountId();
-      this.accountId = walletAccountId
-      var account = await wallet.account(walletAccountId)
-      var balance = await account.getAccountBalance()
-      var balanceYocto = balance.available
-      var amountInNEAR = utils.format.formatNearAmount(balanceYocto)
-      amountInNEAR = parseFloat(amountInNEAR)-parseFloat(0.05)
-      this.balance =  amountInNEAR.toFixed(2)
+      if (wallet.isSignedIn()) {
+        var walletAccountId = wallet.getAccountId();
+        this.accountId = walletAccountId
+        var account = await wallet.account(walletAccountId)
+        var balance = await account.getAccountBalance()
+        var balanceYocto = balance.available
+        var amountInNEAR = utils.format.formatNearAmount(balanceYocto)
+        amountInNEAR = parseFloat(amountInNEAR)-parseFloat(0.05)
+        this.balance =  amountInNEAR.toFixed(2)
+      }
     },
     async removeCartItem(item) {
-      this.dialogAdd = true
-      this.titleAdd = 'Removing item'
       // connect to NEAR
-      // console.log(item)
-      var price = utils.format.parseNearAmount((item.precio).toString())
-      var itemNft = {
-        token_id: item.token_id,
-        contract_id: item.contract_id,
-        contract_market: item.contract_market,
-        price: price,
-        base_uri: item.base_uri,
-      }
-
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["remove_item"],
-        sender: wallet.account(),
-      })
-      await contract.remove_item({
-        item: itemNft
-      }, '85000000000000',
-      ).then((response) => {
-        console.log(response);
-        this.dialogAdd = false
-        this.dialogMessage = true
-        this.titleDM = 'Successful'
-        this.messageDM = 'Delete item successful'
-        setTimeout(() => this.$router.go(0), 3000)
-      }).catch(err => {
-        console.log(err)
-      })
+      if (wallet.isSignedIn()) {
+        this.dialogAdd = true
+        this.titleAdd = 'Removing item'
+        
+        // console.log(item)
+        var price = utils.format.parseNearAmount((item.precio).toString())
+        var itemNft = {
+          token_id: item.token_id,
+          contract_id: item.contract_id,
+          contract_market: item.contract_market,
+          price: price,
+          base_uri: item.base_uri,
+        }
+
+        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+          changeMethods: ["remove_item"],
+          sender: wallet.account(),
+        })
+        await contract.remove_item({
+          item: itemNft
+        }, '85000000000000',
+        ).then((response) => {
+          console.log(response);
+          this.dialogAdd = false
+          this.dialogMessage = true
+          this.titleDM = 'Successful'
+          this.messageDM = 'Delete item successful'
+          setTimeout(() => this.$router.go(0), 3000)
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
     async clearCart() {
-      this.dialogAdd = true
-      this.titleAdd = 'Removing all items'
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["clear_cart"],
-        sender: wallet.account(),
-      })
-      await contract.clear_cart({}, '85000000000000',
-      ).then((response) => {
-        console.log(response)
-        this.dialogAdd = false
-        this.dialogMessage = true
-        this.titleDM = 'Successful'
-        this.messageDM = 'Delete all items successful'
-        setTimeout(() => this.$router.go(0), 3000)
-      }).catch(err => {
-        console.log(err)
-      })
+      if (wallet.isSignedIn()) {
+        this.dialogAdd = true
+        this.titleAdd = 'Removing all items'
+        
+        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+          changeMethods: ["clear_cart"],
+          sender: wallet.account(),
+        })
+        await contract.clear_cart({}, '85000000000000',
+        ).then((response) => {
+          console.log(response)
+          this.dialogAdd = false
+          this.dialogMessage = true
+          this.titleDM = 'Successful'
+          this.messageDM = 'Delete all items successful'
+          setTimeout(() => this.$router.go(0), 3000)
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
     async purchase(item) {
       // console.log("purchase")

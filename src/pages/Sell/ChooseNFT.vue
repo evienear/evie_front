@@ -15,7 +15,7 @@
         </button>
       </aside>
 
-      <aside class="start">
+      <!-- <aside class="start">
         <v-col v-for="(item, index) in dataFilter" v-bind:key="index"
           cols="6" sm="4" md="3" lg="2" class="center">
           <v-select
@@ -31,7 +31,7 @@
             </template>
           </v-select>
         </v-col>
-      </aside>
+      </aside> -->
       
     </v-col>
     <!-- AQUI COMIENZAN LOD NFT -->

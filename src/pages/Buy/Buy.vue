@@ -560,39 +560,40 @@ export default {
       }
     },
     async addCartItem(item) {
-      
-      item.select = true
       // connect to NEAR
-      this.dialogAdd = true
-      this.titleAdd = 'Adding NFT to cart'
-      var price = utils.format.parseNearAmount((item.price).toString())
-      var itemNft = {
-        token_id: item.token_id,
-        contract_id: this.collectionId,
-        contract_market: item.marketplace,
-        price: price,
-        base_uri: item.metadata.media,
-      }
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["add_item"],
-        sender: wallet.account(),
-      })
-      await contract.add_item({
-        item: itemNft,
-      }, '85000000000000').then((response) => {
-        console.log(response, 'response addCart');
-        this.getCartItems()
+      if (wallet.isSignedIn()) {
         item.select = true
-        this.dialogAdd = false
-      }).catch(err => {
-        console.log(err)
-      })
-      
+        this.dialogAdd = true
+        this.titleAdd = 'Adding NFT to cart'
+        var price = utils.format.parseNearAmount((item.price).toString())
+        var itemNft = {
+          token_id: item.token_id,
+          contract_id: this.collectionId,
+          contract_market: item.marketplace,
+          price: price,
+          base_uri: item.metadata.media,
+        }
+        
+        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+          changeMethods: ["add_item"],
+          sender: wallet.account(),
+        })
+        await contract.add_item({
+          item: itemNft,
+        }, '85000000000000').then((response) => {
+          console.log(response, 'response addCart');
+          this.getCartItems()
+          item.select = true
+          this.dialogAdd = false
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
     
     async getCartItems() {
