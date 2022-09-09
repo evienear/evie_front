@@ -46,29 +46,31 @@ export default {
       localStorage.removeItem('idForm')
     },
     async getForm() {
-      this.$store.commit('Load', true)
-
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["get_forms"],
-        sender: wallet.account(),
-      })
-      await contract.get_forms({
-        from_index: '0',
-        limit: 50
-      }, '85000000000000',
-      ).then((response) => {
-        // console.log(response);
-        this.$store.commit('Load', false)
-        this.dataNFTProjects = response
-      }).catch(err => {
-        console.log(err)
-      })
+      if (wallet.isSignedIn()) {
+        this.$store.commit('Load', true)
+
+        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+          changeMethods: ["get_forms"],
+          sender: wallet.account(),
+        })
+        await contract.get_forms({
+          from_index: '0',
+          limit: 50
+        }, '85000000000000',
+        ).then((response) => {
+          // console.log(response);
+          this.$store.commit('Load', false)
+          this.dataNFTProjects = response
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
     viewEducation(item) {
       // console.log(item)
