@@ -152,6 +152,7 @@ export default {
     },
     viewNft(item) {
       localStorage.collections = JSON.stringify(item)
+      localStorage.nft_contract = item.nft_contract
       this.$router.push({
         name: 'buy',
         params:{

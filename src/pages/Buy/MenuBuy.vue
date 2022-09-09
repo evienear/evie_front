@@ -205,7 +205,7 @@
 </template>
 
 <script>
-// import axios from 'axios'
+import axios from 'axios'
 import * as nearApi from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ } = nearApi;
@@ -272,7 +272,7 @@ export default {
     },
     async getBalance() {
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -291,7 +291,7 @@ export default {
     async removeCartItem(item) {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -318,6 +318,9 @@ export default {
         }, '85000000000000',
         ).then((response) => {
           console.log(response);
+          axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
+            console.log(res)
+          }).catch(erro => {console.log(erro)})
           this.dialogAdd = false
           this.dialogMessage = true
           this.titleDM = 'Successful'
@@ -331,7 +334,7 @@ export default {
     async clearCart() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -346,6 +349,9 @@ export default {
         await contract.clear_cart({}, '85000000000000',
         ).then((response) => {
           console.log(response)
+          axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
+            console.log(res)
+          }).catch(erro => {console.log(erro)})
           this.dialogAdd = false
           this.dialogMessage = true
           this.titleDM = 'Successful'
@@ -360,7 +366,7 @@ export default {
       // console.log("purchase")
       // console.log(this.nftCart)
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       
       const wallet = new WalletConnection(near);

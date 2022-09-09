@@ -228,12 +228,28 @@ export default {
     }
   },
   mounted() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    urlParams.get("transactionHashes")
+    this.hash = "https://explorer.mainnet.near.org/transactions/" + urlParams.get("transactionHashes")
+    if (urlParams.get("transactionHashes") !== null) {
+      console.log('aqui' + urlParams.get("transactionHashes"))
+      axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => {
+        console.log(response)
+        this.$router.go(0)
+        history.replaceState(null, location.href.split("?")[0], '/#/sell');
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+    if (urlParams.get("errorCode") !== null) {
+      history.replaceState(null, location.href.split("?")[0], '/#/sell'  + localStorage.nft_contract);
+    }
     this.viewTokens()
     this.listMarkets()
   },
   methods: {
     async viewTokens() {
-      // console.log(this.collectionId)
       axios.post('https://evie.pro:3070/api/v1/listnftowner', {
       // axios.post('http://157.230.2.213:3071/api/v1/listnftowner', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnftowner', {
@@ -251,7 +267,7 @@ export default {
       }).catch(err => console.log(err))
     },
     async market(token_id, precio, base_uri, marketplace, collection) {
-      // console.log(token_id)
+      console.log(token_id, 'token id')
       this.dataNftTokens = []
       var price = ''
       if(precio !== null) {
@@ -262,8 +278,7 @@ export default {
       var responseData = []
       // connect to NEAR
       const near = await connect(
-        //CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -275,30 +290,30 @@ export default {
         token_id: token_id
       }).then((response) => {
         responseData[0] = response
+        console.log(responseData)
         responseData.forEach(item => {
-          if(marketplace !== null) {
-            if (item.metadata.extra !== null) {
-              item.metadata.extra = JSON.parse(item.metadata.extra)
-              item.attributes = item.metadata.extra.atributos
-            } 
-            if (item.metadata.extra == null) {
-              // item.metadata.extra = base_uri + '/' + item.metadata.reference
-              axios.get(base_uri + '/' + item.metadata.reference).then(res => {
-                // console.log(res.data.attributes)
-                item.attributes = res.data.attributes
-              }).catch(err => {
-                console.log(err)
-              })
-            }
-            if (base_uri !== null) {
-              item.metadata.media = base_uri + '/' + item.metadata.media
-            }
-            item.marketplace = marketplace
-            item.price = parseFloat(price)
-            item.precio = precio
-            item.collection = collection
-            this.dataChooseNFTTable.push(item)
+          if (item.metadata.extra !== null) {
+            item.metadata.extra = JSON.parse(item.metadata.extra)
+            item.attributes = item.metadata.extra.atributos
+          } 
+          if (item.metadata.extra == null) {
+            // item.metadata.extra = base_uri + '/' + item.metadata.reference
+            axios.get(base_uri + '/' + item.metadata.reference).then(res => {
+              // console.log(res.data.attributes)
+              item.attributes = res.data.attributes
+            }).catch(err => {
+              console.log(err)
+            })
           }
+          if (base_uri !== null) {
+            item.metadata.media = base_uri + '/' + item.metadata.media
+          }
+          item.marketplace = marketplace
+          item.price = parseFloat(price)
+          item.precio = precio
+          item.collection = collection
+          console.log(item)
+          this.dataChooseNFTTable.push(item)
         });
       }).catch(err => {
         console.log(err)
@@ -316,7 +331,7 @@ export default {
     async storage() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -353,6 +368,28 @@ export default {
         })
       }
       console.log(msg)
+      // connect to NEAR
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), this.dataSellSettings[0].collection, {
+        changeMethods: ["nft_approve"],
+        sender: wallet.account(),
+      })
+      await contract.nft_approve({
+        token_id: this.dataSellSettings[0].token_id,
+        account_id: this.selectedItem,
+        msg: msg,
+      },
+      '85000000000000',
+      '350000000000000000000'
+      ).then((response) => {
+        console.log(response);
+      }).catch(err => {
+        console.log(err)
+      });
     },
     async viewMarketplace(item) {
       axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {

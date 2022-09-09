@@ -194,7 +194,7 @@ export default {
       this.$store.commit('Load', true)
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -224,7 +224,7 @@ export default {
       // connect to NEAR
       this.$store.commit('Load', true)
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
