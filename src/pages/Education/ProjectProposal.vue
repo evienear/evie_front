@@ -54,10 +54,10 @@
         <aside>
           <v-col>
             <!-- <button class="button h9 btn2" @click="addForm()"> -->
-            <button class="button h9 btn2" @click="updateForm()">
+            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near'" class="button h9 btn2" @click="updateForm()">
               EDIT
             </button>
-            <button class="button h9 btn2 ml-3" @click="deleteForm()">
+            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near'" class="button h9 btn2 ml-3" @click="deleteForm()">
               DELETE
             </button>
           </v-col>
@@ -137,6 +137,7 @@ export default {
   name: "ProjectProposal",
   data() {
     return {
+      account_id: localStorage.walletAccountId,
       load: false,
       dataMarketplace: [
         { market: require("@/assets/buttons/xdn.svg") },

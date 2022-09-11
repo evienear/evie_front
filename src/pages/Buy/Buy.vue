@@ -206,7 +206,7 @@
             <v-img class="images" :src="item.media" alt="NFT Market Place" />
 
             <span class="marketplaceId btn2" style="bottom: -5% !important">
-              # {{ item.token_id}}
+              # {{ item.token_id.substr(0,10)}}
               <i class="center" v-show="item.price !== 0" style="margin-inline: 0.3125em">&bullet;</i>
               <span v-show="item.price !== 0">
                 {{ item.price.toFixed(2) }}

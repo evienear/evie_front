@@ -198,6 +198,7 @@ export default {
       titleDM: '',
       messageDM: '',
       dataMenuCollections: [],
+      account_id: localStorage.walletAccountId,
     }
   },
   mounted() {
@@ -208,6 +209,9 @@ export default {
       this.getFormId()
     }
     this.collections()
+    if(this.account_id !== 'lindaley16.near' || this.account_id !== 'sirs.near' || this.account_id !== 'andresdom.near') {
+      this.$router.push('/nft-projects')
+    }
   },
   methods: {
     async collections () {

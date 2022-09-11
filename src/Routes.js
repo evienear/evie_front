@@ -86,6 +86,11 @@ export default new Router({
         name: 'comingSoonGame',
         component: () => import('@/pages/Error/ComingSoonGame'),
       },
+      {
+        path: '/faq',
+        name: 'faq',
+        component: () => import('@/pages/Faq/Faq'),
+      },
     ],
   },
     {
