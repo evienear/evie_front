@@ -824,6 +824,10 @@
       }
     }
   }
+  .v-expansion-panel {
+    background-color: var(--colorCartas) !important;
+    div, button {color: var(--color)}
+  }
   &.educationMain {padding-inline: 10% !important}
   .titulo {
     font-weight: 400;
