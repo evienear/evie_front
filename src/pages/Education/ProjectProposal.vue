@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
@@ -194,11 +194,11 @@ export default {
     async getFormId() {
       //console.log('getForm', this.idForm)
       this.$store.commit('Load', true)
-      axios.post('https://evie.pro:3070/api/v1/descformedu', {
-        'id': this.idForm 
-      }).then(response => {
-        console.log(response.data)
-      })
+      // axios.post('https://evie.pro:3070/api/v1/descformedu', {
+      //   'id': this.idForm 
+      // }).then(response => {
+      //   console.log(response.data)
+      // })
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')

@@ -319,7 +319,7 @@ export default {
         images: this.images,
       }
 
-      console.log(EduForm)
+      // console.log(EduForm)
       //connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
@@ -348,7 +348,7 @@ export default {
       // console.log(this.collection.contract)
       this.dataMenuCollections.forEach(item => {
         if (item.nft_contract === this.collection.contract) {
-          console.log(item)
+          // console.log(item)
           this.images[0] = item.icon
           this.collection.title = item.name
         }

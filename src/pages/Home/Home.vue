@@ -162,7 +162,7 @@ export default {
         'limit': 20,
         'index': this.indexPag,
       }).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(item => {
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {

@@ -354,7 +354,7 @@ export default {
     urlParams.get("transactionHashes")
     this.hash = "https://explorer.mainnet.near.org/transactions/" + urlParams.get("transactionHashes")
     if (urlParams.get("transactionHashes") !== null) {
-      console.log('aqui' + urlParams.get("transactionHashes"))
+      // console.log('aqui' + urlParams.get("transactionHashes"))
       axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => {
         console.log(response)
         this.$router.go(0)
@@ -543,7 +543,7 @@ export default {
         }
         this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
       }
-      console.log(this.dataNftTokens)
+      // console.log(this.dataNftTokens)
     },
     //FIN DE FILTROS
 
@@ -596,7 +596,7 @@ export default {
           axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
             console.log(res)
           }).catch(erro => {console.log(erro)})
-          console.log(response, 'response addCart');
+          console.log(response);
           this.getCartItems()
           item.select = true
           this.dialogAdd = false
@@ -661,8 +661,8 @@ export default {
       this.viewTokens()
     },
     filterPrice() {
-      console.log(this.priceFilter.length)
-      console.log(this.priceFilter)
+      // console.log(this.priceFilter.length)
+      // console.log(this.priceFilter)
       for (var i = 0; i < this.priceFilter.length; i++) {
         if (this.priceFilter[i] === 'Lowest Price') {
           this.filterSelect = 'asc'

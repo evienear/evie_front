@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     viewForm() {
-      console.log('viewForm')
+      // console.log('viewForm')
       
       this.$router.push('/form')
     },
