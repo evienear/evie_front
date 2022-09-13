@@ -8,14 +8,14 @@
         <h1 class="tituloBack p">PROJECT PROPOSAL</h1>
       </aside>
 
-      <aside class="contenedor1 start">
+      <!-- <aside class="contenedor1 start">
         <span class="h9-em">BUY FROM:</span>
         <aside class="divrow">
           <v-btn v-for="(item,i) in dataMarketplace" :key="i" icon disabled>
             <img :src="item.market" alt="button">
           </v-btn>
         </aside>
-      </aside>
+      </aside> -->
     </v-col>
 
     <v-col class="container2">
@@ -127,7 +127,7 @@
 </template>
 
 <script>
-
+// import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
@@ -192,7 +192,13 @@ export default {
   },
   methods: {
     async getFormId() {
+      //console.log('getForm', this.idForm)
       this.$store.commit('Load', true)
+      // axios.post('https://evie.pro:3070/api/v1/descformedu', {
+      //   'form_id': this.idForm 
+      // }).then(response => {
+      //   console.log(response)
+      // })
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')

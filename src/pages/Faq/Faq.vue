@@ -7,11 +7,9 @@
         <v-expansion-panel v-for="(item,i) in dataFaq" :key="i">
           <v-expansion-panel-header class="h7">
             {{ item.question }}
-            <!-- <span>{{ item.question }}</span> -->
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             {{ item.answer }}
-            <!-- <span>{{ item.answer }}</span> -->
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>

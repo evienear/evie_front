@@ -137,7 +137,7 @@
             <div>
               <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
                 dataChips.splice(dataChips.indexOf(item),1);
-                dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', '')
+                dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', item.name)
                 
               ">
                 <span>{{item.name}}</span>
@@ -173,7 +173,7 @@
               <div>
                 <v-chip v-for="(item,i) in dataChips" :key="i" close close-icon="mdi-close" @click:close="
                   dataChips.splice(dataChips.indexOf(item),1);
-                  dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', '')
+                  dataAtt2.forEach(e=>{e.list.findIndex(data=>data==item)!==-1?e.list[e.list.findIndex(data=>data==item)].selected=false:null});filterAttr('', item.name)
                 ">
                   <span>{{item.name}}</span>
                 </v-chip>
@@ -386,7 +386,7 @@ export default {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
-        'limit': 50,
+        'limit': 10,
         'index': this.indexNftCollection,
         'sales': this.sales,
         'order': 'precio',
@@ -394,7 +394,7 @@ export default {
       }).then(response => {
         //console.log(response.data, 'respuesta nft')
         response.data.forEach(item => {
-          console.log(item)
+          // console.log(item)
           var price = ''
           if(item.precio !== null) {
             price = utils.format.formatNearAmount((item.precio.toString()))
@@ -405,7 +405,7 @@ export default {
             item.metadata.extra = JSON.parse(item.metadata.extra)
             item.attributes = item.metadata.extra.atributos
           }
-          if (item.extra == null) {
+          if (item.extra == null && item.reference !== null) {
             // item.metadata.extra = base_uri + '/' + item.metadata.reference
             axios.get(item.base_uri + '/' + item.reference).then(res => {
               item.attributes = res.data.attributes
@@ -415,69 +415,13 @@ export default {
           }
           item.price = parseFloat(price)
           item.select = false
+          
           this.dataNftTokens.push(item)
-          //if(item.precio !== null && item.marketplace !== null) {
-            // this.market(item.token_id, item.precio, item.base_uri, item.marketplace)
-          //}
         });
-        console.log(this.dataNftTokens)
+        // console.log(this.dataNftTokens)
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
-    // ver nft
-    // async market(token_id, precio, base_uri, marketplace) {
-    //   this.dataNftTokens = []
-    //   var price = ''
-    //   if(precio !== null) {
-    //     price = utils.format.formatNearAmount((precio.toString()))
-    //   } else {
-    //     price = 0
-    //   }
-
-    //   var responseData = []
-    //   // const CONTRACT = this.ownerId.toString();
-    //   // connect to NEAR
-    //   const near = await connect(
-    //     CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-    //     // CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
-    //   );
-    //   // create wallet connection
-    //   const wallet = new WalletConnection(near);
-    //   const contract = new Contract(wallet.account(), this.collectionId, {
-    //     viewMethods: ["nft_token"],
-    //     sender: wallet.account(),
-    //   });
-    //   await contract.nft_token({
-    //     token_id: token_id
-    //   }).then((response) => {
-    //     responseData[0] = response
-    //     responseData.forEach(item => {
-    //       if (item.metadata.extra !== null) {
-    //         item.metadata.extra = JSON.parse(item.metadata.extra)
-    //         item.attributes = item.metadata.extra.atributos
-    //       }
-    //       if (item.metadata.extra == null) {
-    //         // item.metadata.extra = base_uri + '/' + item.metadata.reference
-    //         axios.get(base_uri + '/' + item.metadata.reference).then(res => {
-    //           // console.log(res.data.attributes)
-    //           item.attributes = res.data.attributes
-    //         }).catch(err => {
-    //           console.log(err)
-    //         })
-    //       }
-    //       if (base_uri !== null) {
-    //         item.metadata.media = base_uri + '/' + item.metadata.media
-    //       }
-    //       item.marketplace = marketplace
-    //       item.price = parseFloat(price)
-    //       item.select = false
-    //       var object = item
-    //       this.dataNftTokens.push(object)
-    //     });
-    //   }).catch(err => {
-    //     console.log(err)
-    //   });
-    // },
     // COMIENZAN LOS FILTROS
     async armarAtributos() {
       var attributes = []
@@ -487,7 +431,9 @@ export default {
         this.dataNftTokens2 = this.dataNftTokens
         this.dataNftTokens.forEach(item => {
           // console.log(item)
-          attributes.push(item.attributes)
+          if (item.attributes) {
+            attributes.push(item.attributes)
+          }
         })
         //console.log(attributes)
         this.dataAttributeNft(attributes)
@@ -497,6 +443,7 @@ export default {
     dataAttributeNft(attributes) {
       const dataAttributes = []
       attributes.forEach(item => {
+        // console.log(item, 'attributes')
         item.forEach(data => {
           dataAttributes.push(data)
         })
@@ -535,10 +482,17 @@ export default {
     },
     filterAttr(filter, name) {
       var data = []
-      // if (filter !== '' && name !== '') {
-      const index = this.dataAttr.findIndex(i =>
-        i.filter === filter && i.name === name
-      )
+      var index = null
+      if (filter !== '') {
+        index = this.dataAttr.findIndex(i =>
+          i.filter === filter && i.name === name
+        )
+      }
+      if (filter === '') {
+        index = this.dataAttr.findIndex(i =>
+          i.name === name
+        )
+      }
       // console.log(index)
       if (index > -1) {
         this.dataAttr.splice(index, 1)
@@ -547,11 +501,13 @@ export default {
         try {
           this.dataAttr.forEach(filter => {
             this.dataNftTokens2.forEach(nft => {
-              nft.attributes.forEach(tag => {
-                if (filter.filter === tag.trait_type && filter.name === tag.value){
-                  data.push(nft)
-                }
-              })
+              if (nft.attributes) {
+                nft.attributes.forEach(tag => {
+                  if (filter.filter === tag.trait_type && filter.name === tag.value){
+                    data.push(nft)
+                  }
+                })
+              }
             })
           })
         } catch (e) {
@@ -573,11 +529,13 @@ export default {
         try {
           this.dataAttr.forEach(filter => {
             this.dataNftTokens2.forEach(nft => {
-              nft.attributes.forEach(tag => {
-                if (filter.filter === tag.trait_type && filter.name === tag.value){
-                  data.push(nft)
-                }
-              })
+              if (nft.attributes) {
+                nft.attributes.forEach(tag => {
+                  if (filter.filter === tag.trait_type && filter.name === tag.value){
+                    data.push(nft)
+                  }
+                })
+              }
             })
           })
         } catch (e) {
@@ -585,7 +543,7 @@ export default {
         }
         this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
       }
-      // console.log(this.dataNftTokens)
+      console.log(this.dataNftTokens)
     },
     //FIN DE FILTROS
 

@@ -209,9 +209,9 @@ export default {
       this.getFormId()
     }
     this.collections()
-    if(this.account_id !== 'lindaley16.near' || this.account_id !== 'sirs.near' || this.account_id !== 'andresdom.near') {
-      this.$router.push('/nft-projects')
-    }
+    // if(this.account_id !== 'lindaley16.near' || this.account_id !== 'sirs.near' || this.account_id !== 'andresdom.near') {
+    //   this.$router.push('/nft-projects')
+    // }
   },
   methods: {
     async collections () {
@@ -240,6 +240,11 @@ export default {
       }).catch(err => console.log(err))
     },
     async addForm() {
+      var idForm = 0
+      axios.post('https://evie.pro:3070/api/v1/GenerateId').then(response => {
+        console.log(response.data.id)
+        idForm = response.data.id
+      }).catch(err => console.log(err))
       this.$store.commit('Load', true)
       var EduForm = {
         title: this.collection.title,
@@ -263,6 +268,7 @@ export default {
         sender: wallet.account(),
       })
       await contract.add_form({
+        form_id: idForm,
         form: EduForm
       }, '85000000000000',
       ).then((response) => {

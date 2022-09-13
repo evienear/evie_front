@@ -11,8 +11,8 @@
 
     <v-col class="containerNFTProjects padd">
       <v-card v-for="(item,i) in dataNFTProjects" :key="i" color="transparent" @click="viewEducation(item)">
-        <img class="images" :src="item.form.images" alt="token" />
-        <span>{{ item.form.title }}</span>
+        <img class="images" :src="item.images[0]" alt="token" />
+        <span>{{ item.title }}</span>
       </v-card>
     </v-col>
 
@@ -23,12 +23,12 @@
 </template>
 
 <script>
-// import axios from 'axios'
-import * as nearAPI from "near-api-js";
-import { CONFIG } from "@/services/api";
-const { connect, keyStores, WalletConnection, Contract } = nearAPI;
-// const CONTRACT_NAME = 'backend.evie.testnet'
-const CONTRACT_NAME = 'backend.eviepro.near'
+import axios from 'axios'
+// import * as nearAPI from "near-api-js";
+// import { CONFIG } from "@/services/api";
+// const { connect, keyStores, WalletConnection, Contract } = nearAPI;
+// // const CONTRACT_NAME = 'backend.evie.testnet'
+// const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "NFTProjects",
   data() {
@@ -43,35 +43,39 @@ export default {
   },
   methods: {
     viewForm() {
-      this.$router.push('/form'),
-      localStorage.removeItem('idForm')
+      console.log('viewForm')
+      
+      this.$router.push('/form')
     },
     async getForm() {
-      // connect to NEAR
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      if (wallet.isSignedIn()) {
-        this.$store.commit('Load', true)
+      axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
+        this.dataNFTProjects = response.data
+      }).catch(err => { console.log(err) })
+      // // connect to NEAR
+      // const near = await connect(
+      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
+      // );
+      // // create wallet connection
+      // const wallet = new WalletConnection(near);
+      // if (wallet.isSignedIn()) {
+      //   this.$store.commit('Load', true)
 
-        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-          changeMethods: ["get_forms"],
-          sender: wallet.account(),
-        })
-        await contract.get_forms({
-          from_index: '0',
-          limit: 50
-        }, '85000000000000',
-        ).then((response) => {
-          // console.log(response);
-          this.$store.commit('Load', false)
-          this.dataNFTProjects = response
-        }).catch(err => {
-          console.log(err)
-        })
-      }
+      //   const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+      //     changeMethods: ["get_forms"],
+      //     sender: wallet.account(),
+      //   })
+      //   await contract.get_forms({
+      //     from_index: '0',
+      //     limit: 50
+      //   }, '85000000000000',
+      //   ).then((response) => {
+      //     // console.log(response);
+      //     this.$store.commit('Load', false)
+      //     this.dataNFTProjects = response
+      //   }).catch(err => {
+      //     console.log(err)
+      //   })
+      // }
     },
     viewEducation(item) {
       // console.log(item)
