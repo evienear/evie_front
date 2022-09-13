@@ -386,7 +386,7 @@ export default {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
-        'limit': 10,
+        'limit': 50,
         'index': this.indexNftCollection,
         'sales': this.sales,
         'order': 'precio',
@@ -557,7 +557,13 @@ export default {
         this.titleDM = 'Already exists'
         this.messageDM = 'The token already exists in the cart'
       } else {
-        this.addCartItem(item)
+        if(item.precio !== null) {
+          this.addCartItem(item)
+        } else {
+          this.dialogMessage = true
+          this.titleDM = 'Not for sale'
+          this.messageDM = 'This NFT is not for sale'
+        }
       }
     },
     async addCartItem(item) {

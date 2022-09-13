@@ -42,6 +42,7 @@
                     solo background-color="transparent"
                     hide-details="true"
                     maxlength="20"
+                    v-debounce:300ms="searchCollections"
                   >
                     <template v-slot:label>
                       <span style="font-weight: 600">SEARCH BY COLLECTIONS</span>
@@ -109,7 +110,7 @@ export default {
     return {
       menuCollections: false,
       search: '',
-      filter: [ 'foo', 'bar', 'fizz', 'buzz' ],
+      // filter: [ 'foo', 'bar', 'fizz', 'buzz' ],
       resultsCollection: [],
       dataMenuCollections: [],
       indexPag: 0,
@@ -117,21 +118,51 @@ export default {
   },
   
   mounted() {
-    this.collections()
+    this.searchCollections()
   },
   methods: {
-    async collections () {
+    // async collections () {
+    //   this.dataMenuCollections = []
+    //   var data = []
+    //   this.$store.commit('Load', true)
+    //   await axios.post('https://evie.pro:3070/api/v1/listcollections', {
+    //   // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
+    //   // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
+    //     'limit': 20,
+    //     'index': this.indexPag,
+    //   }).then(response => {
+    //     // console.log(response.data)
+    //     // this.dataMenuCollections = response.data
+    //     response.data.forEach(item => {
+    //       if(item.icon == null) {
+    //         axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
+    //           // console.log(res.data.data.results)
+    //           data = res.data.data.results
+    //           data.forEach(element => {
+    //             if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+    //               item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+    //             }
+    //           });
+    //         })
+    //       }
+    //       this.dataMenuCollections.push(item)
+    //     })
+    //     this.$store.commit('Load', false)
+    //     //console.log(this.dataMenuCollections)
+    //   }).catch(err => console.log(err))
+    // },
+    async searchCollections () {
       this.dataMenuCollections = []
       var data = []
-      this.$store.commit('Load', true)
-      await axios.post('https://evie.pro:3070/api/v1/listcollections', {
-      // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
-      // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
+      if(this.search === '') {
+        this.$store.commit('Load', true)
+      }
+      await axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
+        'input': this.search,
         'limit': 20,
         'index': this.indexPag,
       }).then(response => {
-        // console.log(response.data)
-        // this.dataMenuCollections = response.data
+        console.log(response.data)
         response.data.forEach(item => {
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {

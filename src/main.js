@@ -10,9 +10,10 @@ import "vue-toastification/dist/index.css";
 //import axios from "axios";
 import VueAnimateOnScroll from 'vue-animate-onscroll';
 import VueApexCharts from 'vue-apexcharts'
+import vueDebounce from 'vue-debounce'
 
 Vue.use(VueApexCharts)
-
+Vue.use(vueDebounce)
 Vue.component('apexchart', VueApexCharts)
 
 Vue.use(VueAnimateOnScroll);
