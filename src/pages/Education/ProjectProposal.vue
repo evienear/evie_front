@@ -34,22 +34,22 @@
 
       <section class="contRight">
         <aside>
-          <img class="images" :src="dataProjectProposal.description.form.images" alt="nft">
+          <img class="images" :src="dataProjectProposal.description[0].images[0]" alt="nft">
           <div>
-            <h3 class="Title">{{ dataProjectProposal.description.form.title }}</h3>
-            <span><strong>Origianl Supply: </strong>{{ dataProjectProposal.description.form.supply }}</span>
-            <span><strong>Website: </strong>{{ dataProjectProposal.description.form.website }}</span>
-            <span><strong>Twitter: </strong>{{ dataProjectProposal.description.form.twitter }}</span>
-            <span><strong>Instagram: </strong>{{ dataProjectProposal.description.form.instagram }}</span>
-            <span><strong>Discord: </strong>{{ dataProjectProposal.description.form.discord }}</span>
+            <h3 class="Title">{{ dataProjectProposal.description[0].title }}</h3>
+            <span><strong>Origianl Supply: </strong>{{ dataProjectProposal.description[0].supply }}</span>
+            <span><strong>Website: </strong>{{ dataProjectProposal.description[0].website }}</span>
+            <span><strong>Twitter: </strong>{{ dataProjectProposal.description[0].twitter }}</span>
+            <span><strong>Instagram: </strong>{{ dataProjectProposal.description[0].instagram }}</span>
+            <span><strong>Discord: </strong>{{ dataProjectProposal.description[0].discord }}</span>
           </div>
         </aside>
 
         <aside>
-          <img v-if="dataProjectProposal.description.img" :src="dataProjectProposal.description.img"
-            alt="image">
+          <!-- <img v-if="dataProjectProposal.description.img" :src="dataProjectProposal.description.img" 
+            alt="image">-->
           <h3 class="Title">ABOUT:</h3>
-          <span>{{ dataProjectProposal.description.form.descriptions[0] }}</span>
+          <span>{{ dataProjectProposal.description[0].descriptions[0] }}</span>
         </aside>
         <aside>
           <v-col>
@@ -127,7 +127,7 @@
 </template>
 
 <script>
-// import axios from 'axios'
+import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
@@ -194,34 +194,37 @@ export default {
     async getFormId() {
       //console.log('getForm', this.idForm)
       this.$store.commit('Load', true)
-      // axios.post('https://evie.pro:3070/api/v1/descformedu', {
-      //   'id': this.idForm 
-      // }).then(response => {
-      //   console.log(response.data)
-      // })
-      // connect to NEAR
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["get_form_by_id"],
-        sender: wallet.account(),
-      })
-      await contract.get_form_by_id({
-        form_id: this.idForm
-      }, '85000000000000',
-      ).then((response) => {
-        // console.log(response);
-        this.dataNFTProjects = response
-        this.dataProjectProposal.description = response
-        // console.log(this.dataProjectProposal.description)
-        this.load = false
+      axios.post('https://evie.pro:3070/api/v1/descformedu', {
+        'id': this.idForm 
+      }).then(response => {
+        // console.log(response.data)
+        this.dataProjectProposal.description = response.data
+        console.log(this.dataProjectProposal.description)
         this.$store.commit('Load', false)
-      }).catch(err => {
-        console.log(err)
       })
+      // connect to NEAR
+      // const near = await connect(
+      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+      // );
+      // // create wallet connection
+      // const wallet = new WalletConnection(near);
+      // const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+      //   changeMethods: ["get_form_by_id"],
+      //   sender: wallet.account(),
+      // })
+      // await contract.get_form_by_id({
+      //   form_id: this.idForm
+      // }, '85000000000000',
+      // ).then((response) => {
+      //   console.log(response);
+      //   // this.dataNFTProjects = response
+      //   // this.dataProjectProposal.description = response
+      //   // console.log(this.dataProjectProposal.description)
+      //   this.load = false
+      //   this.$store.commit('Load', false)
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
     updateForm() {
       this.$router.push('/form')
