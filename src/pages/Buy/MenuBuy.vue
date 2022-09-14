@@ -384,7 +384,7 @@ export default {
       },'300000000000000',
       item.price).then((response) => {
         console.log(response);
-        axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
+        axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(res => {
           console.log(res)
         }).catch(erro => {console.log(erro)})
       }).catch(err => {

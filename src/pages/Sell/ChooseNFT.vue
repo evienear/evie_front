@@ -160,6 +160,36 @@
         </v-col>
       </section>
     </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialogMessage"
+      max-width="400"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              {{ titleDM }}
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <span>
+            {{ messageDM }}
+          </span>
+        </v-col>
+        <v-col v-show="transactionHashes !== ''" cols="12" class="center">
+          <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes">
+            {{ transactionHashes }}
+          </a>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="dialogMessage = false">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
@@ -225,6 +255,10 @@ export default {
       ],
       selectedItem: '',
       data: [],
+      dialogMessage: false,
+      titleDM: '',
+      messageDM:'',
+      transactionHashes: '',
     }
   },
   mounted() {
@@ -236,7 +270,12 @@ export default {
       console.log('aqui' + urlParams.get("transactionHashes"))
       axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => {
         console.log(response)
-        this.$router.go(0)
+        console.log()
+        this.dialogMessage = true
+        this.titleDM = 'Successful'
+        this.messageDM = 'Successful listing'
+        this.transactionHashes = urlParams.get("transactionHashes")
+        // this.$router.go(0)
         history.replaceState(null, location.href.split("?")[0], '/#/sell');
       }).catch(err => {
         console.log(err)
@@ -360,14 +399,14 @@ export default {
       if(!this.sameSellPrice) {
         price = utils.format.parseNearAmount((this.price).toString())
         msg = JSON.stringify({
-        market_type: "sale", price: price, ft_token_id: "near"
-      })
+          market_type: "sale", price: price, ft_token_id: "near"
+        })
       } else if(this.sameSellPrice) {
         msg = JSON.stringify({
           market_type: "sale", price: this.dataSellSettings[0].precio, ft_token_id: "near"
         })
       }
-      console.log(msg)
+      // console.log(msg)
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')

@@ -253,6 +253,11 @@
             {{ messageDM }}
           </span>
         </v-col>
+        <v-col v-show="transactionHashes !== ''" cols="12" class="center">
+          <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes">
+            {{ transactionHashes }}
+          </a>
+        </v-col>
         <v-col cols="12">
           <button  class="button h9 btn2" @click="dialogMessage = false">
             CLOSE
@@ -340,6 +345,7 @@ export default {
       dialogMessage: false,
       titleDM: '',
       messageDM:'',
+      transactionHashes: '',
       dialogAdd: false,
       titleAdd: '',
       indexNftCollection: 0,
@@ -357,8 +363,13 @@ export default {
       // console.log('aqui' + urlParams.get("transactionHashes"))
       axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => {
         console.log(response)
-        this.$router.go(0)
+        this.dialogMessage = true
+        this.titleDM = 'Successful'
+        this.messageDM = 'Purchase successful'
+        this.transactionHashes = urlParams.get("transactionHashes")
         history.replaceState(null, location.href.split("?")[0], '/#/buy/' + localStorage.nft_contract);
+        // this.$router.go(0)
+        
       }).catch(err => {
         console.log(err)
       })
@@ -392,9 +403,8 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
-        //console.log(response.data, 'respuesta nft')
+        // console.log(response.data, 'respuesta nft')
         response.data.forEach(item => {
-          // console.log(item)
           var price = ''
           if(item.precio !== null) {
             price = utils.format.formatNearAmount((item.precio.toString()))
@@ -402,8 +412,15 @@ export default {
             price = 0
           }
           if (item.extra !== null) {
-            item.metadata.extra = JSON.parse(item.metadata.extra)
-            item.attributes = item.metadata.extra.atributos
+            if(JSON.parse(item.extra)) {
+              item.extra = JSON.parse(item.extra)
+              if (item.extra.attributes) {
+                item.attributes = item.extra.attributes
+              }
+              if (item.extra.atributos) {
+                item.attributes = item.extra.atributos
+              }
+            }
           }
           if (item.extra == null && item.reference !== null) {
             // item.metadata.extra = base_uri + '/' + item.metadata.reference
@@ -415,7 +432,7 @@ export default {
           }
           item.price = parseFloat(price)
           item.select = false
-          
+          // console.log(item)
           this.dataNftTokens.push(item)
         });
         // console.log(this.dataNftTokens)
@@ -567,6 +584,7 @@ export default {
       }
     },
     async addCartItem(item) {
+      console.log(item)
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
@@ -636,9 +654,7 @@ export default {
                   item.select = true
                 }
               })
-            
             });
-          
             this.cantCart = this.nftCart.length
           }
           this.$store.commit('Load', false)
