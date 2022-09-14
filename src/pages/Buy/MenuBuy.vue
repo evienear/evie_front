@@ -365,6 +365,7 @@ export default {
     async purchase(item) {
       // console.log("purchase")
       // console.log(this.nftCart)
+      console.log(item)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
@@ -383,6 +384,9 @@ export default {
       },'300000000000000',
       item.price).then((response) => {
         console.log(response);
+        axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
+          console.log(res)
+        }).catch(erro => {console.log(erro)})
       }).catch(err => {
         console.log(err)
       })
