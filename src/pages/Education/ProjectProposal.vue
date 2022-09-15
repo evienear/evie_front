@@ -214,29 +214,6 @@ export default {
         // console.log(this.dataProjectProposal.description)
         this.$store.commit('Load', false)
       })
-      // connect to NEAR
-      // const near = await connect(
-      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-      // );
-      // // create wallet connection
-      // const wallet = new WalletConnection(near);
-      // const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-      //   changeMethods: ["get_form_by_id"],
-      //   sender: wallet.account(),
-      // })
-      // await contract.get_form_by_id({
-      //   form_id: this.idForm
-      // }, '85000000000000',
-      // ).then((response) => {
-      //   console.log(response);
-      //   // this.dataNFTProjects = response
-      //   // this.dataProjectProposal.description = response
-      //   // console.log(this.dataProjectProposal.description)
-      //   this.load = false
-      //   this.$store.commit('Load', false)
-      // }).catch(err => {
-      //   console.log(err)
-      // })
     },
     updateForm() {
       this.$router.push('/form')
