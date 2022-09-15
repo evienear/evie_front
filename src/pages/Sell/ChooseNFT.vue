@@ -267,22 +267,20 @@ export default {
     urlParams.get("transactionHashes")
     this.hash = "https://explorer.mainnet.near.org/transactions/" + urlParams.get("transactionHashes")
     if (urlParams.get("transactionHashes") !== null) {
-      console.log('aqui' + urlParams.get("transactionHashes"))
-      axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => {
-        console.log(response)
-        console.log()
-        this.dialogMessage = true
-        this.titleDM = 'Successful'
-        this.messageDM = 'Successful listing'
-        this.transactionHashes = urlParams.get("transactionHashes")
-        // this.$router.go(0)
-        history.replaceState(null, location.href.split("?")[0], '/#/sell');
-      }).catch(err => {
-        console.log(err)
-      })
+      // console.log('aqui' + urlParams.get("transactionHashes"))
+      setTimeout(() => {
+        axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
+      }, 35000)
+      this.dialogMessage = true
+      this.titleDM = 'Successful'
+      this.messageDM = 'Successful listing'
+      this.transactionHashes = urlParams.get("transactionHashes")
+      // this.$router.go(0)
+      history.replaceState(null, location.href.split("?")[0], '/#/sell');
+      
     }
     if (urlParams.get("errorCode") !== null) {
-      history.replaceState(null, location.href.split("?")[0], '/#/sell'  + localStorage.nft_contract);
+      history.replaceState(null, location.href.split("?")[0], '/#/sell');
     }
     this.viewTokens()
     this.listMarkets()

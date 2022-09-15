@@ -234,6 +234,7 @@ export default {
       messageDM:'',
       dialogAdd: false,
       titleAdd: '',
+      refreshCart: false,
     }
   },
   created() {
@@ -254,6 +255,15 @@ export default {
     this.getBalance()
     //console.log(this.dataMenuBuy)
     this.getCartItems()
+    if (localStorage.refreshCart === 'true') {
+      this.refreshCart = false
+      localStorage.refreshCart = this.refreshCart
+      setTimeout(() => {
+        axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
+          console.log(res)
+        }).catch(erro => {console.log(erro)})
+      }, 35000)
+    }
   },
   methods: {
     changeToReview() {
@@ -318,13 +328,12 @@ export default {
         }, '85000000000000',
         ).then((response) => {
           console.log(response);
-          axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
-            console.log(res)
-          }).catch(erro => {console.log(erro)})
           this.dialogAdd = false
           this.dialogMessage = true
           this.titleDM = 'Successful'
           this.messageDM = 'Delete item successful'
+          this.refreshCart = true
+          localStorage.refreshCart = this.refreshCart
           setTimeout(() => this.$router.go(0), 3000)
         }).catch(err => {
           console.log(err)
@@ -349,13 +358,12 @@ export default {
         await contract.clear_cart({}, '85000000000000',
         ).then((response) => {
           console.log(response)
-          axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
-            console.log(res)
-          }).catch(erro => {console.log(erro)})
           this.dialogAdd = false
           this.dialogMessage = true
           this.titleDM = 'Successful'
           this.messageDM = 'Delete all items successful'
+          this.refreshCart = true
+          localStorage.refreshCart = this.refreshCart
           setTimeout(() => this.$router.go(0), 3000)
         }).catch(err => {
           console.log(err)
@@ -384,9 +392,9 @@ export default {
       },'300000000000000',
       item.price).then((response) => {
         console.log(response);
-        axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(res => {
-          console.log(res)
-        }).catch(erro => {console.log(erro)})
+        // axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(res => {
+        //   console.log(res)
+        // }).catch(erro => {console.log(erro)})
       }).catch(err => {
         console.log(err)
       })

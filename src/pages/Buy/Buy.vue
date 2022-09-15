@@ -361,18 +361,15 @@ export default {
     this.hash = "https://explorer.mainnet.near.org/transactions/" + urlParams.get("transactionHashes")
     if (urlParams.get("transactionHashes") !== null) {
       // console.log('aqui' + urlParams.get("transactionHashes"))
-      axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => {
-        console.log(response)
-        this.dialogMessage = true
-        this.titleDM = 'Successful'
-        this.messageDM = 'Purchase successful'
-        this.transactionHashes = urlParams.get("transactionHashes")
-        history.replaceState(null, location.href.split("?")[0], '/#/buy/' + localStorage.nft_contract);
-        // this.$router.go(0)
-        
-      }).catch(err => {
-        console.log(err)
-      })
+      setTimeout(() => {
+        axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
+      }, 35000)
+      this.dialogMessage = true
+      this.titleDM = 'Successful'
+      this.messageDM = 'Purchase successful'
+      this.transactionHashes = urlParams.get("transactionHashes")
+      history.replaceState(null, location.href.split("?")[0], '/#/buy/' + localStorage.nft_contract);
+      // this.$router.go(0)
     }
     if (urlParams.get("errorCode") !== null) {
       history.replaceState(null, location.href.split("?")[0], '/#/buy/'  + localStorage.nft_contract);
@@ -404,7 +401,11 @@ export default {
         'type_order': this.filterSelect
       }).then(response => {
         // console.log(response.data, 'respuesta nft')
+        var referenceJson = ''
+        var i = 0
         response.data.forEach(item => {
+          i++
+          console.log(i, item.reference)
           var price = ''
           if(item.precio !== null) {
             price = utils.format.formatNearAmount((item.precio.toString()))
@@ -412,6 +413,7 @@ export default {
             price = 0
           }
           if (item.extra !== null) {
+            console.log('extra no es null')
             if(JSON.parse(item.extra)) {
               item.extra = JSON.parse(item.extra)
               if (item.extra.attributes) {
@@ -423,9 +425,18 @@ export default {
             }
           }
           if (item.extra == null && item.reference !== null) {
-            // item.metadata.extra = base_uri + '/' + item.metadata.reference
-            axios.get(item.base_uri + '/' + item.reference).then(res => {
+            console.log('extra es nul y referencia no')
+            if(item.base_uri !== null) {
+              referenceJson = item.base_uri + '/' + item.reference
+            }
+            if (item.base_uri == null) {
+              referenceJson = item.reference
+            }
+            console.log(referenceJson)
+            axios.get(referenceJson).then(res => {
+              console.log(res.data)
               item.attributes = res.data.attributes
+              console.log(item.attributes, 'atributos')
             }).catch(err => {
               console.log(err)
             })
@@ -433,7 +444,8 @@ export default {
           item.price = parseFloat(price)
           item.select = false
           // console.log(item)
-          this.dataNftTokens.push(item)
+          this.dataNftTokens2.push(item)
+          this.dataNftTokens = this.dataNftTokens2
         });
         // console.log(this.dataNftTokens)
         this.armarAtributos()
@@ -445,7 +457,6 @@ export default {
       setTimeout(() => {
         // console.log(this.dataNftTokens)
         this.totalNft = this.dataNftTokens.length
-        this.dataNftTokens2 = this.dataNftTokens
         this.dataNftTokens.forEach(item => {
           // console.log(item)
           if (item.attributes) {
@@ -611,9 +622,12 @@ export default {
         await contract.add_item({
           item: itemNft,
         }, '85000000000000').then((response) => {
-          axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
-            console.log(res)
-          }).catch(erro => {console.log(erro)})
+          setTimeout(() => {
+            axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
+              console.log(res)
+            }).catch(erro => {console.log(erro)})
+          }, 35000)
+          
           console.log(response);
           this.getCartItems()
           item.select = true

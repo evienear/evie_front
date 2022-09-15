@@ -2,7 +2,7 @@
   <section id="home" class="center align gap">
     <h1 class="titulo">BUY</h1>
 
-    <button class="chooseNftBtn btn" @click="menuCollections=true">
+    <button class="chooseNftBtn btn" @click="menuCollections=true; this.$refs.search.focus()">
       CHOOSE NFT's
       <div class="decoration" />
       <v-icon medium>mdi-chevron-down</v-icon>
@@ -38,6 +38,7 @@
                 <v-col class="center contSearch">
                   <v-text-field
                     id="search"
+                    ref="search"
                     v-model="search"
                     solo background-color="transparent"
                     hide-details="true"
@@ -119,6 +120,7 @@ export default {
   
   mounted() {
     this.searchCollections()
+    this.search.focus()
   },
   methods: {
     // async collections () {
