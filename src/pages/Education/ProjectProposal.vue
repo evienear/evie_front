@@ -193,7 +193,7 @@ export default {
     this.idBuy = parseInt(localStorage.idCollectionForm)
     this.vieneDe = localStorage.vieneDe
     this.getFormId()
-    console.log(this.vieneDe)
+    // console.log(this.vieneDe)
   },
   methods: {
     async getFormId() {
