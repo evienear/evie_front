@@ -184,18 +184,30 @@ export default {
       dialogMessage: false,
       titleDM: '',
       messageDM: '',
+      idBuy: 0,
+      vieneDe: ''
     }
   },
   mounted() {
     this.idForm = parseInt(localStorage.idForm)
+    this.idBuy = parseInt(localStorage.idCollectionForm)
+    this.vieneDe = localStorage.vieneDe
     this.getFormId()
+    console.log(this.vieneDe)
   },
   methods: {
     async getFormId() {
+      var id = null
+      if (this.vieneDe === 'buy') {
+        id = this.idBuy
+      }
+      if (this.vieneDe === 'nftprojects') {
+        id = this.idForm
+      }
       //console.log('getForm', this.idForm)
       this.$store.commit('Load', true)
       axios.post('https://evie.pro:3070/api/v1/descformedu', {
-        'id': this.idForm 
+        'id': id 
       }).then(response => {
         // console.log(response.data)
         this.dataProjectProposal.description = response.data

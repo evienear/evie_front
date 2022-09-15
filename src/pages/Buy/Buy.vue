@@ -717,10 +717,17 @@ export default {
       this.viewTokens()
     },
     viewFormEducation() {
-      console.log(this.collection)
+      console.log(this.collection.name)
       axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
-        console.log(response.data)
-        this.dataNFTProjects = response.data
+        response.data.forEach(item => {
+          if (item.title === this.collection.name) {
+            console.log(item)
+            localStorage.vieneDe = 'buy'
+            localStorage.idCollectionForm = item.id
+            this.$router.push('/project-proposal')
+          }
+        });
+        console.log()
       }).catch(err => { console.log(err) })
     }
   }

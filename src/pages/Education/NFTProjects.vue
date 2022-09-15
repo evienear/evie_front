@@ -81,6 +81,7 @@ export default {
     viewEducation(item) {
       // console.log(item)
       localStorage.idForm = item.id
+      localStorage.vieneDe = 'nftprojects'
       this.$router.push('/project-proposal')
     },
   }
