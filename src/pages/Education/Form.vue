@@ -239,47 +239,48 @@ export default {
         })
       }).catch(err => console.log(err))
     },
-    async addForm() {
-      var idForm = 0
-      axios.post('https://evie.pro:3070/api/v1/GenerateId').then(response => {
+    addForm() {
+      var idForm = null
+      axios.post('https://evie.pro:3070/api/v1/GenerateId').then(async response => {
         console.log(response.data.id)
         idForm = response.data.id
+      
+        this.$store.commit('Load', true)
+        var EduForm = {
+          title: this.collection.title,
+          supply: this.collection.supply,
+          website: this.collection.website,
+          twitter: this.collection.twitter,
+          discord: this.collection.discord,
+          instagram: this.collection.instagram,
+          descriptions: this.descriptions,
+          images: this.images,
+        }
+        console.log(idForm, 'este es el id')
+        //connect to NEAR
+        const near = await connect(
+          CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        );
+        // create wallet connection
+        const wallet = new WalletConnection(near);
+        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+          changeMethods: ["add_form"],
+          sender: wallet.account(),
+        })
+        await contract.add_form({
+          form_id: idForm,
+          form: EduForm
+        }, '85000000000000',
+        ).then((response) => {
+          console.log(response);
+          this.$store.commit('Load', false)
+          this.dialogMessage = true
+          this.titleDM = 'Successfully saved'
+          this.messageDM = 'The data was saved successfully'
+        }).catch(err => {
+          console.log(err)
+        })
       }).catch(err => console.log(err))
-      this.$store.commit('Load', true)
-      var EduForm = {
-        title: this.collection.title,
-        supply: this.collection.supply,
-        website: this.collection.website,
-        twitter: this.collection.twitter,
-        discord: this.collection.discord,
-        instagram: this.collection.instagram,
-        descriptions: this.descriptions,
-        images: this.images,
-      }
-      // console.log(EduForm)
-      //connect to NEAR
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["add_form"],
-        sender: wallet.account(),
-      })
-      await contract.add_form({
-        form_id: idForm,
-        form: EduForm
-      }, '85000000000000',
-      ).then((response) => {
-        console.log(response);
-        this.$store.commit('Load', false)
-        this.dialogMessage = true
-        this.titleDM = 'Successfully saved'
-        this.messageDM = 'The data was saved successfully'
-      }).catch(err => {
-        console.log(err)
-      })
     },
     async getFormId() {
       // connect to NEAR
