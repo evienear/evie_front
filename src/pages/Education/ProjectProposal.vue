@@ -199,7 +199,7 @@ export default {
       }).then(response => {
         // console.log(response.data)
         this.dataProjectProposal.description = response.data
-        console.log(this.dataProjectProposal.description)
+        // console.log(this.dataProjectProposal.description)
         this.$store.commit('Load', false)
       })
       // connect to NEAR

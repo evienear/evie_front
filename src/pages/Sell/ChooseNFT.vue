@@ -294,7 +294,7 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(item => {
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace, item.collection)
         });
@@ -304,7 +304,7 @@ export default {
       }).catch(err => console.log(err))
     },
     async market(token_id, precio, base_uri, marketplace, collection) {
-      console.log(token_id, 'token id')
+      // console.log(token_id, 'token id')
       this.dataNftTokens = []
       var price = ''
       if(precio !== null) {
@@ -327,7 +327,7 @@ export default {
         token_id: token_id
       }).then((response) => {
         responseData[0] = response
-        console.log(responseData)
+        // console.log(responseData)
         responseData.forEach(item => {
           if (item.metadata.extra !== null) {
             item.metadata.extra = JSON.parse(item.metadata.extra)
@@ -349,7 +349,7 @@ export default {
           item.price = parseFloat(price)
           item.precio = precio
           item.collection = collection
-          console.log(item)
+          // console.log(item)
           this.dataChooseNFTTable.push(item)
         });
       }).catch(err => {
@@ -440,7 +440,7 @@ export default {
         });
       }).catch(err => console.log(err))
       this.data.push(item)
-      console.log(this.data)
+      // console.log(this.data)
     },
   }
 };

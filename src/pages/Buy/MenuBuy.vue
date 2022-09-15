@@ -373,7 +373,7 @@ export default {
     async purchase(item) {
       // console.log("purchase")
       // console.log(this.nftCart)
-      console.log(item)
+      // console.log(item)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );

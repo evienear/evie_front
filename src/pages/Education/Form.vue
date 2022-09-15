@@ -242,7 +242,7 @@ export default {
     addForm() {
       var idForm = null
       axios.post('https://evie.pro:3070/api/v1/GenerateId').then(async response => {
-        console.log(response.data.id)
+        // console.log(response.data.id)
         idForm = response.data.id
       
         this.$store.commit('Load', true)
@@ -256,7 +256,7 @@ export default {
           descriptions: this.descriptions,
           images: this.images,
         }
-        console.log(idForm, 'este es el id')
+        // console.log(idForm, 'este es el id')
         //connect to NEAR
         const near = await connect(
           CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')

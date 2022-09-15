@@ -402,10 +402,8 @@ export default {
       }).then(response => {
         // console.log(response.data, 'respuesta nft')
         var referenceJson = ''
-        var i = 0
         response.data.forEach(item => {
-          i++
-          console.log(i, item.reference)
+          // console.log(item.reference)
           var price = ''
           if(item.precio !== null) {
             price = utils.format.formatNearAmount((item.precio.toString()))
@@ -413,7 +411,7 @@ export default {
             price = 0
           }
           if (item.extra !== null) {
-            console.log('extra no es null')
+            // console.log('extra no es null')
             if(JSON.parse(item.extra)) {
               item.extra = JSON.parse(item.extra)
               if (item.extra.attributes) {
@@ -425,18 +423,18 @@ export default {
             }
           }
           if (item.extra == null && item.reference !== null) {
-            console.log('extra es nul y referencia no')
+            // console.log('extra es nul y referencia no')
             if(item.base_uri !== null) {
               referenceJson = item.base_uri + '/' + item.reference
             }
             if (item.base_uri == null) {
               referenceJson = item.reference
             }
-            console.log(referenceJson)
+            //console.log(referenceJson)
             axios.get(referenceJson).then(res => {
-              console.log(res.data)
+              // console.log(res.data)
               item.attributes = res.data.attributes
-              console.log(item.attributes, 'atributos')
+              // console.log(item.attributes, 'atributos')
             }).catch(err => {
               console.log(err)
             })
@@ -595,7 +593,7 @@ export default {
       }
     },
     async addCartItem(item) {
-      console.log(item)
+      // console.log(item)
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
