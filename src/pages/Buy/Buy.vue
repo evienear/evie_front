@@ -42,7 +42,7 @@
 
             <!-- mobile -->
             <aside class="acenter vermobile" style="gap:1em">
-              <h4 class="educationText p center btn2">EDUCATION</h4>
+              <h4 class="educationText p center btn2" @click="viewFormEducation()" style="cursor: pointer">EDUCATION</h4>
               <span class="resultsText">{{ totalNft }} RESULTS</span>
             </aside>
           </div>
@@ -77,7 +77,7 @@
           </div>
 
           <!-- desktop -->
-          <h4 class="educationText p center btn2 eliminarmobile">EDUCATION</h4>
+          <h4 class="educationText p center btn2 eliminarmobile" @click="viewFormEducation()" style="cursor: pointer">EDUCATION</h4>
           <span class="resultsText eliminarmobile">{{ totalNft }} RESULTS</span>
         </aside>
       </v-col>
@@ -715,6 +715,13 @@ export default {
         this.sales = '%'
       }
       this.viewTokens()
+    },
+    viewFormEducation() {
+      console.log(this.collection)
+      axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
+        console.log(response.data)
+        this.dataNFTProjects = response.data
+      }).catch(err => { console.log(err) })
     }
   }
 };

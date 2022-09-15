@@ -256,7 +256,7 @@ export default {
           descriptions: this.descriptions,
           images: this.images,
         }
-        // console.log(idForm, 'este es el id')
+        console.log(idForm, 'este es el id')
         //connect to NEAR
         const near = await connect(
           CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')

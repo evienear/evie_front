@@ -48,7 +48,7 @@ export default {
       this.$router.push('/form')
     },
     async getForm() {
-      axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
+      await axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
         // console.log(response)
         this.dataNFTProjects = response.data
       }).catch(err => { console.log(err) })
