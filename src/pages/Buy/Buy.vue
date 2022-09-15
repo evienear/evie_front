@@ -377,6 +377,7 @@ export default {
     // console.log(this.collectionId)
     
     this.collection = JSON.parse(localStorage.collections)
+    // console.log(this.collection)
     this.viewTokens()
     this.getCartItems()
   },
@@ -717,11 +718,11 @@ export default {
       this.viewTokens()
     },
     viewFormEducation() {
-      console.log(this.collection.name)
+      // console.log(this.collection.name)
       axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
         response.data.forEach(item => {
           if (item.title === this.collection.name) {
-            console.log(item)
+            // console.log(item)
             localStorage.vieneDe = 'buy'
             localStorage.idCollectionForm = item.id
             this.$router.push('/project-proposal')

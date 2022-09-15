@@ -21,14 +21,14 @@
     <v-col class="container2">
       <ul>
         <li v-for="(item,i) in dataProjectProposal.lista" :key="i">
-          <img class="marker" :src="require(`@/assets/buttons/${item.market}.svg`)" alt="marker list">
+          <img class="marker" :src="item.market" alt="marker list" width="10%">
 
           <span>Listen: {{ item.listen }}</span>
-          <span>Floor Price: {{ item.price }}
+          <!-- <span>Floor Price: {{ item.price }}
             <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
           </span>
           <span>Monthly Volume: $ {{ item.volume}}</span>
-          <span>Total Volumen: $ {{ item.total }}</span>
+          <span>Total Volumen: $ {{ item.total }}</span> -->
         </li>
       </ul>
 
@@ -65,7 +65,7 @@
       </section>
     </v-col>
     <v-col cols="12" md="6" class="center">
-      <button class="button h9 btn2">
+      <button class="button h9 btn2" @click="viewNfts()">
         BUY NOW<v-icon medium>mdi-chevron-right</v-icon>
       </button>
     </v-col>
@@ -145,27 +145,27 @@ export default {
       ],
       dataProjectProposal: {
         lista: [
-          {
-            listen: "9",
-            price: "1068",
-            volume: "50,000",
-            total: "150,000",
-            market: "doge"
-          },
-          {
-            listen: "9",
-            price: "1068",
-            volume: "50,000",
-            total: "150,000",
-            market: "auto"
-          },
-          {
-            listen: "9",
-            price: "1068",
-            volume: "50,000",
-            total: "150,000",
-            market: "dlt"
-          },
+          // {
+          //   listen: "9",
+          //   price: "1068",
+          //   volume: "50,000",
+          //   total: "150,000",
+          //   market: "doge"
+          // },
+          // {
+          //   listen: "9",
+          //   price: "1068",
+          //   volume: "50,000",
+          //   total: "150,000",
+          //   market: "auto"
+          // },
+          // {
+          //   listen: "9",
+          //   price: "1068",
+          //   volume: "50,000",
+          //   total: "150,000",
+          //   market: "dlt"
+          // },
         ],
         description: {
           // nft: require("@/assets/nft/monkeyA2.png"),
@@ -185,7 +185,9 @@ export default {
       titleDM: '',
       messageDM: '',
       idBuy: 0,
-      vieneDe: ''
+      vieneDe: '',
+      nft_contract: '',
+      collectionView: [],
     }
   },
   mounted() {
@@ -210,6 +212,7 @@ export default {
         'id': id 
       }).then(response => {
         // console.log(response.data)
+        this.searchCollections(response.data[0].title)
         this.dataProjectProposal.description = response.data
         // console.log(this.dataProjectProposal.description)
         this.$store.commit('Load', false)
@@ -247,7 +250,59 @@ export default {
     async deleteForm() {
       this.dialogDelete = true
     },
-  }
+    async searchCollections (title) {
+      var data = []
+      await axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
+        'input': title,
+        'limit': 1,
+        'index': 0,
+      }).then(response => {
+        // console.log(response.data[0].nft_contract)
+        response.data.forEach(item => {
+          console.log(item)
+          if(item.icon == null) {
+            axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
+              data = res.data.data.results
+              data.forEach(element => {
+                if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+                  item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+                  localStorage.collections = JSON.stringify(item)
+                }
+              });
+            })
+          }          
+        })
+        this.nft_contract = response.data[0].nft_contract
+        localStorage.nft_contract = response.data[0].nft_contract
+        this.viewMarketplace(response.data[0].nft_contract)
+      }).catch(err => console.log(err))
+    },
+    async viewMarketplace(item) {
+      axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
+        "collection": item
+      }).then(response => {
+        response.data.forEach(i => {
+          var type = i.marketplace === 'apollo42.near' ? '.jpg' : '.png'
+          this.dataProjectProposal.lista.push({
+            listen: i.marketplace,
+            // price: "1068",
+            // volume: "50,000",
+            // total: "150,000",
+            market: require('@/assets/markets/' + i.marketplace + type)
+          })
+        });
+        
+      }).catch(err => console.log(err))
+    },
+    viewNfts() {
+      this.$router.push({
+        name: 'buy',
+        params:{
+          id: this.nft_contract,
+        }
+      })
+    }
+  },
 };
 </script>
 
