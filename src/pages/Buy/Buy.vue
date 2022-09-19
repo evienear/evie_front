@@ -401,7 +401,7 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
-        // console.log(response.data, 'respuesta nft')
+        console.log(response.data, 'respuesta nft')
         var referenceJson = ''
         response.data.forEach(item => {
           // console.log(item.reference)
@@ -413,7 +413,9 @@ export default {
           }
           if (item.extra !== null) {
             // console.log('extra no es null')
+            // console.log(typeof(item.extra),  'tipo de variable extra')
             if(JSON.parse(item.extra)) {
+              // console.log(item.extra, 'paso el if de json parse')
               item.extra = JSON.parse(item.extra)
               if (item.extra.attributes) {
                 item.attributes = item.extra.attributes
@@ -422,8 +424,7 @@ export default {
                 item.attributes = item.extra.atributos
               }
             }
-          }
-          if (item.extra == null && item.reference !== null) {
+          } else if (item.extra == null && item.reference !== null && item.reference !== 'Pinata') {
             // console.log('extra es nul y referencia no')
             if(item.base_uri !== null) {
               referenceJson = item.base_uri + '/' + item.reference
@@ -442,7 +443,8 @@ export default {
           }
           item.price = parseFloat(price)
           item.select = false
-          // console.log(item)
+          // console.log(item.attributes, 'armando el item')
+          // if(item.attributes == undefined) {}
           this.dataNftTokens2.push(item)
           this.dataNftTokens = this.dataNftTokens2
         });
@@ -458,12 +460,15 @@ export default {
         this.totalNft = this.dataNftTokens.length
         this.dataNftTokens.forEach(item => {
           // console.log(item)
-          if (item.attributes) {
+          if (item.attributes !== undefined) {
             attributes.push(item.attributes)
           }
         })
-        //console.log(attributes)
-        this.dataAttributeNft(attributes)
+        console.log(attributes, 'attr')
+        if(attributes.length) {
+          console.log('tiene elementos')
+          this.dataAttributeNft(attributes)
+        }
       }, 1000)
 
     },

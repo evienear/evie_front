@@ -44,7 +44,7 @@ export default {
   methods: {
     viewForm() {
       // console.log('viewForm')
-      
+      localStorage.removeItem('idForm')
       this.$router.push('/form')
     },
     async getForm() {

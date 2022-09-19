@@ -65,7 +65,7 @@ export default {
           key: "buy-limit",
           state: "-outline",
           name: "BUY LIMIT",
-          to: "/buy-limit"
+          to: "/coming-soon"
         },
         {
           key: "sell",
@@ -77,7 +77,7 @@ export default {
           key: "stats",
           state: "-outline",
           name: "STATS",
-          to: "/stats"
+          to: "/coming-soon"
         },
         {
           key: "education",
@@ -89,7 +89,7 @@ export default {
           key: "games",
           state: "-outline",
           name: "GAMES",
-          to: "/games"
+          to: "/coming-soon-game"
         },
         {
           key: "calendar",
@@ -101,7 +101,7 @@ export default {
           key: "faq",
           state: "-outline",
           name: "FAQ",
-          to: "/",
+          to: "/faq",
         },
       ],
     };

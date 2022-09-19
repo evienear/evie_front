@@ -77,7 +77,8 @@
                 @click="viewNft(item)"
               >
                 <aside class="divrow center" style="gap: 10px">
-                  <img class="nft images" :src="item.icon" alt="token" />
+                  <img v-show="item.icon!==null" class="nft images" :src="item.icon" alt="token" />
+                  <img v-show="item.icon===null" class="nft images" :src="require('@/assets/azul-color.png')" alt="token" />
                   <span class="h8" style="font-weight: 400">{{ item.name }}</span>
                 </aside>
                 <span class="h8">
@@ -164,17 +165,24 @@ export default {
         'limit': 20,
         'index': this.indexPag,
       }).then(response => {
-        // console.log(response.data)
+        // console.log(response.data, 'respuesta')
         response.data.forEach(item => {
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
               // console.log(res.data.data.results)
               data = res.data.data.results
-              data.forEach(element => {
-                if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
-                  item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
-                }
-              });
+              // console.log(data)
+              if(data.length) {
+                data.forEach(element => {
+                  if (data.length > 1) {
+                    if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+                      item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+                    }
+                  } else if ((element.creator_id).toLowerCase() === (item.nft_contract).toLowerCase()) {
+                    item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+                  }
+                })
+              }
             })
           }
           this.dataMenuCollections.push(item)
