@@ -39,6 +39,9 @@ export default {
   },
   mounted() {
     // this.collections()
+    axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
+      console.log(response)
+    })
     this.getForm()
   },
   methods: {

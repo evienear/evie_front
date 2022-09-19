@@ -244,7 +244,6 @@ export default {
       axios.post('https://evie.pro:3070/api/v1/GenerateId').then(async response => {
         // console.log(response.data.id)
         idFormAdd = response.data.id
-        idFormAdd= idFormAdd + 1
         this.$store.commit('Load', true)
         var EduForm = {
           title: this.collection.title,
