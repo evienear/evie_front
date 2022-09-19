@@ -276,6 +276,11 @@ export default {
           this.dialogMessage = true
           this.titleDM = 'Successfully saved'
           this.messageDM = 'The data was saved successfully'
+          setTimeout(() => {
+            axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
+              console.log(response)
+            }).catch(erro => {console.log(erro)})
+          }, 35000)
         }).catch(err => {
           console.log(err)
           this.$store.commit('Load', false)
@@ -344,6 +349,11 @@ export default {
         this.dialogMessage = true
         this.titleDM = 'Successfully modified'
         this.messageDM = 'The data was modified successfully'
+        setTimeout(() => {
+          axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
+            console.log(response)
+          }).catch(erro => {console.log(erro)})
+        }, 35000)
       }).catch(err => {
         console.log(err)
       })
