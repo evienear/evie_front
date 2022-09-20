@@ -215,8 +215,8 @@
             </span>
 
             <aside class="buttons" >
-              <v-btn v-for="(item2,i) in markets" :key="i" icon>
-                <img :src="item2.icon" :alt="item2.marketplace" class="buttons">
+              <v-btn v-for="(item2,i) in markets" :key="i">
+                <img :src="item2.icon" :alt="item2.marketplace">
               </v-btn>
             </aside>
           </div>
@@ -745,7 +745,7 @@ export default {
         response.data.forEach(i => {
           this.markets.push({
             marketplace: i.marketplace,
-            icon: require('@/assets/markets/' + i.marketplace + '.jpeg'),
+            icon: require('@/assets/markets/' + i.marketplace + '.svg'),
             })
         })
         console.log(this.markets)
