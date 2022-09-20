@@ -24,7 +24,7 @@
           <span class="subtitleBack">SELECT MARKETPLACE</span>
         </v-col>
 
-        <v-col class=" divrow containerMenuReview">
+        <v-col class=" divrow containerMenuBuy">
           <v-slide-group
             v-model="sliderA"
             center-active
@@ -58,7 +58,7 @@
           </v-slide-group>
         </v-col>
 
-        <v-col class="col-8 col-sm-6 containerMenuBottom">
+        <v-col class="col-8 col-sm-6 containerMenuBottom mb-10">
           <aside class="divcol">
             <span class="h9 color">{{ accountId }}</span>
             <span class="desc h9 color">Balance: {{ balance }}</span>
