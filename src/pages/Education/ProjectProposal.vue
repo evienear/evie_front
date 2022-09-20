@@ -282,13 +282,12 @@ export default {
         "collection": item
       }).then(response => {
         response.data.forEach(i => {
-          var type = i.marketplace === 'apollo42.near' ? '.jpg' : '.png'
           this.dataProjectProposal.lista.push({
             listen: i.marketplace,
             // price: "1068",
             // volume: "50,000",
             // total: "150,000",
-            market: require('@/assets/markets/' + i.marketplace + type)
+            market: require('@/assets/markets/' + i.marketplace + '.jpeg')
           })
         });
         

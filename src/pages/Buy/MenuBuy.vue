@@ -117,10 +117,9 @@
                 </span>
 
                 <aside class="mt-10">
-                  <!-- class="buttons" -->
-                  <!-- <v-btn v-for="(item2,i) in item.market" :key="i" icon>
-                    <img class="filter" :src="require(`@/assets/buttons/${item2.name}.svg`)" alt="marketplace">
-                  </v-btn> -->
+                  <v-btn v-for="(item2,i) in markets" :key="i" class="buttons" icon>
+                    <img class="filter" :src="item.icon" :alt="item.marketplace">
+                  </v-btn>
                   <button class="button btn2 pa-2 ma-2" @click="purchase(item)">
                     BUY
                   </button>
@@ -213,7 +212,7 @@ const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ 
 const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "MenuBuy",
-  props: ['nftCart', 'cantCart', 'priceTotal'],
+  props: ['nftCart', 'cantCart', 'priceTotal', 'markets'],
   data() {
     return {
       sliderA: "",

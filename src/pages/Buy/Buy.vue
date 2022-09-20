@@ -1,6 +1,6 @@
 <template>
   <section id="buy">
-    <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal"></MenuBuy>
+    <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal" :markets="markets"></MenuBuy>
     
     <h1 class="titulo h2mobile">BUY</h1>
     <v-row class="mt-3">
@@ -214,10 +214,10 @@
               <img class="nearBalanceLogo" v-show="item.price !== 0" src="@/assets/logo/near.svg" alt="near">
             </span>
 
-            <aside class="buttons">
-              <!-- <v-btn v-for="(item2,i) in item.market" :key="i" icon>
-                <img :src="require(`@/assets/buttons/${item2.name}.svg`)" alt="marketplace">
-              </v-btn> -->
+            <aside class="buttons" >
+              <v-btn v-for="(item2,i) in markets" :key="i" icon>
+                <img :src="item2.icon" :alt="item2.marketplace" class="buttons">
+              </v-btn>
             </aside>
           </div>
         </v-col>
@@ -352,6 +352,7 @@ export default {
       priceFilter: '',
       filterSelect: '',
       sales: '%',
+      markets: [],
     }
   },
   mounted() {
@@ -379,6 +380,7 @@ export default {
     this.collection = JSON.parse(localStorage.collections)
     // console.log(this.collection)
     this.viewTokens()
+    this.viewMarketplace()
     this.getCartItems()
   },
   computed: {
@@ -735,7 +737,20 @@ export default {
         });
         console.log()
       }).catch(err => { console.log(err) })
-    }
+    },
+    viewMarketplace() {
+      axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
+        "collection": this.collectionId
+      }).then(response => {
+        response.data.forEach(i => {
+          this.markets.push({
+            marketplace: i.marketplace,
+            icon: require('@/assets/markets/' + i.marketplace + '.jpeg'),
+            })
+        })
+        console.log(this.markets)
+      }).catch(err => console.log(err))
+    },
   }
 };
 </script>
