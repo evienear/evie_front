@@ -643,6 +643,10 @@ export default {
           console.log(err)
           this.$store.commit('Load', false )
         })
+      } else {
+        this.dialogMessage = true
+        this.titleDM = 'Session error'
+        this.messageDM = 'You are not logged in to add to cart'
       }
     },
     
