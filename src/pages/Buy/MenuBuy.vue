@@ -115,12 +115,12 @@
                   {{ item.precio}}
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
-
+                <aside class="buttons" >
+                  <v-btn v-for="(item2,i) in markets" :key="i">
+                    <img :src="item2.icon" :alt="item2.marketplace">
+                  </v-btn>
+                </aside>
                 <aside class="mt-10">
-                  <!-- <v-btn v-for="(item2,i) in markets" :key="i" class="buttons" icon>
-                    <img class="filter" :src="item.icon" :alt="item.marketplace">
-                  </v-btn> -->
-                  
                   <button class="button btn2 pa-1 ma-1" @click="purchase(item)">
                     BUY
                   </button>
@@ -128,12 +128,6 @@
                     <v-icon color="red">mdi-trash-can-outline</v-icon>
                   </button>
                 </aside>
-                <v-divider></v-divider>
-                <aside class="buttons" >
-                  <v-btn v-for="(item2,i) in markets" :key="i">
-                    <img :src="item2.icon" :alt="item2.marketplace">
-                  </v-btn>
-                </aside> 
               </v-card>
             </v-slide-item>
           </v-slide-group>
