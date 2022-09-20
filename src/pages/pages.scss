@@ -326,8 +326,6 @@
       min-width: 100% !important;
       width: 100% !important;
       height: max-content !important;
-      border-radius: 5px !important;
-      overflow: hidden;
       padding: 0 !important;
       border: var(--corner-size) solid var(--color);
       clip-path: $clip-path !important;
@@ -418,20 +416,35 @@
 :is(.containerMenuBuy, .containerMenuReview) {
   .v-slide-group__content {
     --padding: 10px;
+    --margin-bottom: 50px;
     display: flex !important;
     //justify-content: space-between !important;
     gap: 2em;
     padding-bottom: var(--padding);
+    margin-bottom: var(--margin-bottom);
+    .actions {
+      --corner-size: 3px;
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      position: absolute;
+      bottom: calc(var(--margin-bottom) * -1);
+      left: 0;
+      .btn2 {
+        min-width: max-content !important;
+        height: 38px !important;
+        padding: 0 1.5em !important;
+      }
+      button[title] {
+        i {padding: 0 .2em !important}
+      }
+    }
     .marketplaceId {transform: translateY(var(--padding))}
     .buttons {
       gap: clamp(0.2em, 0.5vw, 0.5em) !important;
+      width: 14%;
       .v-btn {
-        max-width: max-content;
-        min-height: max-content;
-        height: max-content !important;
         img {
-          width: 2em !important;
-          @include media(max, small) {width: 2.5em !important}
         }
       }
     }

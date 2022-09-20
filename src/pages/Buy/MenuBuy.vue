@@ -120,12 +120,13 @@
                     <img :src="item2.icon" :alt="item2.marketplace">
                   </v-btn>
                 </aside>
-                <aside class="mt-10">
-                  <button class="button btn2 pa-1 ma-1" @click="purchase(item)">
+
+                <aside class="actions">
+                  <button class="btn2" @click="purchase(item)">
                     BUY
                   </button>
-                  <button class="button btn2 pa-1 ma-1" title="Delete item to cart" @click="removeCartItem(item)">
-                    <v-icon color="red">mdi-trash-can-outline</v-icon>
+                  <button title="Delete item to cart" @click="removeCartItem(item)">
+                    <v-icon color="red" class="btn2">mdi-trash-can-outline</v-icon>
                   </button>
                 </aside>
               </v-card>
