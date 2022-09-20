@@ -19,11 +19,11 @@
     </v-col>
 
     <v-col class="container2">
-      <ul class="mb-5">
+      <ul class="mb-5"> 
         <li v-for="(item,i) in dataProjectProposal.lista" :key="i">
-            <img class="marker rounded" :src="item.market" alt="marker list" width="40px">
-
-            <span class="mt-2">Listen: {{ item.listen }}</span>
+            
+            <img class="marker imgC" :src="item.market" :alt="item.listen" :title="item.listen">
+            <span class="ml-3 ml-md-0">Listen: {{ item.listen }}</span>
           
           <!-- <span>Floor Price: {{ item.price }}
             <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
@@ -288,7 +288,7 @@ export default {
             // price: "1068",
             // volume: "50,000",
             // total: "150,000",
-            market: require('@/assets/markets/' + i.marketplace + '.jpeg')
+            market: require('@/assets/markets/' + i.marketplace + '.svg')
           })
         });
         

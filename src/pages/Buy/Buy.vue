@@ -752,6 +752,7 @@ export default {
           this.markets.push({
             marketplace: i.marketplace,
             icon: require('@/assets/markets/' + i.marketplace + '.svg'),
+            selected: true,
           })
         })
         console.log(this.markets)

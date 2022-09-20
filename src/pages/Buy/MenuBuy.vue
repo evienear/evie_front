@@ -9,7 +9,7 @@
       :overlay-color="overlay_color"
     >
       <!-- checkout dialog-->
-      <!-- <section v-if="checkout" id="menuCheckout" class="colorCartas relative" style="min-height: 550.5px">
+      <section v-if="checkout" id="menuCheckout" class="colorCartas relative">
         <button class="buttonClose center">
           <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
         </button>
@@ -24,7 +24,7 @@
           <span class="subtitleBack">SELECT MARKETPLACE</span>
         </v-col>
 
-        <v-col class="containerMenuBuy divrow containerMenuReview">
+        <v-col class=" divrow containerMenuReview">
           <v-slide-group
             v-model="sliderA"
             center-active
@@ -38,7 +38,11 @@
                 class="containerMarketplace relative"
               >
                 <img class="images" :src="item.base_uri" alt="NFT Market Place">
-
+                <aside class="buttons">
+                  <v-btn v-for="(item2,i) in markets" :key="i" icon @click="selectMarket(item2, item.token_id)">
+                    <img :src="item2.icon" :alt="item2.marketplace" :title="item2.marketplace" >
+                  </v-btn>
+                </aside>
                 <span class="marketplaceId btn2">
                   # {{ item.token_id }} 
                   <i class="center" style="margin-inline: 0.3125rem">
@@ -48,11 +52,7 @@
                   <img class="nearBalanceLogo" src="@/assets/logo/near.png" alt="near">
                 </span>
 
-                <aside class="buttons">
-                  <v-btn v-for="(item2,i) in item.market" :key="i" icon>
-                    <img :src="require(`@/assets/buttons/${item2.name}.svg`)" alt="marketplace">
-                  </v-btn>
-                </aside>
+                
               </v-card>
             </v-slide-item>
           </v-slide-group>
@@ -74,19 +74,19 @@
             REVIEW<v-icon medium>mdi-chevron-right</v-icon>
           </button>
         </v-col>
-      </section> -->
+      </section>
 
       <!-- review dialog-->
-      <section id="menuReview" class="colorCartas relative" style="min-height: 550.5px">
+      <section v-show="review" id="menuReview" class="colorCartas relative" style="min-height: 550.5px">
         <button class="buttonClose center">
           <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
         </button>
 
         <v-col cols="11">
           <aside class="divrow" style="gap: 6px; margin-bottom: -2px">
-            <!-- <button class="botonBack center" @click="checkout=true;review=false">
+            <button class="botonBack center" @click="checkout=true;review=false">
               <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
-            </button> -->
+            </button>
             <h3 class="tituloBack p">REVIEW</h3>
           </aside>
           <span class="subtitleBack">SELECT MARKETPLACE</span>
@@ -116,8 +116,8 @@
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
                 <aside class="buttons" >
-                  <v-btn v-for="(item2,i) in markets" :key="i">
-                    <img :src="item2.icon" :alt="item2.marketplace">
+                  <v-btn >
+                    <img :src="require('@/assets/markets/' + item.contract_market + '.svg')" :alt="item.contract_market" :title="'Buy in ' + item.contract_market">
                   </v-btn>
                 </aside>
 
@@ -236,6 +236,8 @@ export default {
       dialogAdd: false,
       titleAdd: '',
       refreshCart: false,
+      marketBuy: '',
+      nftMarketSelect: [],
     }
   },
   created() {
@@ -371,31 +373,53 @@ export default {
         })
       }
     },
+    selectMarket (item, token_id) {
+      // setTimeout(() => {
+      //   this.marketBuy = item.marketplace
+      //   console.log(item)
+      //   this.markets.forEach(element => {
+      //     if(element.marketplace !== item.marketplace) {
+      //       element.selected = false
+      //     }
+      //   });
+      //   console.log(this.markets)
+      // }, 200)
+      console.log(item)
+      this.nftCart.forEach(element=> {
+        if(element.token_id === token_id) {
+          // console.log(element)
+          element.contract_market = item.marketplace
+        }
+        
+      })
+      console.log(this.nftCart)
+    },
     async purchase(item) {
       // console.log("purchase")
-      // console.log(this.nftCart)
-      // console.log(item)
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-      );
+      console.log(this.marketBuy)
+      console.log(item)
+      // const near = await connect(
+      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+      // );
       
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), item.contract_market, {
-        changeMethods: ["buy"],
-        sender: wallet.account(),
-      })
+      // const wallet = new WalletConnection(near);
+      // // const contract = new Contract(wallet.account(), item.contract_market, {
+      // const contract = new Contract(wallet.account(), this.marketBuy, {
+      //   changeMethods: ["buy"],
+      //   sender: wallet.account(),
+      // })
 
-      await contract.buy({
-        nft_contract_id: item.contract_id ,
-        token_id: item.token_id,
-        ft_token_id: 'near',
-        price: item.price
-      },'300000000000000',
-      item.price).then((response) => {
-        console.log(response);
-      }).catch(err => {
-        console.log(err)
-      })
+      // await contract.buy({
+      //   nft_contract_id: item.contract_id ,
+      //   token_id: item.token_id,
+      //   ft_token_id: 'near',
+      //   price: item.price
+      // },'300000000000000',
+      // item.price).then((response) => {
+      //   console.log(response);
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
   },
 };
