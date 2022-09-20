@@ -117,16 +117,23 @@
                 </span>
 
                 <aside class="mt-10">
-                  <v-btn v-for="(item2,i) in markets" :key="i" class="buttons" icon>
+                  <!-- <v-btn v-for="(item2,i) in markets" :key="i" class="buttons" icon>
                     <img class="filter" :src="item.icon" :alt="item.marketplace">
-                  </v-btn>
-                  <button class="button btn2 pa-2 ma-2" @click="purchase(item)">
+                  </v-btn> -->
+                  
+                  <button class="button btn2 pa-1 ma-1" @click="purchase(item)">
                     BUY
                   </button>
-                  <button class="button btn2 pa-2 ma-2" title="Delete item to cart" @click="removeCartItem(item)">
+                  <button class="button btn2 pa-1 ma-1" title="Delete item to cart" @click="removeCartItem(item)">
                     <v-icon color="red">mdi-trash-can-outline</v-icon>
                   </button>
                 </aside>
+                <v-divider></v-divider>
+                <aside class="buttons" >
+                  <v-btn v-for="(item2,i) in markets" :key="i">
+                    <img :src="item2.icon" :alt="item2.marketplace">
+                  </v-btn>
+                </aside> 
               </v-card>
             </v-slide-item>
           </v-slide-group>

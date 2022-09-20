@@ -403,7 +403,7 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
-        console.log(response.data, 'respuesta nft')
+        //console.log(response.data, 'respuesta nft')
         var referenceJson = ''
         response.data.forEach(item => {
           // console.log(item.reference)
@@ -466,9 +466,9 @@ export default {
             attributes.push(item.attributes)
           }
         })
-        console.log(attributes, 'attr')
+        //console.log(attributes, 'attr')
         if(attributes.length) {
-          console.log('tiene elementos')
+          //console.log('tiene elementos')
           this.dataAttributeNft(attributes)
         }
       }, 1000)
@@ -592,6 +592,7 @@ export default {
         this.messageDM = 'The token already exists in the cart'
       } else {
         if(item.precio !== null) {
+          this.$store.commit('Load', true)
           this.addCartItem(item)
         } else {
           this.dialogMessage = true
@@ -633,13 +634,14 @@ export default {
               console.log(res)
             }).catch(erro => {console.log(erro)})
           }, 35000)
-          
+          this.$store.commit('Load', false)
           console.log(response);
           this.getCartItems()
           item.select = true
           this.dialogAdd = false
         }).catch(err => {
           console.log(err)
+          this.$store.commit('Load', false )
         })
       }
     },
@@ -746,7 +748,7 @@ export default {
           this.markets.push({
             marketplace: i.marketplace,
             icon: require('@/assets/markets/' + i.marketplace + '.svg'),
-            })
+          })
         })
         console.log(this.markets)
       }).catch(err => console.log(err))

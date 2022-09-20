@@ -19,11 +19,12 @@
     </v-col>
 
     <v-col class="container2">
-      <ul>
+      <ul class="mb-5">
         <li v-for="(item,i) in dataProjectProposal.lista" :key="i">
-          <img class="marker" :src="item.market" alt="marker list" width="10%">
+            <img class="marker rounded" :src="item.market" alt="marker list" width="40px">
 
-          <span>Listen: {{ item.listen }}</span>
+            <span class="mt-2">Listen: {{ item.listen }}</span>
+          
           <!-- <span>Floor Price: {{ item.price }}
             <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
           </span>
