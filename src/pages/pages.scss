@@ -322,12 +322,15 @@
     gap: clamp(0.4em, 0.6vw, 0.6em);
     width: 12%;
     .v-btn {
+      --corner-size: 3px;
       min-width: 100% !important;
       width: 100% !important;
       height: max-content !important;
       border-radius: 5px !important;
       overflow: hidden;
       padding: 0 !important;
+      border: var(--corner-size) solid var(--color);
+      clip-path: $clip-path !important;
       * {width: 100% !important}
       span:not(.v-btn__content) {display: none !important}
     }
