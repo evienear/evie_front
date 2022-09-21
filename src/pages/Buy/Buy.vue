@@ -394,7 +394,6 @@ export default {
   methods: {
     async viewTokens() {
       this.dataNftTokens = []
-      // console.log(this.collectionId)
       axios.post('https://evie.pro:3070/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
@@ -405,10 +404,8 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
-        //console.log(response.data, 'respuesta nft')
         var referenceJson = ''
         response.data.forEach(item => {
-          // console.log(item.reference)
           var price = ''
           if(item.precio !== null) {
             price = utils.format.formatNearAmount((item.precio.toString()))
@@ -416,10 +413,7 @@ export default {
             price = 0
           }
           if (item.extra !== null) {
-            // console.log('extra no es null')
-            // console.log(typeof(item.extra),  'tipo de variable extra')
             if(JSON.parse(item.extra)) {
-              // console.log(item.extra, 'paso el if de json parse')
               item.extra = JSON.parse(item.extra)
               if (item.extra.attributes) {
                 item.attributes = item.extra.attributes
@@ -429,30 +423,24 @@ export default {
               }
             }
           } else if (item.extra == null && item.reference !== null && item.reference !== 'Pinata') {
-            // console.log('extra es nul y referencia no')
             if(item.base_uri !== null) {
               referenceJson = item.base_uri + '/' + item.reference
             }
             if (item.base_uri == null) {
               referenceJson = item.reference
             }
-            //console.log(referenceJson)
             axios.get(referenceJson).then(res => {
-              // console.log(res.data)
               item.attributes = res.data.attributes
-              // console.log(item.attributes, 'atributos')
             }).catch(err => {
               console.log(err)
             })
           }
           item.price = parseFloat(price)
           item.select = false
-          // console.log(item.attributes, 'armando el item')
           // if(item.attributes == undefined) {}
           this.dataNftTokens2.push(item)
           this.dataNftTokens = this.dataNftTokens2
         });
-        // console.log(this.dataNftTokens)
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
@@ -460,17 +448,13 @@ export default {
     async armarAtributos() {
       var attributes = []
       setTimeout(() => {
-        // console.log(this.dataNftTokens)
         this.totalNft = this.dataNftTokens.length
         this.dataNftTokens.forEach(item => {
-          // console.log(item)
           if (item.attributes !== undefined) {
             attributes.push(item.attributes)
           }
         })
-        //console.log(attributes, 'attr')
         if(attributes.length) {
-          //console.log('tiene elementos')
           this.dataAttributeNft(attributes)
         }
       }, 1000)
@@ -479,7 +463,6 @@ export default {
     dataAttributeNft(attributes) {
       const dataAttributes = []
       attributes.forEach(item => {
-        // console.log(item, 'attributes')
         item.forEach(data => {
           dataAttributes.push(data)
         })
@@ -495,7 +478,6 @@ export default {
       this.dataAtt2.forEach(element => {
         element.list = this.dataAtt[element.title]
       });
-      // console.log(this.dataAtt2)
     },
     groupBy(array) {
       const result = {}
@@ -529,10 +511,8 @@ export default {
           i.name === name
         )
       }
-      // console.log(index)
       if (index > -1) {
         this.dataAttr.splice(index, 1)
-        // console.log(this.dataAttr.length)
         this.dataNftTokens = []
         try {
           this.dataAttr.forEach(filter => {
@@ -553,7 +533,6 @@ export default {
 
         if (this.dataAttr.length == 0) {
           this.dataAttr = []
-          // console.log(this.dataNftTokens2)
           this.dataNftTokens = this.dataNftTokens2
         }
       } else {
@@ -579,7 +558,6 @@ export default {
         }
         this.dataNftTokens = Object.values(data.reduce((prev,next)=>Object.assign(prev,{[next.token_id]:next}),{}))
       }
-      // console.log(this.dataNftTokens)
     },
     //FIN DE FILTROS
 
@@ -604,7 +582,6 @@ export default {
       }
     },
     async addCartItem(item) {
-      // console.log(item)
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
@@ -669,7 +646,6 @@ export default {
         await contract.get_cart_items({
           user: wallet.getAccountId(),
         }).then((response) => {
-          // console.log(response, 'getCart')
           if (response.length) {
             var precio = 0
             this.nftCart = response
@@ -686,7 +662,6 @@ export default {
                     selected: true,
                   })
                 })
-                console.log(this.markets)
               }).catch(erro => console.log(erro))
 
               element.marketplace = this.marketplaceCart
@@ -700,7 +675,6 @@ export default {
               })
             });
             this.cantCart = this.nftCart.length
-            console.log(this.nftCart)
           }
           this.$store.commit('Load', false)
         }).catch(err => {
@@ -722,8 +696,6 @@ export default {
       this.viewTokens()
     },
     filterPrice() {
-      // console.log(this.priceFilter.length)
-      // console.log(this.priceFilter)
       for (var i = 0; i < this.priceFilter.length; i++) {
         if (this.priceFilter[i] === 'Lowest Price') {
           this.filterSelect = 'asc'
@@ -750,17 +722,14 @@ export default {
       this.viewTokens()
     },
     viewFormEducation() {
-      // console.log(this.collection.name)
       axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
         response.data.forEach(item => {
           if (item.title === this.collection.name) {
-            // console.log(item)
             localStorage.vieneDe = 'buy'
             localStorage.idCollectionForm = item.id
             this.$router.push('/project-proposal')
           }
         });
-        console.log()
       }).catch(err => { console.log(err) })
     },
     viewMarketplace() {
@@ -774,7 +743,6 @@ export default {
             selected: true,
           })
         })
-        console.log(this.markets)
       }).catch(err => console.log(err))
     },
   }

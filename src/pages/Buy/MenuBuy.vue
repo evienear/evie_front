@@ -251,13 +251,10 @@ export default {
     this.nftCart.forEach(element => {
       price = utils.format.formatNearAmount((element.precio.toString()))
       price = parseFloat(price)
-      element.price = price
-      // console.log(element, 'element price')
-      
+      element.price = price      
     });
     this.dataMenuBuy = this.nftCart
     this.getBalance()
-    //console.log(this.dataMenuBuy)
     this.getCartItems()
     if (localStorage.refreshCart === 'true') {
       this.refreshCart = false
@@ -312,8 +309,6 @@ export default {
       if (wallet.isSignedIn()) {
         this.dialogAdd = true
         this.titleAdd = 'Removing item'
-        
-        // console.log(item)
         var price = utils.format.parseNearAmount((item.precio).toString())
         var itemNft = {
           token_id: item.token_id,
@@ -375,41 +370,22 @@ export default {
       }
     },
     selectMarket (item, token_id) {
-      // setTimeout(() => {
-      //   this.marketBuy = item.marketplace
-      //   console.log(item)
-      //   this.markets.forEach(element => {
-      //     if(element.marketplace !== item.marketplace) {
-      //       element.selected = false
-      //     }
-      //   });
-      //   console.log(this.markets)
-      // }, 200)
-      // console.log(item)
       this.nftCart.forEach(element=> {
         if(element.token_id === token_id) {
-          // console.log(element)
           element.contract_market = item.marketplace
         }
-        
       })
-      console.log(this.nftCart)
     },
     async purchase(item) {
-      // console.log("purchase")
-      // console.log(this.marketBuy)
-      // console.log(item)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
       );
-      
       const wallet = new WalletConnection(near);
       // const contract = new Contract(wallet.account(), item.contract_market, {
       const contract = new Contract(wallet.account(), this.marketBuy, {
         changeMethods: ["buy"],
         sender: wallet.account(),
       })
-
       await contract.buy({
         nft_contract_id: item.contract_id ,
         token_id: item.token_id,
