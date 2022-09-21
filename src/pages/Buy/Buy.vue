@@ -668,6 +668,7 @@ export default {
     },
     
     async getCartItems() {
+      this.marketplaceCart = []
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
@@ -689,6 +690,7 @@ export default {
             this.nftCart = response
             this.priceTotal = 0
             this.nftCart.forEach(element => {
+              
               // coloca el market de las que estanb en el carrito
               axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
                 "collection": element.contract_id
