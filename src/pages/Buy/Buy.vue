@@ -380,7 +380,7 @@ export default {
     // console.log(this.collectionId)
     
     this.collection = JSON.parse(localStorage.collections)
-    // console.log(this.collection)
+    console.log(this.collection, 'datos coleccion')
     this.viewTokens()
     this.viewMarketplace()
     this.getCartItems()
@@ -392,8 +392,8 @@ export default {
     // }
   },
   methods: {
-    async viewTokens() {
-      this.dataNftTokens = []
+    viewTokens() {
+      // console.log(this.filterSelect)
       axios.post('https://evie.pro:3070/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
@@ -404,8 +404,14 @@ export default {
         'order': 'precio',
         'type_order': this.filterSelect
       }).then(response => {
+        this.dataAtt = [],
+        this.dataAtt2 = []
+        this.dataChips = []
+        this.dataAttr = []
+        this.dataNftTokens = []
+        this.dataNftTokens2 = []
         var referenceJson = ''
-        response.data.forEach(item => {
+        response.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
             price = utils.format.formatNearAmount((item.precio.toString()))
@@ -434,13 +440,41 @@ export default {
             }).catch(err => {
               console.log(err)
             })
-          }
+          } 
+
+
+          // if (item.media.includes('https://dev.nagmi.art/ipfs/')) {
+          //   console.log('para que se vea')
+
+
+          //   const near = await connect(
+          //     CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+          //   );
+          //   // create wallet connection
+          //   const wallet = new WalletConnection(near);
+  
+          //   const contract = new Contract(wallet.account(), item.contract_id, {
+          //     viewMethods: ["nft_token"],
+          //     sender: wallet.account(),
+          //   });
+          //   await contract.nft_token({
+          //     token_id: item.token_id
+          //   }).then((resToken) => {
+          //     console.log(resToken, 'res nft token')
+          //   }).catch(err => {
+          //     console.log(err)
+          //   });
+
+
+
+          // }
           item.price = parseFloat(price)
           item.select = false
           // if(item.attributes == undefined) {}
           this.dataNftTokens2.push(item)
           this.dataNftTokens = this.dataNftTokens2
         });
+        //console.log(this.dataNftTokens2, 'data pusheada')
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
