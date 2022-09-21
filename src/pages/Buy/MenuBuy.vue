@@ -44,7 +44,7 @@
                   </v-btn>
                 </aside>
                 <span class="marketplaceId btn2">
-                  # {{ item.token_id }} 
+                  # {{ item.token_id.substr(0,10) }} 
                   <i class="center" style="margin-inline: 0.3125rem">
                     &bullet;
                   </i> 
@@ -108,7 +108,7 @@
                 <img class="images" :src="item.base_uri" alt="NFT">
 
                 <span class="marketplaceNumber btn2">
-                  # {{ item.token_id }}
+                  # {{ item.token_id.substr(0,10) }}
                 </span>
 
                 <span class="marketplaceAmount btn2 center">
@@ -175,6 +175,11 @@
           <span>
             {{ messageDM }}
           </span>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="dialogMessage = false">
+            CLOSE
+          </button>
         </v-col>
       </section>
     </v-dialog>
@@ -370,6 +375,9 @@ export default {
       }
     },
     selectMarket (item, token_id) {
+      this.dialogMessage = true
+      this.titleDM = 'MarketPlace Selected'
+      this.messageDM = 'You have selected ' +item.marketplace
       this.nftCart.forEach(element=> {
         if(element.token_id === token_id) {
           element.contract_market = item.marketplace

@@ -474,7 +474,7 @@ export default {
           this.dataNftTokens2.push(item)
           this.dataNftTokens = this.dataNftTokens2
         });
-        //console.log(this.dataNftTokens2, 'data pusheada')
+        // console.log(this.dataNftTokens2, 'data pusheada')
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
