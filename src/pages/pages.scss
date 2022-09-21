@@ -328,6 +328,8 @@
       height: max-content !important;
       padding: 0 !important;
       border: var(--corner-size) solid var(--color);
+      border-radius: 0 !important;
+      overflow: hidden !important;
       clip-path: $clip-path !important;
       * {width: 100% !important}
       span:not(.v-btn__content) {display: none !important}
@@ -443,10 +445,6 @@
     .buttons {
       gap: clamp(0.2em, 0.5vw, 0.5em) !important;
       width: 14%;
-      .v-btn {
-        img {
-        }
-      }
     }
   }
 }

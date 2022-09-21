@@ -31,7 +31,7 @@
             :show-arrows="true"
             class="fill-w"
           >
-            <v-slide-item class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(item, index) in nftCart" :key="index">
+            <v-slide-item v-for="(item, index) in nftCart" :key="index">
               <v-card
                 color="transparent"
                 style="display: flex"
