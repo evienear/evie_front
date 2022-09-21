@@ -353,6 +353,8 @@ export default {
       filterSelect: '',
       sales: '%',
       markets: [],
+      marketplaceCart: [],
+
     }
   },
   mounted() {
@@ -667,11 +669,28 @@ export default {
         await contract.get_cart_items({
           user: wallet.getAccountId(),
         }).then((response) => {
+          // console.log(response, 'getCart')
           if (response.length) {
             var precio = 0
             this.nftCart = response
             this.priceTotal = 0
             this.nftCart.forEach(element => {
+
+
+              axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
+                "collection": element.contract_id
+              }).then(response => {
+                response.data.forEach(i => {
+                  this.marketplaceCart.push({
+                    marketplace: i.marketplace,
+                    icon: require('@/assets/markets/' + i.marketplace + '.svg'),
+                    selected: true,
+                  })
+                })
+                console.log(this.markets)
+              }).catch(erro => console.log(erro))
+
+              element.marketplace = this.marketplaceCart
               precio = utils.format.formatNearAmount((element.price.toString()))
               element.precio = parseFloat(precio)
               this.priceTotal = this.priceTotal + element.precio
@@ -682,6 +701,7 @@ export default {
               })
             });
             this.cantCart = this.nftCart.length
+            console.log(this.nftCart)
           }
           this.$store.commit('Load', false)
         }).catch(err => {

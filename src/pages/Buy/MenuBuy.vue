@@ -39,7 +39,7 @@
               >
                 <img class="images" :src="item.base_uri" alt="NFT Market Place">
                 <aside class="buttons">
-                  <v-btn v-for="(item2,i) in markets" :key="i" icon @click="selectMarket(item2, item.token_id)">
+                  <v-btn v-for="(item2,i) in item.marketplace" :key="i" icon @click="selectMarket(item2, item.token_id)">
                     <img :src="item2.icon" :alt="item2.marketplace" :title="item2.marketplace" >
                   </v-btn>
                 </aside>
@@ -238,6 +238,7 @@ export default {
       refreshCart: false,
       marketBuy: '',
       nftMarketSelect: [],
+      marketplace: [],
     }
   },
   created() {
@@ -384,7 +385,7 @@ export default {
       //   });
       //   console.log(this.markets)
       // }, 200)
-      console.log(item)
+      // console.log(item)
       this.nftCart.forEach(element=> {
         if(element.token_id === token_id) {
           // console.log(element)
@@ -396,30 +397,30 @@ export default {
     },
     async purchase(item) {
       // console.log("purchase")
-      console.log(this.marketBuy)
-      console.log(item)
-      // const near = await connect(
-      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
-      // );
+      // console.log(this.marketBuy)
+      // console.log(item)
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+      );
       
-      // const wallet = new WalletConnection(near);
-      // // const contract = new Contract(wallet.account(), item.contract_market, {
-      // const contract = new Contract(wallet.account(), this.marketBuy, {
-      //   changeMethods: ["buy"],
-      //   sender: wallet.account(),
-      // })
+      const wallet = new WalletConnection(near);
+      // const contract = new Contract(wallet.account(), item.contract_market, {
+      const contract = new Contract(wallet.account(), this.marketBuy, {
+        changeMethods: ["buy"],
+        sender: wallet.account(),
+      })
 
-      // await contract.buy({
-      //   nft_contract_id: item.contract_id ,
-      //   token_id: item.token_id,
-      //   ft_token_id: 'near',
-      //   price: item.price
-      // },'300000000000000',
-      // item.price).then((response) => {
-      //   console.log(response);
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+      await contract.buy({
+        nft_contract_id: item.contract_id ,
+        token_id: item.token_id,
+        ft_token_id: 'near',
+        price: item.price
+      },'300000000000000',
+      item.price).then((response) => {
+        console.log(response);
+      }).catch(err => {
+        console.log(err)
+      })
     },
   },
 };
