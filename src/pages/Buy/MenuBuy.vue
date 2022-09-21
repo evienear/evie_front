@@ -214,7 +214,7 @@ const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ 
 const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "MenuBuy",
-  props: ['nftCart', 'cantCart', 'priceTotal', 'markets'],
+  props: ['nftCart', 'cantCart', 'priceTotal'],
   data() {
     return {
       sliderA: "",

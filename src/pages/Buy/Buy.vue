@@ -1,6 +1,6 @@
 <template>
   <section id="buy">
-    <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal" :markets="markets"></MenuBuy>
+    <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal"></MenuBuy>
     
     <h1 class="titulo h2mobile">BUY</h1>
     <v-row class="mt-3">
@@ -675,8 +675,7 @@ export default {
             this.nftCart = response
             this.priceTotal = 0
             this.nftCart.forEach(element => {
-
-
+              // coloca el market de las que estanb en el carrito
               axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
                 "collection": element.contract_id
               }).then(response => {
