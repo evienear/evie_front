@@ -390,7 +390,7 @@ export default {
       );
       const wallet = new WalletConnection(near);
       // const contract = new Contract(wallet.account(), item.contract_market, {
-      const contract = new Contract(wallet.account(), this.marketBuy, {
+      const contract = new Contract(wallet.account(), item.contract_market, {
         changeMethods: ["buy"],
         sender: wallet.account(),
       })
