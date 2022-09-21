@@ -41,6 +41,7 @@ export default {
     // this.collections()
     axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
       console.log(response)
+      //console.log('refrescar')
     })
     this.getForm()
   },
@@ -52,7 +53,7 @@ export default {
     },
     async getForm() {
       await axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
-        console.log(response)
+        //console.log(response.data)
         this.dataNFTProjects = response.data
       }).catch(err => { console.log(err) })
       // // connect to NEAR

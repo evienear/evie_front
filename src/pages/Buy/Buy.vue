@@ -411,6 +411,7 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
+        //console.log(response.data)
         response.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
@@ -418,7 +419,8 @@ export default {
           } else {
             price = 0
           }
-          if (item.extra !== null) {
+          if (item.extra !== null && item.extra !== '') {
+            //console.log('paso al extra')
             if(JSON.parse(item.extra)) {
               item.extra = JSON.parse(item.extra)
               if (item.extra.attributes) {
@@ -428,7 +430,8 @@ export default {
                 item.attributes = item.extra.atributos
               }
             }
-          } else if (item.extra == null && item.reference !== null && item.reference !== 'Pinata') {
+          } else if (item.extra == null || item.extra === '' && item.reference !== null && item.reference !== 'Pinata') {
+            //console.log('paso a referencia')
             if(item.base_uri !== null) {
               referenceJson = item.base_uri + '/' + item.reference
             }
@@ -437,11 +440,12 @@ export default {
             }
             axios.get(referenceJson).then(res => {
               item.attributes = res.data.attributes
+              //console.log('respuesta de los atributos')
             }).catch(err => {
               console.log(err)
             })
-          } 
 
+          } 
 
           // if (item.media.includes('https://dev.nagmi.art/ipfs/')) {
           //   console.log('para que se vea')
@@ -474,7 +478,7 @@ export default {
           this.dataNftTokens2.push(item)
           this.dataNftTokens = this.dataNftTokens2
         });
-        // console.log(this.dataNftTokens2, 'data pusheada')
+        //console.log(this.dataNftTokens2, 'data pusheada')
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
