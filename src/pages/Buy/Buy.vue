@@ -218,9 +218,14 @@
                 <v-icon small>mdi-arrow-up</v-icon>
               </v-btn>
               <div class="buttons__wrapper" @scroll="scroll($event)">
-                <v-btn v-for="(item2,i) in markets" :key="i">
-                  <img :src="item2.icon" :alt="item2.marketplace">
-                </v-btn>
+                <v-tooltip v-for="(item2,i) in markets" :key="i" bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on">
+                      <img :src="item2.icon" :alt="item2.marketplace">
+                    </v-btn>
+                  </template>
+                  <span>{{ item2.marketplace }}</span>
+                </v-tooltip>
               </div>
               <v-btn v-show="markets.length > 4" icon class="btn3" :disabled="slider === 'disabled'" @click="next($event)">
                 <v-icon small>mdi-arrow-down</v-icon>
