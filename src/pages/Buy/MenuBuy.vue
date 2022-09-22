@@ -39,8 +39,16 @@
               >
                 <img class="images" :src="item.base_uri" alt="NFT Market Place">
                 <aside class="buttons">
-                  <v-btn v-for="(item2,i) in item.marketplace" :key="i" icon @click="selectMarket(item2, item.token_id)">
-                    <img :src="item2.icon" :alt="item2.marketplace" :title="item2.marketplace" >
+                  <v-btn v-show="item.marketplace.length > 4" icon class="btn3" :disabled="slider <= 0" @click="prev($event)">
+                    <v-icon small>mdi-arrow-up</v-icon>
+                  </v-btn>
+                  <div class="buttons__wrapper" @scroll="scroll($event)">
+                    <v-btn v-for="(item2,i) in item.marketplace" :key="i" icon @click="selectMarket(item2, item.token_id)">
+                      <img :src="item2.icon" :alt="item2.marketplace" :title="item2.marketplace" >
+                    </v-btn>
+                  </div>
+                  <v-btn v-show="item.marketplace.length > 4" icon class="btn3" :disabled="slider === 'disabled'" @click="next($event)">
+                    <v-icon small>mdi-arrow-down</v-icon>
                   </v-btn>
                 </aside>
                 <span class="marketplaceId btn2">
@@ -222,6 +230,7 @@ export default {
   props: ['nftCart', 'cantCart', 'priceTotal'],
   data() {
     return {
+      slider: 0,
       sliderA: "",
       sliderB: "",
       checkout: true,
@@ -405,6 +414,34 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    prev(e) {
+      const slide = e.path[3].querySelector('.buttons__wrapper')
+      if (slide.scrollTop >= 0) {
+        slide.scrollTop -= 80;
+        this.slider = slide.scrollTop -= 80;
+        console.log(this.slider)
+      }
+    },
+    next(e) {
+      const wrapper = e.path[3]
+      const slide = wrapper.querySelector('.buttons__wrapper');
+      if (slide.getBoundingClientRect().height + slide.scrollTop <= wrapper.getBoundingClientRect().height) {
+        slide.scrollTop += 80;
+        this.slider = slide.scrollTop += 80;
+      } else {
+        this.slider = 'disabled'
+      }
+      console.log(this.slider)
+    },
+    scroll(e) {
+      const wrapper = e.path[1];
+      const slide = e.target;
+      if (slide.getBoundingClientRect().height + slide.scrollTop <= wrapper.getBoundingClientRect().height) {
+        this.slider = slide.scrollTop
+      } else {
+        this.slider = 'disabled'
+      }
     },
   },
 };

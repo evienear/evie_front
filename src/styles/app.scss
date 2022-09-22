@@ -210,6 +210,22 @@
   color: #58565b;
   span,i {color: #58565b}
 }
+.btn3 {
+  --corner-size: 3px;
+  --height: 25px;
+  min-width: max-content !important;
+  max-width: max-content !important;
+  width: max-content !important;
+  max-height: var(--height) !important;
+  min-height: var(--height) !important;
+  height: var(--height) !important;
+  padding: .1em !important;
+  border: var(--corner-size) solid var(--color);
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background-color: $clr-btn;
+  clip-path: $clip-path !important;
+}
 .titulo {
   @media (max-width: 880px) and (max-height: 1180px) {
     font-weight: 400 !important;
