@@ -92,6 +92,8 @@
               <v-select
                 v-model="priceFilter"
                 :items="item.selection"
+                item.text="text"
+                item.value="value"
                 :hide-details="true"
                 @change="filterPrice()"
                 multiple
@@ -332,7 +334,14 @@ export default {
       dataFilter: [
         {
           title: "FILTER",
-          selection: [ 'Lowest Price', 'Highest Price', 'On sale', 'Not sale', 'All']
+          // selection: [ 'Lowest Price', 'Highest Price', 'On sale', 'Not sale', 'All']
+          selection: [
+            {value: 'asc', text: 'Lowest Price' },
+            {value: 'decs', text: 'Highest Price' },
+            {value: 'true', text: 'On sale' },
+            {value: 'false', text: 'Not sale' },
+            {value: '%', text: 'All' },
+          ]
         },
         // {
         //   title: "ATTRIBUTE",
@@ -392,7 +401,7 @@ export default {
     // console.log(this.collectionId)
     
     this.collection = JSON.parse(localStorage.collections)
-    console.log(this.collection, 'datos coleccion')
+    // console.log(this.collection, 'datos coleccion')
     this.viewTokens()
     this.viewMarketplace()
     this.getCartItems()
@@ -423,7 +432,7 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
-        //console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
@@ -748,29 +757,35 @@ export default {
       this.viewTokens()
     },
     filterPrice() {
+      if (this.priceFilter.length == 0) {
+        this.filterSelect = ''
+        this.sales = '%'
+      } // else if(this.priceFilter.length > 2) {
+
+      //}
       for (var i = 0; i < this.priceFilter.length; i++) {
-        if (this.priceFilter[i] === 'Lowest Price') {
+        
+        if (this.priceFilter[i] === 'asc') {
           this.filterSelect = 'asc'
-        } else if (this.priceFilter[i] === 'Highest Price') {
+        } else if (this.priceFilter[i] === 'desc') {
           this.filterSelect = 'desc'
+        } else if (this.priceFilter[i] === '%') {
+          this.sales = ''
         } else {
           this.filterSelect = ''
         }
         
-        if (this.priceFilter[i] === 'On sale') {
+        if (this.priceFilter[i] === 'true') {
           this.sales = 'true'
-        } else if (this.priceFilter[i] === 'Not sale') {
+        } else if (this.priceFilter[i] === 'false') {
           this.sales = 'false'
-        } else if (this.priceFilter[i] === 'All') {
+        } else if (this.priceFilter[i] === '%') {
           this.sales = '%'
         } else {
           this.sales = '%'
         }
       }
-      if (this.priceFilter.length == 0) {
-        this.filterSelect = ''
-        this.sales = '%'
-      }
+      
       this.viewTokens()
     },
     viewFormEducation() {
