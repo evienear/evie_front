@@ -258,7 +258,7 @@ export default {
         console.log(idFormAdd, 'este es el id')
         //connect to NEAR
         const near = await connect(
-          CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+          CONFIG(new keyStores.BrowserLocalStorageKeyStore())
         );
         // create wallet connection
         const wallet = new WalletConnection(near);
@@ -294,7 +294,7 @@ export default {
       // connect to NEAR
       this.$store.commit('Load', true)
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -331,7 +331,7 @@ export default {
       // console.log(EduForm)
       //connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);

@@ -2,22 +2,19 @@
 // const API_PROXY_PREFIX='/api'
 //const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX
 const BASE_URL = process.env.VUE_APP_API_BASE_URL
-//const NETWORK = process.env.NODE_ENV === 'development' ? 'testnet' : 'mainnet'
-var NETWORK = ''
+// const NETWORK = process.env.NODE_ENV === 'development' ? 'testnet' : 'mainnet'
+const NETWORK = 'mainnet'
+// var NETWORK = ''
 
-function CONFIG(keyStores, networkId) {
-  if(networkId) {
-    NETWORK = networkId
-  } else {
-    NETWORK = process.env.NODE_ENV === 'development' ? 'testnet' : 'mainnet'
-  }
+function CONFIG(keyStores) {
   switch (NETWORK) {
   case 'mainnet':
     return {
       networkId: 'mainnet',
       keyStore: keyStores,
       nodeUrl: "https://rpc.mainnet.near.org",
-      walletUrl: "https://wallet.mainnet.near.org",
+      // walletUrl: "https://wallet.mainnet.near.org",
+      walletUrl: "https://app.mynearwallet.com/",
       helperUrl: "https://helper.mainnet.near.org",
       explorerUrl: "https://explorer.mainnet.near.org",
     }

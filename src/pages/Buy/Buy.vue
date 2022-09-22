@@ -464,7 +464,7 @@ export default {
 
 
           //   const near = await connect(
-          //     CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+          //     CONFIG(new keyStores.BrowserLocalStorageKeyStore())
           //   );
           //   // create wallet connection
           //   const wallet = new WalletConnection(near);
@@ -634,7 +634,7 @@ export default {
     async addCartItem(item) {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -683,7 +683,7 @@ export default {
       this.marketplaceCart = []
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);

@@ -307,7 +307,7 @@ export default {
     },
     async getBalance() {
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -326,7 +326,7 @@ export default {
     async removeCartItem(item) {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -366,7 +366,7 @@ export default {
     async clearCart() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -405,7 +405,7 @@ export default {
     },
     async purchase(item) {
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), 'mainnet')
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       const wallet = new WalletConnection(near);
       // const contract = new Contract(wallet.account(), item.contract_market, {
