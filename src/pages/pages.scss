@@ -512,7 +512,8 @@
       right: 0;
       top: 0em;
       display: flex;
-      flex-direction: column-reverse;
+      // reverse deleted
+      flex-direction: column;
       img {
         width: 1.625rem;
         height: 1.625rem;
@@ -559,7 +560,8 @@
       right: 0;
       bottom: 0em;
       display: flex;
-      flex-direction: column-reverse;
+      // reverse deleted
+      flex-direction: column;
       img {
         width: 1.625rem;
         height: 1.625rem;
