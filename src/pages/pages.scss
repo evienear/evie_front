@@ -510,6 +510,7 @@
     .buttons {
       position: absolute;
       right: 0;
+      top: auto;
       bottom: 0;
       display: flex;
       // reverse deleted
@@ -558,14 +559,17 @@
     .buttons {
       position: absolute;
       right: 0;
+      top: auto;
       bottom: 0em;
       display: flex;
       // reverse deleted
       flex-direction: column;
+      height: calc(100% - auto);
       img {
         width: 1.625rem;
         height: 1.625rem;
         aspect-ratio: 1 / 1;
+        bottom: 0em;
       }
     }
   }
