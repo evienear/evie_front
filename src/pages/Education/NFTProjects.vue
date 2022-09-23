@@ -16,7 +16,7 @@
       </v-card>
     </v-col>
 
-    <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near'" class="button h9 btn2" @click="viewForm()">
+    <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near' || account_id === 'leyner.near'" class="button h9 btn2" @click="viewForm()">
       PROJECT PROPOSAL<v-icon medium>mdi-chevron-right</v-icon>
     </button>
   </section>

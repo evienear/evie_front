@@ -617,8 +617,10 @@ export default {
 
     // COMIENZA EL CARRITO
     addCart(item) {
+      // console.log(this.nftCart)
+      // console.log(item)
       const index = this.nftCart.findIndex(i =>
-        i.token_id === item.token_id
+        i.token_id === item.token_id && item.marketplace === i.contract_market
       )
       if (index > -1) {
         this.dialogMessage = true
@@ -710,7 +712,7 @@ export default {
               element.precio = parseFloat(precio)
               this.priceTotal = this.priceTotal + element.precio
               this.dataNftTokens.forEach(item => {
-                if (item.token_id === element.token_id) {
+                if (item.token_id === element.token_id && item.marketplace === element.contract_market) {
                   item.select = true
                 }
               })

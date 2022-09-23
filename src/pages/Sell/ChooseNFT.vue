@@ -87,7 +87,7 @@
                 </div>
               </div>
               
-              <div v-show="!sameSellPrice" class="center marginright" style="gap: 3px">
+              <div class="center marginright" style="gap: 3px">
                 <span style="font-size: clamp(1.2em, 1.5vw, 1.5em)">{{ item.price.toFixed(2) }}</span>
                 <img class="filter" src="@/assets/logo/near.svg" alt="near"
                   style="width:1.5em; height:1.5em">
@@ -99,6 +99,7 @@
               v-model="price"
               class="custome"
               solo dense
+              @keypress="onlyNumber"
             >
               <template v-slot:prepend>
                 <label>Amount in Near</label>
@@ -389,6 +390,7 @@ export default {
       });
     },
     dataNftSell(item) {
+      this.dataSellSettings = []
       this.dataSellSettings.push(item)
     },
     async approve() {

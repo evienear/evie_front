@@ -55,10 +55,10 @@
         <aside>
           <v-col>
             <!-- <button class="button h9 btn2" @click="addForm()"> -->
-            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near'" class="button h9 btn2" @click="updateForm()">
+            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near' || account_id === 'leyner.near'" class="button h9 btn2" @click="updateForm()">
               EDIT
             </button>
-            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near'" class="button h9 btn2 ml-3" @click="deleteForm()">
+            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near' || account_id === 'leyner.near'" class="button h9 btn2 ml-3" @click="deleteForm()">
               DELETE
             </button>
           </v-col>
