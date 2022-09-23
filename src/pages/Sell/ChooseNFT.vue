@@ -184,7 +184,7 @@
         </v-col>
         <v-col v-show="transactionHashes !== ''" cols="12" class="center">
           <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes">
-            {{ transactionHashes }}
+            View Transaction
           </a>
         </v-col>
         <v-col cols="12">
@@ -281,11 +281,11 @@ export default {
       this.messageDM = 'Successful listing'
       this.transactionHashes = urlParams.get("transactionHashes")
       // this.$router.go(0)
-      history.replaceState(null, location.href.split("?")[0], '/#/sell');
+      history.replaceState(null, location.href.split("?")[0], '/#/choose-nft');
       
     }
     if (urlParams.get("errorCode") !== null) {
-      history.replaceState(null, location.href.split("?")[0], '/#/sell');
+      history.replaceState(null, location.href.split("?")[0], '/#/choose-nft');
     }
     this.viewTokens()
     this.listMarkets()
