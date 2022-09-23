@@ -286,7 +286,7 @@
         </v-col>
         <v-col v-show="transactionHashes !== ''" cols="12" class="center">
           <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes">
-            {{ transactionHashes }}
+            View Transaction
           </a>
         </v-col>
         <v-col cols="12">

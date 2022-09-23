@@ -116,7 +116,7 @@
       </section>
     </section>
 
-
+<!-- DIALOG DEPOSIT -->
     <v-dialog
       id="dialog"
       v-model="dialog"
@@ -162,6 +162,8 @@
         </v-col>
       </section>
     </v-dialog>
+    <!-- DIALOG DEPOSIT -->
+    <!-- DIALOG MENSAJE -->
     <v-dialog
       id="dialogo"
       v-model="dialogMessage"
@@ -192,6 +194,7 @@
         </v-col>
       </section>
     </v-dialog>
+    <!-- DIALOG MENSAJE -->
   </section>
 </template>
 
@@ -296,7 +299,7 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
-        // console.log(response.data)
+        //console.log(response.data)
         response.data.forEach(item => {
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace, item.collection)
         });
@@ -344,7 +347,7 @@ export default {
               console.log(err)
             })
           }
-          if (base_uri !== null) {
+          if (base_uri !== null && !item.metadata.media.includes('https://')) {
             item.metadata.media = base_uri + '/' + item.metadata.media
           }
           item.marketplace = marketplace
@@ -353,6 +356,7 @@ export default {
           item.collection = collection
           // console.log(item)
           this.dataChooseNFTTable.push(item)
+          console.log(this.dataChooseNFTTable)
         });
       }).catch(err => {
         console.log(err)
