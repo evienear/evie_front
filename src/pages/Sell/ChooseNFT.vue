@@ -147,6 +147,7 @@
             v-model="amountStorage"
             class="custome"
             solo dense
+            @keypress="onlyNumber"
           >
             <template v-slot:prepend>
               <label>Amount in Near</label>
@@ -442,6 +443,13 @@ export default {
       }).catch(err => console.log(err))
       // this.data.push(item)
       // console.log(this.data)
+    },
+    onlyNumber ($event) {
+      //console.log($event.keyCode); //keyCodes value
+      let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+          $event.preventDefault();
+      }
     },
   }
 };

@@ -92,8 +92,6 @@
               <v-select
                 v-model="priceFilter"
                 :items="item.selection"
-                item.text="text"
-                item.value="value"
                 :hide-details="true"
                 @change="filterPrice()"
                 multiple
@@ -101,12 +99,23 @@
                 <template v-slot:label>
                   <span class="titleAutocompleteBuy h8 color">{{ item.title }}</span>
                 </template>
+                <template v-slot:[`item`]="{ item }">
+                  <v-list-item @click="clickValueFilter=item.value">
+                    
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ item.text }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider class="mt-2"></v-divider>
+                </template>
 
-              <button class="rightButton btn2 fill-w paddleftmobile"
-                @click="$refs.menu.dialog=true, priceTotalNft()">
-                CART:{{ cantCart }}
-                <span class="acenter">{{ priceTotal }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
-              </button>
+                  <!-- <button class="rightButton btn2 fill-w paddleftmobile"
+                    @click="$refs.menu.dialog=true, priceTotalNft()">
+                    CART:{{ cantCart }}
+                    <span class="acenter">{{ priceTotal }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
+                  </button> -->
                 <template v-slot:append>
                   <v-icon large class="color">mdi-chevron-down</v-icon>
                 </template>
@@ -220,18 +229,26 @@
                 <v-icon small>mdi-arrow-up</v-icon>
               </v-btn>
               <div class="buttons__wrapper" @scroll="scroll($event)">
-                <v-tooltip v-for="(item2,i) in markets" :key="i" bottom>
+                <!-- <v-tooltip v-for="(item2,i) in markets" :key="i" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on">
                       <img :src="item2.icon" :alt="item2.marketplace">
                     </v-btn>
                   </template>
                   <span>{{ item2.marketplace }}</span>
+                </v-tooltip> -->
+                <v-tooltip v-if="item.marketplace !== null" bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on">
+                      <img :src="require('@/assets/markets/' + item.marketplace + '.svg')" :alt="item.marketplace">
+                    </v-btn>
+                  </template>
+                  <span>{{ item.marketplace }}</span>
                 </v-tooltip>
               </div>
-              <v-btn v-show="markets.length > 4" icon class="btn3" :disabled="slider === 'disabled'" @click="next($event)">
+              <!-- <v-btn v-show="markets.length > 4" icon class="btn3" :disabled="slider === 'disabled'" @click="next($event)">
                 <v-icon small>mdi-arrow-down</v-icon>
-              </v-btn>
+              </v-btn> -->
             </aside>
           </div>
         </v-col>
@@ -319,6 +336,7 @@ export default {
   components: { MenuBuy },
   data() {
     return {
+      clickValueFilter: '',
       menuFilter: false,
       drawer: false,
       collectionId: this.$route.params.id,
@@ -337,7 +355,7 @@ export default {
           // selection: [ 'Lowest Price', 'Highest Price', 'On sale', 'Not sale', 'All']
           selection: [
             {value: 'asc', text: 'Lowest Price' },
-            {value: 'decs', text: 'Highest Price' },
+            {value: 'desc', text: 'Highest Price' },
             {value: 'true', text: 'On sale' },
             {value: 'false', text: 'Not sale' },
             {value: '%', text: 'All' },
@@ -376,6 +394,7 @@ export default {
       markets: [],
       marketplaceCart: [],
       slider: 0,
+      filterGeneral: [],
     }
   },
   mounted() {
@@ -403,7 +422,6 @@ export default {
     this.collection = JSON.parse(localStorage.collections)
     // console.log(this.collection, 'datos coleccion')
     this.viewTokens()
-    this.viewMarketplace()
     this.getCartItems()
   },
   computed: {
@@ -414,7 +432,6 @@ export default {
   },
   methods: {
     viewTokens() {
-      // console.log(this.filterSelect)
       axios.post('https://evie.pro:3070/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
       // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
@@ -432,7 +449,7 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
-        // console.log(response.data)
+        //console.log(response.data)
         response.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
@@ -440,6 +457,11 @@ export default {
           } else {
             price = 0
           }
+          // axios.get(item.media).then(res => {
+          //     console.log(res, 'data media')
+          //   }).catch(err => {
+          //     console.log(err)
+          //   })
           if (item.extra !== null && item.extra !== '') {
             //console.log('paso al extra')
             if(JSON.parse(item.extra)) {
@@ -465,34 +487,7 @@ export default {
             }).catch(err => {
               console.log(err)
             })
-
           } 
-
-          // if (item.media.includes('https://dev.nagmi.art/ipfs/')) {
-          //   console.log('para que se vea')
-
-
-          //   const near = await connect(
-          //     CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-          //   );
-          //   // create wallet connection
-          //   const wallet = new WalletConnection(near);
-  
-          //   const contract = new Contract(wallet.account(), item.contract_id, {
-          //     viewMethods: ["nft_token"],
-          //     sender: wallet.account(),
-          //   });
-          //   await contract.nft_token({
-          //     token_id: item.token_id
-          //   }).then((resToken) => {
-          //     console.log(resToken, 'res nft token')
-          //   }).catch(err => {
-          //     console.log(err)
-          //   });
-
-
-
-          // }
           item.price = parseFloat(price)
           item.select = false
           // if(item.attributes == undefined) {}
@@ -689,7 +684,7 @@ export default {
     },
     
     async getCartItems() {
-      this.marketplaceCart = []
+      console.log('pasando por getcart')
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
@@ -711,21 +706,6 @@ export default {
             this.nftCart = response
             this.priceTotal = 0
             this.nftCart.forEach(element => {
-              
-              // coloca el market de las que estanb en el carrito
-              axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
-                "collection": element.contract_id
-              }).then(response => {
-                response.data.forEach(i => {
-                  this.marketplaceCart.push({
-                    marketplace: i.marketplace,
-                    icon: require('@/assets/markets/' + i.marketplace + '.svg'),
-                    selected: true,
-                  })
-                })
-              }).catch(erro => console.log(erro))
-
-              element.marketplace = this.marketplaceCart
               precio = utils.format.formatNearAmount((element.price.toString()))
               element.precio = parseFloat(precio)
               this.priceTotal = this.priceTotal + element.precio
@@ -757,35 +737,59 @@ export default {
       this.viewTokens()
     },
     filterPrice() {
+      var index = null
+      //var filter = []
+      if(this.clickValueFilter !== '%') {
+        index = this.priceFilter.findIndex(i => i === '%')
+        if(index > -1) {
+          this.priceFilter.splice(index, 1)
+        }
+      } 
+      if(this.clickValueFilter === 'asc') {
+        index = this.priceFilter.findIndex(i => i === 'desc')
+        if(index > -1) {
+          this.priceFilter.splice(index, 1)
+        }
+        this.filterSelect = 'asc'
+      } 
+      if(this.clickValueFilter === 'desc') {
+        index = this.priceFilter.findIndex(i => i === 'asc')
+        if(index > -1) {
+          this.priceFilter.splice(index, 1)
+        }
+        this.filterSelect = 'desc'
+        console.log(this.priceFilter)
+      }
+      if(this.clickValueFilter === 'true') {
+        index = this.priceFilter.findIndex(i => i === 'false')
+        if(index > -1) {
+          this.priceFilter.splice(index, 1)
+        }
+        this.sales = 'true'
+      }
+      if(this.clickValueFilter === 'false') {
+        index = this.priceFilter.findIndex(i => i === 'true')
+        console.log(index, 'index')
+        if(index > -1) {
+          this.priceFilter.splice(index, 1)
+        }
+        this.sales = 'false'
+      }
+      if(this.clickValueFilter === '%') {
+        this.priceFilter.forEach(i => {
+          this.priceFilter.splice(i, 1)
+        });
+        this.sales = '%'
+        this.filterSelect = ''
+      } 
+
+      
+
       if (this.priceFilter.length == 0) {
         this.filterSelect = ''
         this.sales = '%'
-      } // else if(this.priceFilter.length > 2) {
-
-      //}
-      for (var i = 0; i < this.priceFilter.length; i++) {
-        
-        if (this.priceFilter[i] === 'asc') {
-          this.filterSelect = 'asc'
-        } else if (this.priceFilter[i] === 'desc') {
-          this.filterSelect = 'desc'
-        } else if (this.priceFilter[i] === '%') {
-          this.sales = ''
-        } else {
-          this.filterSelect = ''
-        }
-        
-        if (this.priceFilter[i] === 'true') {
-          this.sales = 'true'
-        } else if (this.priceFilter[i] === 'false') {
-          this.sales = 'false'
-        } else if (this.priceFilter[i] === '%') {
-          this.sales = '%'
-        } else {
-          this.sales = '%'
-        }
-      }
-      
+      } 
+      console.log(this.priceFilter, 'variable del select')
       this.viewTokens()
     },
     viewFormEducation() {
@@ -799,19 +803,19 @@ export default {
         });
       }).catch(err => { console.log(err) })
     },
-    viewMarketplace() {
-      axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
-        "collection": this.collectionId
-      }).then(response => {
-        response.data.forEach(i => {
-          this.markets.push({
-            marketplace: i.marketplace,
-            icon: require('@/assets/markets/' + i.marketplace + '.svg'),
-            selected: true,
-          })
-        })
-      }).catch(err => console.log(err))
-    },
+    // viewMarketplace() {
+    //   axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
+    //     "collection": this.collectionId
+    //   }).then(response => {
+    //     response.data.forEach(i => {
+    //       this.markets.push({
+    //         marketplace: i.marketplace,
+    //         icon: require('@/assets/markets/' + i.marketplace + '.svg'),
+    //         selected: true,
+    //       })
+    //     })
+    //   }).catch(err => console.log(err))
+    // },
     prev(e) {
       const slide = e.path[3].querySelector('.buttons__wrapper')
       if (slide.scrollTop >= 0) {

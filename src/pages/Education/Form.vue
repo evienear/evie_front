@@ -80,6 +80,7 @@
         v-model="collection.supply"
         class="custome"
         solo dense
+        :rules="rules"
       >
         <template v-slot:prepend>
           <label>SUPPLY</label>
@@ -90,6 +91,7 @@
         v-model="collection.website"
         class="custome"
         solo dense
+        :rules="rules"
       >
         <template v-slot:prepend>
           <label>WEBSITE</label>
@@ -100,6 +102,7 @@
         v-model="collection.twitter"
         class="custome"
         solo dense
+        :rules="rules"
       >
         <template v-slot:prepend>
           <label>TWITTER</label>
@@ -110,6 +113,7 @@
         v-model="collection.discord"
         class="custome"
         solo dense
+        :rules="rules"
       >
         <template v-slot:prepend>
           <label>DISCORD</label>
@@ -120,6 +124,7 @@
         v-model="collection.instagram"
         class="custome"
         solo dense
+        :rules="rules"
       >
         <template v-slot:prepend>
           <label>INSTAGRAM</label>
@@ -133,6 +138,7 @@
         v-model="descriptions[0]"
         solo
         class="custome"
+        :rules="rules"
       ></v-textarea>
     </div>
 
@@ -184,6 +190,10 @@ export default {
   name: "Form",
   data() {
     return {
+      rules: [
+        value => !!value || 'Required.',
+        value => (value && value.length >= 3) || 'Min 3 characters',
+      ],
       collection: [],
       descriptions: [],
       imagenes: [],

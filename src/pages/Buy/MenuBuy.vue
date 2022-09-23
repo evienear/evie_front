@@ -9,7 +9,7 @@
       :overlay-color="overlay_color"
     >
       <!-- checkout dialog-->
-      <section v-if="checkout" id="menuCheckout" class="colorCartas relative">
+      <!-- <section v-if="checkout" id="menuCheckout" class="colorCartas relative">
         <button class="buttonClose center">
           <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
         </button>
@@ -22,9 +22,9 @@
             <h3 class="tituloBack p">CHECKOUT</h3>
           </aside>
           <span class="subtitleBack">SELECT MARKETPLACE</span>
-        </v-col>
+        </v-col> -->
 
-        <v-col class=" divrow containerMenuBuy">
+        <!-- <v-col class=" divrow containerMenuBuy">
           <v-slide-group
             v-model="sliderA"
             center-active
@@ -69,9 +69,9 @@
               </v-card>
             </v-slide-item>
           </v-slide-group>
-        </v-col>
+        </v-col> -->
 
-        <v-col class="col-8 col-sm-6 containerMenuBottom mb-10">
+        <!-- <v-col class="col-8 col-sm-6 containerMenuBottom mb-10">
           <aside class="divcol">
             <span class="h9 color">{{ accountId }}</span>
             <span class="desc h9 color">Balance: {{ balance }}</span>
@@ -87,19 +87,19 @@
             REVIEW<v-icon medium>mdi-chevron-right</v-icon>
           </button>
         </v-col>
-      </section>
+      </section> -->
 
       <!-- review dialog-->
-      <section v-show="review" id="menuReview" class="colorCartas relative" style="min-height: 550.5px">
+      <section id="menuReview" class="colorCartas relative" style="min-height: 550.5px">
         <button class="buttonClose center">
           <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
         </button>
 
         <v-col cols="11">
           <aside class="divrow" style="gap: 6px; margin-bottom: -2px">
-            <button class="botonBack center" @click="checkout=true;review=false">
+            <!-- <button class="botonBack center" @click="checkout=true;review=false">
               <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
-            </button>
+            </button> -->
             <h3 class="tituloBack p">REVIEW</h3>
           </aside>
           <span class="subtitleBack">SELECT MARKETPLACE</span>
@@ -128,8 +128,8 @@
                   {{ item.precio}}
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
-                <aside class="buttons" >
-                  <v-tooltip bottom>
+                <aside class="buttons">
+                  <v-tooltip right>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn v-bind="attrs" v-on="on">
                         <img :src="require('@/assets/markets/' + item.contract_market + '.svg')" :alt="item.contract_market">
