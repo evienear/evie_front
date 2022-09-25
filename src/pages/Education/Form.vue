@@ -285,7 +285,6 @@ export default {
       } else {
         var idFormAdd = null
         axios.post('https://evie.pro:3070/api/v1/GenerateId').then(async response => {
-          // console.log(response.data.id)
           idFormAdd = response.data.id
           this.$store.commit('Load', true)
           var EduForm = {
@@ -387,7 +386,6 @@ export default {
         images: this.images,
       }
 
-      // console.log(EduForm)
       //connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
@@ -418,10 +416,8 @@ export default {
       })
     },
     dataCollection() {
-      // console.log(this.collection.contract)
       this.dataMenuCollections.forEach(item => {
         if (item.nft_contract === this.collection.contract) {
-          // console.log(item)
           this.images[0] = item.icon
           this.collection.title = item.name
         }

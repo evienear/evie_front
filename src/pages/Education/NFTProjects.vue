@@ -38,52 +38,22 @@ export default {
     }
   },
   mounted() {
-    // this.collections()
     axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
       console.log(response)
-      //console.log('refrescar')
     })
     this.getForm()
   },
   methods: {
     viewForm() {
-      // console.log('viewForm')
       localStorage.removeItem('idForm')
       this.$router.push('/form')
     },
     async getForm() {
       await axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
-        //console.log(response.data)
         this.dataNFTProjects = response.data
       }).catch(err => { console.log(err) })
-      // // connect to NEAR
-      // const near = await connect(
-      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore(), '')
-      // );
-      // // create wallet connection
-      // const wallet = new WalletConnection(near);
-      // if (wallet.isSignedIn()) {
-      //   this.$store.commit('Load', true)
-
-      //   const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-      //     changeMethods: ["get_forms"],
-      //     sender: wallet.account(),
-      //   })
-      //   await contract.get_forms({
-      //     from_index: '0',
-      //     limit: 50
-      //   }, '85000000000000',
-      //   ).then((response) => {
-      //     // console.log(response);
-      //     this.$store.commit('Load', false)
-      //     this.dataNFTProjects = response
-      //   }).catch(err => {
-      //     console.log(err)
-      //   })
-      // }
     },
     viewEducation(item) {
-      // console.log(item)
       localStorage.idForm = item.id
       localStorage.vieneDe = 'nftprojects'
       this.$router.push('/project-proposal')

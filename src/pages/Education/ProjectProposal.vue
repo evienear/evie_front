@@ -145,40 +145,8 @@ export default {
         { market: require("@/assets/buttons/dlt.svg") },
       ],
       dataProjectProposal: {
-        lista: [
-          // {
-          //   listen: "9",
-          //   price: "1068",
-          //   volume: "50,000",
-          //   total: "150,000",
-          //   market: "doge"
-          // },
-          // {
-          //   listen: "9",
-          //   price: "1068",
-          //   volume: "50,000",
-          //   total: "150,000",
-          //   market: "auto"
-          // },
-          // {
-          //   listen: "9",
-          //   price: "1068",
-          //   volume: "50,000",
-          //   total: "150,000",
-          //   market: "dlt"
-          // },
-        ],
-        description: {
-          // nft: require("@/assets/nft/monkeyA2.png"),
-          // name: "MARA GEN 0",
-          // supply: "101",
-          // website: "maranft.art/",
-          // twitter: "twitter.com/MaraNFT_DAO",
-          // instagram: "instagram.com/mara_mtp",
-          // discord: "discord:discord.gg/prT5pxKv",
-          // about: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Deserunt ad quae ipsam qui debitis excepturi explicabo quas dolor, repellat itaque. In mollitia asperiores voluptate placeat ratione. Voluptas ipsum quibusdam quisquam.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas ipsum quibusdam quisquam.Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
-          // img: require("@/assets/image1.png")
-        }
+        lista: [],
+        description: {}
       },
       idForm: 0,
       dialogDelete: false,
@@ -196,7 +164,6 @@ export default {
     this.idBuy = parseInt(localStorage.idCollectionForm)
     this.vieneDe = localStorage.vieneDe
     this.getFormId()
-    // console.log(this.vieneDe)
   },
   methods: {
     async getFormId() {
@@ -207,15 +174,12 @@ export default {
       if (this.vieneDe === 'nftprojects') {
         id = this.idForm
       }
-      //console.log('getForm', this.idForm)
       this.$store.commit('Load', true)
       axios.post('https://evie.pro:3070/api/v1/descformedu', {
         'id': id 
       }).then(response => {
-        // console.log(response.data)
         this.searchCollections(response.data[0].title)
         this.dataProjectProposal.description = response.data
-        // console.log(this.dataProjectProposal.description)
         this.$store.commit('Load', false)
       })
     },
@@ -259,7 +223,6 @@ export default {
         'limit': 1,
         'index': 0,
       }).then(response => {
-        // console.log(response.data[0].nft_contract)
         response.data.forEach(item => {
           console.log(item)
           if(item.icon == null) {

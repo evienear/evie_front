@@ -2,7 +2,7 @@
   <section id="home" class="center align gap">
     <h1 class="titulo">BUY</h1>
 
-    <button class="chooseNftBtn btn" @click="menuCollections=true; this.$refs.search.focus()">
+    <button class="chooseNftBtn btn" @click="menuCollections=true">
       CHOOSE NFT's
       <div class="decoration" />
       <v-icon medium>mdi-chevron-down</v-icon>
@@ -121,39 +121,8 @@ export default {
   
   mounted() {
     this.searchCollections()
-    this.search.focus()
   },
   methods: {
-    // async collections () {
-    //   this.dataMenuCollections = []
-    //   var data = []
-    //   this.$store.commit('Load', true)
-    //   await axios.post('https://evie.pro:3070/api/v1/listcollections', {
-    //   // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
-    //   // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
-    //     'limit': 20,
-    //     'index': this.indexPag,
-    //   }).then(response => {
-    //     // console.log(response.data)
-    //     // this.dataMenuCollections = response.data
-    //     response.data.forEach(item => {
-    //       if(item.icon == null) {
-    //         axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
-    //           // console.log(res.data.data.results)
-    //           data = res.data.data.results
-    //           data.forEach(element => {
-    //             if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
-    //               item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
-    //             }
-    //           });
-    //         })
-    //       }
-    //       this.dataMenuCollections.push(item)
-    //     })
-    //     this.$store.commit('Load', false)
-    //     //console.log(this.dataMenuCollections)
-    //   }).catch(err => console.log(err))
-    // },
     async searchCollections () {
       this.dataMenuCollections = []
       var data = []
@@ -165,13 +134,10 @@ export default {
         'limit': 20,
         'index': this.indexPag,
       }).then(response => {
-        // console.log(response.data, 'respuesta')
         response.data.forEach(item => {
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
-              // console.log(res.data.data.results)
               data = res.data.data.results
-              // console.log(data)
               if(data.length) {
                 data.forEach(element => {
                   if (data.length > 1) {
@@ -188,7 +154,6 @@ export default {
           this.dataMenuCollections.push(item)
         })
         this.$store.commit('Load', false)
-        //console.log(this.dataMenuCollections)
       }).catch(err => console.log(err))
     },
     viewNft(item) {

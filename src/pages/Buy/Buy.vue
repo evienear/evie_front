@@ -403,7 +403,6 @@ export default {
     urlParams.get("transactionHashes")
     this.hash = "https://explorer.mainnet.near.org/transactions/" + urlParams.get("transactionHashes")
     if (urlParams.get("transactionHashes") !== null) {
-      // console.log('aqui' + urlParams.get("transactionHashes"))
       setTimeout(() => {
         axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
       }, 35000)
@@ -412,15 +411,12 @@ export default {
       this.messageDM = 'Purchase successful'
       this.transactionHashes = urlParams.get("transactionHashes")
       history.replaceState(null, location.href.split("?")[0], '/#/buy/' + localStorage.nft_contract);
-      // this.$router.go(0)
     }
     if (urlParams.get("errorCode") !== null) {
       history.replaceState(null, location.href.split("?")[0], '/#/buy/'  + localStorage.nft_contract);
     }
-    // console.log(this.collectionId)
     
     this.collection = JSON.parse(localStorage.collections)
-    // console.log(this.collection, 'datos coleccion')
     this.viewTokens()
     this.getCartItems()
   },
@@ -449,7 +445,7 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
-        //console.log(response.data)
+        console.log(response.data)
         response.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
@@ -457,13 +453,12 @@ export default {
           } else {
             price = 0
           }
-          // axios.get(item.media).then(res => {
-          //     console.log(res, 'data media')
-          //   }).catch(err => {
-          //     console.log(err)
-          //   })
+          axios.get(item.media).then(res => {
+              console.log(res, 'data media')
+            }).catch(err => {
+              console.log(err)
+            })
           if (item.extra !== null && item.extra !== '') {
-            //console.log('paso al extra')
             if(JSON.parse(item.extra)) {
               item.extra = JSON.parse(item.extra)
               if (item.extra.attributes) {
@@ -473,8 +468,7 @@ export default {
                 item.attributes = item.extra.atributos
               }
             }
-          } else if (item.extra == null || item.extra === '' && item.reference !== null && item.reference !== 'Pinata') {
-            //console.log('paso a referencia')
+          } else if ((item.extra == null || item.extra === '') && (item.reference !== null || item.reference !== 'Pinata')) {
             if(item.base_uri !== null  && !item.reference.includes('https://')) {
               referenceJson = item.base_uri + '/' + item.reference
             }
@@ -486,7 +480,6 @@ export default {
             }
             axios.get(referenceJson).then(res => {
               item.attributes = res.data.attributes
-              //console.log('respuesta de los atributos')
             }).catch(err => {
               console.log(err)
             })
@@ -497,7 +490,6 @@ export default {
           this.dataNftTokens2.push(item)
           this.dataNftTokens = this.dataNftTokens2
         });
-        //console.log(this.dataNftTokens2, 'data pusheada')
         this.armarAtributos()
       }).catch(err => console.log(err))
     },
@@ -620,8 +612,6 @@ export default {
 
     // COMIENZA EL CARRITO
     addCart(item) {
-      // console.log(this.nftCart)
-      // console.log(item)
       const index = this.nftCart.findIndex(i =>
         i.token_id === item.token_id && item.marketplace === i.contract_market
       )
@@ -808,19 +798,6 @@ export default {
         });
       }).catch(err => { console.log(err) })
     },
-    // viewMarketplace() {
-    //   axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
-    //     "collection": this.collectionId
-    //   }).then(response => {
-    //     response.data.forEach(i => {
-    //       this.markets.push({
-    //         marketplace: i.marketplace,
-    //         icon: require('@/assets/markets/' + i.marketplace + '.svg'),
-    //         selected: true,
-    //       })
-    //     })
-    //   }).catch(err => console.log(err))
-    // },
     prev(e) {
       const slide = e.path[3].querySelector('.buttons__wrapper')
       if (slide.scrollTop >= 0) {

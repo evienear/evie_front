@@ -281,7 +281,6 @@ export default {
     urlParams.get("transactionHashes")
     this.hash = "https://explorer.mainnet.near.org/transactions/" + urlParams.get("transactionHashes")
     if (urlParams.get("transactionHashes") !== null) {
-      // console.log('aqui' + urlParams.get("transactionHashes"))
       setTimeout(() => {
         axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
       }, 35000)
@@ -289,7 +288,6 @@ export default {
       this.titleDM = 'Successful'
       this.messageDM = 'Successful listing'
       this.transactionHashes = urlParams.get("transactionHashes")
-      // this.$router.go(0)
       history.replaceState(null, location.href.split("?")[0], '/#/choose-nft');
       
     }
@@ -308,17 +306,12 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
-        //console.log(response.data)
         response.data.forEach(item => {
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace, item.collection)
         });
-        // this.totalNft = this.dataNftTokens.length
-        // this.armarAtributos()
-        // console.log(this.dataChooseNFTTable)
       }).catch(err => console.log(err))
     },
     async market(token_id, precio, base_uri, marketplace, collection) {
-      // console.log(token_id, 'token id')
       this.dataNftTokens = []
       var price = ''
       if(precio !== null) {
@@ -341,31 +334,12 @@ export default {
         token_id: token_id
       }).then((response) => {
         responseData[0] = response
-        // console.log(responseData)
         responseData.forEach(item => {
-          if (item.metadata.extra !== null) {
-            item.metadata.extra = JSON.parse(item.metadata.extra)
-            item.attributes = item.metadata.extra.atributos
-          } 
-          if (item.metadata.extra == null) {
-            // item.metadata.extra = base_uri + '/' + item.metadata.reference
-            axios.get(base_uri + '/' + item.metadata.reference).then(res => {
-              // console.log(res.data.attributes)
-              item.attributes = res.data.attributes
-            }).catch(err => {
-              console.log(err)
-            })
-          }
-          if (base_uri !== null && !item.metadata.media.includes('https://')) {
-            item.metadata.media = base_uri + '/' + item.metadata.media
-          }
           item.marketplace = marketplace
           item.price = parseFloat(price)
           item.precio = precio
           item.collection = collection
-          // console.log(item)
           this.dataChooseNFTTable.push(item)
-          console.log(this.dataChooseNFTTable)
         });
       }).catch(err => {
         console.log(err)
@@ -407,7 +381,6 @@ export default {
       this.dataSellSettings.push(item)
     },
     async approve() {
-      // console.log(this.selectedItem, 'market a vender')
       var msg = ''
       var price = 0
       if(!this.sameSellPrice) {
@@ -441,7 +414,6 @@ export default {
         }
         
       }
-      // console.log(msg)
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
@@ -472,16 +444,12 @@ export default {
       // axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
         "collection": item.collection
       }).then(response => {
-        // console.log(response.data)
         response.data.forEach(item => {
           this.marketplace.push(item.marketplace)
         });
       }).catch(err => console.log(err))
-      // this.data.push(item)
-      // console.log(this.data)
     },
     onlyNumber ($event) {
-      //console.log($event.keyCode); //keyCodes value
       let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
           $event.preventDefault();
