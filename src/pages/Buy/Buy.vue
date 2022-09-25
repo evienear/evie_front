@@ -475,8 +475,11 @@ export default {
             }
           } else if (item.extra == null || item.extra === '' && item.reference !== null && item.reference !== 'Pinata') {
             //console.log('paso a referencia')
-            if(item.base_uri !== null) {
+            if(item.base_uri !== null  && !item.reference.includes('https://')) {
               referenceJson = item.base_uri + '/' + item.reference
+            }
+            if(item.reference.includes('https://')) {
+              referenceJson = item.reference
             }
             if (item.base_uri == null) {
               referenceJson = item.reference

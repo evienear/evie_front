@@ -13,6 +13,20 @@
         <button class="button btn2" @click="dialog=true">
           Deposit
         </button>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn class="button2" color="transparent" v-bind="attrs" v-on="on">
+              <v-icon x-large>mdi-information-outline</v-icon>
+            </v-btn>
+          </template>
+        <span>
+          To be listed on a market first You have to 
+        </span>
+        <br>
+        <span>
+          deposit for storage in the corresponding market
+        </span>
+      </v-tooltip>
       </aside>
 
       <!-- <aside class="start">
@@ -210,7 +224,7 @@ export default {
   data() {
     return {
       marketplaceDeposit: '',
-      price: '',
+      price: null,
       dialog: false,
       amountStorage: 0,
       dataFilter: [
@@ -252,13 +266,8 @@ export default {
         //   amount: "0,00",
         // }
       ],
-      marketplace: [
-        // {img: require("@/assets/buttons/auto.svg"), active: false},
-        // {img: require("@/assets/buttons/doge.svg"), active: false},
-        // {img: require("@/assets/buttons/dlt.svg"), active: false},
-        // {img: require("@/assets/buttons/xdn.svg"), active: false}
-      ],
-      selectedItem: '',
+      marketplace: [],
+      selectedItem: null,
       data: [],
       dialogMessage: false,
       titleDM: '',
@@ -402,14 +411,35 @@ export default {
       var msg = ''
       var price = 0
       if(!this.sameSellPrice) {
-        price = utils.format.parseNearAmount((this.price).toString())
-        msg = JSON.stringify({
-          market_type: "sale", price: price, ft_token_id: "near"
-        })
+        if(!this.selectedItem) {
+          this.dialogMessage = true
+          this.titleDM = 'Empty fields'
+          this.messageDM = 'You must select the marketplace'
+          return
+        } else if(!this.price) {
+          this.dialogMessage = true
+          this.titleDM = 'Empty fields'
+          this.messageDM = 'the amount field must not be empty'
+          return
+        } else {
+          price = utils.format.parseNearAmount((this.price).toString())
+          msg = JSON.stringify({
+            market_type: "sale", price: price, ft_token_id: "near"
+          })
+        }
+        
       } else if(this.sameSellPrice) {
-        msg = JSON.stringify({
-          market_type: "sale", price: this.dataSellSettings[0].precio, ft_token_id: "near"
-        })
+        if(!this.selectedItem) {
+          this.dialogMessage = true
+          this.titleDM = 'Empty fields'
+          this.messageDM = 'You must select the marketplace'
+          return
+        } else {
+          msg = JSON.stringify({
+            market_type: "sale", price: this.dataSellSettings[0].precio, ft_token_id: "near"
+          })
+        }
+        
       }
       // console.log(msg)
       // connect to NEAR

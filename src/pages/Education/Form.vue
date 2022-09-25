@@ -8,19 +8,19 @@
     </v-col>
 
     <section id="container-content">
-      <v-file-input
+      <!-- <v-file-input
         v-model="images"
         class="custome file"
         prepend-icon=""
         solo
       >
         <template v-slot:label>
-          <!-- <img src="@/assets/icons/camera.svg" alt="upload files"> -->
+          
           <v-icon>camera</v-icon>
           <span>UPLOAD</span>
         </template>
-      </v-file-input>
-
+      </v-file-input> -->
+      <img class="file" :src="images[0]" :alt="collection.title" width="">
       <v-autocomplete
         v-model="collection.contract"
         :items="dataMenuCollections"
@@ -144,7 +144,11 @@
 
     <v-col class="center">
       <!-- <button class="button h9 btn2" @click="addForm()"> -->
-      <button v-show="!update" class="button h9 btn2" @click="addForm()">
+      <button
+        v-show="!update"
+        class="button h9 btn2"
+        @click="addForm()"
+      >
         SAVE
       </button>
       <button v-show="update" class="button h9 btn2" @click="updateForm()">
@@ -191,8 +195,7 @@ export default {
   data() {
     return {
       rules: [
-        value => !!value || 'Required.',
-        value => (value && value.length >= 3) || 'Min 3 characters',
+        value => !!value || 'This field is required.',
       ],
       collection: [],
       descriptions: [],
@@ -224,6 +227,7 @@ export default {
     // }
   },
   methods: {
+    
     async collections () {
       // this.$store.commit('Load', true)
       var data = []
@@ -250,55 +254,87 @@ export default {
       }).catch(err => console.log(err))
     },
     addForm() {
-      var idFormAdd = null
-      axios.post('https://evie.pro:3070/api/v1/GenerateId').then(async response => {
-        // console.log(response.data.id)
-        idFormAdd = response.data.id
-        this.$store.commit('Load', true)
-        var EduForm = {
-          title: this.collection.title,
-          supply: this.collection.supply,
-          website: this.collection.website,
-          twitter: this.collection.twitter,
-          discord: this.collection.discord,
-          instagram: this.collection.instagram,
-          descriptions: this.descriptions,
-          images: this.images,
-        }
-        console.log(idFormAdd, 'este es el id')
-        //connect to NEAR
-        const near = await connect(
-          CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-        );
-        // create wallet connection
-        const wallet = new WalletConnection(near);
-        const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-          changeMethods: ["add_form"],
-          sender: wallet.account(),
-        })
-        await contract.add_form({
-          form_id: idFormAdd,
-          form: EduForm
-        }, '85000000000000',
-        ).then((response) => {
-          console.log(response, idFormAdd);
-          this.$store.commit('Load', false)
-          this.dialogMessage = true
-          this.titleDM = 'Successfully saved'
-          this.messageDM = 'The data was saved successfully'
-          setTimeout(() => {
-            axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
-              console.log(response)
-            }).catch(erro => {console.log(erro)})
-          }, 35000)
-        }).catch(err => {
-          console.log(err)
-          this.$store.commit('Load', false)
-          this.dialogMessage = true
-          this.titleDM = 'Error'
-          this.messageDM = 'An error has occurred' + err
-        })
-      }).catch(erro => console.log(erro))
+      if (!this.collection.contract) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'You must select a collection'
+      } else if(!this.collection.supply) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The supply field must not be empty'
+      } else if(!this.collection.website) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The website field must not be empty'
+      } else if(!this.collection.twitter) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The twitter field must not be empty'
+      } else if(!this.collection.discord) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The discord field must not be empty'
+      } else if(!this.collection.instagram) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The instagram field must not be empty'
+      } else if(!this.descriptions.length) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The description field must not be empty'
+      } else {
+        var idFormAdd = null
+        axios.post('https://evie.pro:3070/api/v1/GenerateId').then(async response => {
+          // console.log(response.data.id)
+          idFormAdd = response.data.id
+          this.$store.commit('Load', true)
+          var EduForm = {
+            title: this.collection.title,
+            supply: this.collection.supply,
+            website: this.collection.website,
+            twitter: this.collection.twitter,
+            discord: this.collection.discord,
+            instagram: this.collection.instagram,
+            descriptions: this.descriptions,
+            images: this.images,
+          }
+          console.log(idFormAdd, 'este es el id')
+          //connect to NEAR
+          const near = await connect(
+            CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+          );
+          // create wallet connection
+          const wallet = new WalletConnection(near);
+          const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+            changeMethods: ["add_form"],
+            sender: wallet.account(),
+          })
+          await contract.add_form({
+            form_id: idFormAdd,
+            form: EduForm
+          }, '85000000000000',
+          ).then((response) => {
+            console.log(response, idFormAdd);
+            this.$store.commit('Load', false)
+            this.dialogMessage = true
+            this.titleDM = 'Successfully saved'
+            this.messageDM = 'The data was saved successfully'
+            setTimeout(() => {
+              axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
+                console.log(response)
+              }).catch(erro => {console.log(erro)})
+            }, 35000)
+          }).catch(err => {
+            console.log(err)
+            this.$store.commit('Load', false)
+            this.dialogMessage = true
+            this.titleDM = 'Error'
+            this.messageDM = 'An error has occurred' + err
+          })
+        }).catch(erro => console.log(erro))
+      }
+      
+      
     },
     async getFormId() {
       // connect to NEAR
@@ -316,11 +352,24 @@ export default {
         form_id: this.idForm
       }, '85000000000000',
       ).then((response) => {
-        // console.log(response);
+        console.log(response)
         this.collection = response.form
         this.descriptions[0] = response.form.descriptions[0]
         this.images[0] = response.form.images[0]
         this.$store.commit('Load', false)
+        //this.searchCollections(this.collection.title)
+         axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
+          'input': this.collection.title,
+          'limit': 1,
+          'index': 0,
+        }).then(res => {
+          console.log(res.data)
+          this.collection.contract = res.data[0].nft_contract
+        }).catch(erro => console.log(erro))
+        setTimeout(() => {
+          console.log(this.collection, 'colection')
+        }, 1000);
+        
       }).catch(err => {
         console.log(err)
       })
@@ -378,7 +427,7 @@ export default {
         }
       });
       // 
-    }
+    },
   }
 };
 </script>

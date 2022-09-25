@@ -110,7 +110,7 @@
             v-model="sliderB"
             center-active
             :show-arrows="true"
-            class="fill-w sliderReview"
+            class="fill-w"
           >
             <v-slide-item v-for="(item, index) in nftCart" :key="index">
               <v-card
@@ -279,7 +279,6 @@ export default {
     });
     this.dataMenuBuy = this.nftCart
     this.getBalance()
-    this.getCartItems()
     if (localStorage.refreshCart === 'true') {
       this.refreshCart = false
       localStorage.refreshCart = this.refreshCart
