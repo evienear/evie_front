@@ -110,7 +110,7 @@
             v-model="sliderB"
             center-active
             :show-arrows="true"
-            class="fill-w"
+            style="width: 85%"
           >
             <v-slide-item v-for="(item, index) in nftCart" :key="index">
               <v-card
