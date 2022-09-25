@@ -453,6 +453,12 @@ export default {
           } else {
             price = 0
           }
+
+          // fetch(item.media, {
+          //   headers: {"Access-Control-Allow-Origin": "*",}
+          // })
+          // .then((res) => res.json())
+          // .then((data) => console.log(data));
           axios.get(item.media).then(res => {
               console.log(res, 'data media')
             }).catch(err => {
