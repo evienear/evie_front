@@ -202,7 +202,7 @@
           </a>
         </v-col>
         <v-col cols="12">
-          <button  class="button h9 btn2" @click="dialogMessage = false">
+          <button  class="button h9 btn2" @click="dialogMessage = false, transactionHashes = ''">
             CLOSE
           </button>
         </v-col>

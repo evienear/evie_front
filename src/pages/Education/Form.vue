@@ -4,7 +4,7 @@
       <button class="botonBack center" @click="$router.push('/nft-projects')">
         <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
       </button>
-      <h1 class="tituloBack p">PROJECT PROPOSAL EDIT</h1>
+      <h1 class="tituloBack p">PROJECT PROPOSAL {{ addEdit }}</h1>
     </v-col>
 
     <section id="container-content">
@@ -212,6 +212,7 @@ export default {
       messageDM: '',
       dataMenuCollections: [],
       account_id: localStorage.walletAccountId,
+      addEdit: '',
     }
   },
   mounted() {
@@ -219,8 +220,10 @@ export default {
     if(localStorage.idForm) {
       this.idForm = parseInt(localStorage.idForm)
       this.update = true
+      this.addEdit = 'EDIT'
       this.getFormId()
     }
+
     this.collections()
     // if(this.account_id !== 'lindaley16.near' || this.account_id !== 'sirs.near' || this.account_id !== 'andresdom.near') {
     //   this.$router.push('/nft-projects')
