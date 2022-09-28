@@ -445,7 +445,7 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
-        console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
