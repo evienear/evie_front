@@ -306,6 +306,7 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
+        console.log(response.data)
         response.data.forEach(item => {
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace, item.collection)
         });
@@ -335,10 +336,16 @@ export default {
       }).then((response) => {
         responseData[0] = response
         responseData.forEach(item => {
+          if(base_uri !== '' || base_uri !== null) {
+            if(!item.metadata.media.includes('https://')) {
+              item.metadata.media = base_uri + '/' + item.metadata.media
+            }
+          }
           item.marketplace = marketplace
           item.price = parseFloat(price)
           item.precio = precio
           item.collection = collection
+          console.log(item)
           this.dataChooseNFTTable.push(item)
         });
       }).catch(err => {
