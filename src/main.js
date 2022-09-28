@@ -11,11 +11,13 @@ import "vue-toastification/dist/index.css";
 import VueAnimateOnScroll from 'vue-animate-onscroll';
 import VueApexCharts from 'vue-apexcharts'
 import vueDebounce from 'vue-debounce'
+import VueFileAgent from 'vue-file-agent';
+import 'vue-file-agent/dist/vue-file-agent.css';
 
 Vue.use(VueApexCharts)
 Vue.use(vueDebounce)
 Vue.component('apexchart', VueApexCharts)
-
+Vue.use(VueFileAgent)
 Vue.use(VueAnimateOnScroll);
 const i18n = initI18n("ES", "US");
 

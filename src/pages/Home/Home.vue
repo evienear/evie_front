@@ -140,6 +140,7 @@ export default {
               data = res.data.data.results
               if(data.length) {
                 data.forEach(element => {
+                  console.log(element, 'collec')
                   if (data.length > 1) {
                     if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
                       item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
@@ -147,7 +148,12 @@ export default {
                   } else if ((element.creator_id).toLowerCase() === (item.nft_contract).toLowerCase()) {
                     item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
                   }
+                  if (item.nft_contract === 'mara-smartcontract.near') {
+                    item.icon = 'https://paras-cdn.imgix.net/bafybeid7fbyflawy24hsttpriucgbc26hv3rnegsbcrvqww72prr2jdhoq?w=300&auto=format,compress'
+                  }
                 })
+              } else {
+                item.icon = require('@/assets/azul-color.png')
               }
             })
           }
@@ -168,11 +174,11 @@ export default {
     },
     nextItems() {
       this.indexPag = this.indexPag + 20
-      this.collections()
+      this.searchCollections()
     },
     prevItems() {
       this.indexPag = this.indexPag - 20
-      this.collections()
+      this.searchCollections()
     },
   },
   computed: {

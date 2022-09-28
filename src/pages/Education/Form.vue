@@ -8,6 +8,16 @@
     </v-col>
 
     <section id="container-content">
+      <!-- <VueFileAgent
+        :uploadUrl="uploadUrl"
+        v-model="fileRecord"
+        :multiple="false"
+        :deletable="true"
+        :accept="'image/*'"
+        :helpText="'Choose images'"
+        class="file"
+        @select="filesSelected()"
+      ></VueFileAgent> -->
       <!-- <v-file-input
         v-model="images"
         class="custome file"
@@ -189,6 +199,7 @@ import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract } = nearAPI;
 // const CONTRACT_NAME = 'backend.evie.testnet'
+// import { NFTStorage, File } from 'nft.storage'
 const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "Form",
@@ -246,8 +257,15 @@ export default {
               // console.log(res.data.data.results)
               data = res.data.data.results
               data.forEach(element => {
-                if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+                if (data.length > 1) {
+                  if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+                    item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+                  }
+                } else if ((element.creator_id).toLowerCase() === (item.nft_contract).toLowerCase()) {
                   item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+                }
+                if (item.nft_contract === 'mara-smartcontract.near') {
+                  item.icon = 'https://paras-cdn.imgix.net/bafybeid7fbyflawy24hsttpriucgbc26hv3rnegsbcrvqww72prr2jdhoq?w=300&auto=format,compress'
                 }
               });
             })
