@@ -43,7 +43,7 @@
                     solo background-color="transparent"
                     hide-details="true"
                     maxlength="20"
-                    v-debounce:300ms="searchCollections"
+                    v-debounce:600ms="searchCollections"
                   >
                     <template v-slot:label>
                       <span style="font-weight: 600">SEARCH BY COLLECTIONS</span>
@@ -97,7 +97,7 @@
           <v-btn class="btn2" :disabled="indexPag == 0" @click="prevItems()">
             <v-icon large style="color:#58565b !important">mdi-chevron-left</v-icon>
           </v-btn>
-          <v-btn class="btn2" @click="nextItems()">
+          <v-btn class="btn2" :disabled="dataMenuCollections.length < 20" @click="nextItems()">
             <v-icon large style="color:#58565b !important">mdi-chevron-right</v-icon>
           </v-btn>
         </v-col>
@@ -131,7 +131,6 @@ export default {
   },
   methods: {
     async searchCollections () {
-      this.dataMenuCollections = []
       var data = []
       if(this.search === '') {
         this.$store.commit('Load', true)
@@ -143,17 +142,15 @@ export default {
         "order": "volumen",
         "type_order": this.order
       }).then(response => {
-        console.log(response.data)
+        this.dataMenuCollections = []
+        // console.log(response.data)
         response.data.forEach(item => {
-          // item.name = unescape(encodeURIComponent(item.name))
-          // item.name = decodeURIComponent(escape(item.name))
-          // item.name = utf8.decode(item.name)
+          
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
               data = res.data.data.results
               if(data.length) {
-                data.forEach(element => {
-                  //console.log(element, 'collec')
+                data.forEach(element => {          
                   if (data.length > 1) {
                     if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
                       item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media

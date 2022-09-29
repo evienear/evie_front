@@ -259,7 +259,7 @@
           <v-btn class="btn2" :disabled="indexNftCollection == 0" @click="prevItems()">
             <v-icon large style="color:#58565b !important">mdi-chevron-left</v-icon>
           </v-btn>
-          <v-btn class="btn2" @click="nextItems()">
+          <v-btn class="btn2" :disabled="dataNftTokens.length < 50" @click="nextItems()">
             <v-icon large style="color:#58565b !important">mdi-chevron-right</v-icon>
           </v-btn>
         </v-col>
@@ -445,7 +445,7 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
-        //console.log(response.data)
+        // console.log(response.data)
         response.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
