@@ -21,6 +21,7 @@
     "highcharts-vue": "^1.3.5",
     "near-api-js": "^0.45.1",
     "nft.storage": "^7.0.0",
+    "utf8": "^3.0.0",
     "vue": "^2.6.12",
     "vue-animate-onscroll": "^1.0.8",
     "vue-apexcharts": "^1.6.1",

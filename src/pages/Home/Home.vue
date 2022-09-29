@@ -56,15 +56,17 @@
                 </v-col>
 
                 <v-col cols="4" class="center">
-                  <!-- <v-select
+                  <v-select
                     :items="filter"
+                    v-model="orderBy"
                     :hide-details="true"
                     append-icon="mdi-chevron-down"
+                    @change="changeOrder()"
                   >
                     <template v-slot:label>
                       <span style="font-weight: 600">ALL TIME VOLUME</span>
                     </template>
-                  </v-select> -->
+                  </v-select>
                 </v-col>
               </v-col>
             </template>
@@ -82,8 +84,10 @@
                   <span class="h8" style="font-weight: 400">{{ item.name }}</span>
                 </aside>
                 <span class="h8">
-                  <strong></strong>
+                  <strong>{{ parseFloat(item.volumen_near).toFixed(4) }} </strong>
+                  <img src="@/assets/logo/near.svg" alt="near">
                 </span>
+                
               </button>
             </template>
           </v-data-table>
@@ -105,6 +109,7 @@
 
 <script>
 import axios from 'axios'
+// const utf8 = require('utf8');
 
 export default {
   name: "Home",
@@ -112,10 +117,12 @@ export default {
     return {
       menuCollections: false,
       search: '',
-      // filter: [ 'foo', 'bar', 'fizz', 'buzz' ],
+      filter: [ 'desc', 'asc' ],
       resultsCollection: [],
       dataMenuCollections: [],
       indexPag: 0,
+      order: 'asc',
+      orderBy: 'acs',
     }
   },
   
@@ -133,14 +140,20 @@ export default {
         'input': this.search,
         'limit': 20,
         'index': this.indexPag,
+        "order": "volumen",
+        "type_order": this.order
       }).then(response => {
+        console.log(response.data)
         response.data.forEach(item => {
+          // item.name = unescape(encodeURIComponent(item.name))
+          // item.name = decodeURIComponent(escape(item.name))
+          // item.name = utf8.decode(item.name)
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
               data = res.data.data.results
               if(data.length) {
                 data.forEach(element => {
-                  console.log(element, 'collec')
+                  //console.log(element, 'collec')
                   if (data.length > 1) {
                     if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
                       item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
@@ -160,7 +173,10 @@ export default {
           this.dataMenuCollections.push(item)
         })
         this.$store.commit('Load', false)
-      }).catch(err => console.log(err))
+      }).catch(err => {
+        console.log(err)
+        this.$store.commit('Load', false)
+      })
     },
     viewNft(item) {
       localStorage.collections = JSON.stringify(item)
@@ -180,6 +196,10 @@ export default {
       this.indexPag = this.indexPag - 20
       this.searchCollections()
     },
+    changeOrder() {
+      this.order = this.orderBy
+      this.searchCollections()
+    }
   },
   computed: {
     headers() {return [{ sortable: false, value: "name" }]},

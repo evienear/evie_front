@@ -209,6 +209,7 @@ export default {
         this.dialogMessage = true
         this.titleDM = 'Successful'
         this.messageDM = 'Delete form education successful'
+        setTimeout(() => this.$router.push('/nft-projects'), 4000)
       }).catch(err => {
         console.log(err)
       })
@@ -224,7 +225,7 @@ export default {
         'index': 0,
       }).then(response => {
         response.data.forEach(item => {
-          console.log(item)
+          //console.log(item)
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
               data = res.data.data.results
@@ -243,6 +244,7 @@ export default {
       }).catch(err => console.log(err))
     },
     async viewMarketplace(item) {
+      this.dataProjectProposal.lista = []
       axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
         "collection": item
       }).then(response => {
