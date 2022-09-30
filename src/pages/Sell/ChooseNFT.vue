@@ -60,6 +60,16 @@
           <span class="marketplaceId btn2 h8">
             #{{ item.token_id }}
           </span>
+          <aside class="buttons" v-if="item.marketplace !== null">
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-bind="attrs" v-on="on">
+                  <img :src="require('@/assets/markets/' + item.marketplace + '.svg')" :alt="item.contract_market">
+                </v-btn>
+              </template>
+              <span>{{ item.marketplace }}</span>
+            </v-tooltip>
+          </aside>
         </v-card>
       </section>
 
@@ -216,6 +226,9 @@
 import axios from 'axios'
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
+import {/*Action,*/ createTransaction, functionCall} from 'near-api-js/lib/transaction'
+import { base_decode } from 'near-api-js/lib/utils/serialize'
+import { PublicKey } from 'near-api-js/lib/utils'
 const { connect, keyStores, WalletConnection, Contract, utils } = nearAPI;
 // const CONTRACT_NAME = 'backend.evie.testnet'
 // const CONTRACT_NAME = 'backend.eviepro.near'
@@ -240,32 +253,7 @@ export default {
       selectionMarket: [],
       dataChooseNFTTable: [],
       sameSellPrice: false,
-      dataSellSettings: [
-        // {
-        //   nft: require("@/assets/nft/monkeyA1.png"),
-        //   title: "NEARNAUT",
-        //   number: "3706",
-        //   amount: "0,00",
-        // },
-        // {
-        //   nft: require("@/assets/nft/monkeyA1.png"),
-        //   title: "NEARNAUT",
-        //   number: "3706",
-        //   amount: "0,00",
-        // },
-        // {
-        //   nft: require("@/assets/nft/monkeyA1.png"),
-        //   title: "NEARNAUT",
-        //   number: "3706",
-        //   amount: "0,00",
-        // },
-        // {
-        //   nft: require("@/assets/nft/monkeyA1.png"),
-        //   title: "NEARNAUT",
-        //   number: "3706",
-        //   amount: "0,00",
-        // }
-      ],
+      dataSellSettings: [],
       marketplace: [],
       selectedItem: null,
       data: [],
@@ -347,6 +335,7 @@ export default {
           item.collection = collection
           console.log(item)
           this.dataChooseNFTTable.push(item)
+          console.log(this.dataChooseNFTTable)
         });
       }).catch(err => {
         console.log(err)
@@ -462,6 +451,79 @@ export default {
           $event.preventDefault();
       }
     },
+    //FUNCIONES DEL BATCH
+    async createTransactionFn(receiverId, actions){
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
+      if (!wallet || !near) {
+        throw new Error(`No active wallet or NEAR connection.`)
+      }
+
+      const localKey =
+        await near?.connection.signer.getPublicKey(
+          wallet?.account().accountId,
+          near.connection.networkId
+        )
+
+      const accessKey = await wallet
+        ?.account()
+        .accessKeyForTransaction(receiverId, actions, localKey)
+
+      if (!accessKey) {
+        throw new Error(
+          `Cannot find matching key for transaction sent to ${receiverId}`
+        )
+      }
+
+      const block = await near?.connection.provider.block({
+        finality: 'final',
+      })
+
+      if (!block) {
+        throw new Error(`Cannot find block for transaction sent to ${receiverId}`)
+      }
+
+      const blockHash = base_decode(block?.header?.hash)
+      //const blockHash = nearAPI.utils.serialize.base_decode(accessKey.block_hash);
+
+      const publicKey = PublicKey.from(accessKey.public_key)
+      //const nonce = accessKey.access_key.nonce + nonceOffset
+      const nonce = ++accessKey.access_key.nonce;
+
+      return createTransaction(
+        wallet?.account().accountId,
+        publicKey,
+        receiverId,
+        nonce,
+        actions,
+        blockHash
+      )
+    },
+
+    async batchTransaction(transactions, options) {
+
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
+      const nearTransactions = await Promise.all(
+        transactions.map(async (tx) => {
+          return await this.createTransactionFn(
+            tx.receiverId,
+            tx.functionCalls.map((fc) => {
+              return functionCall(fc.methodName, fc.args, fc.gas, fc.deposit)
+            })
+          )
+        })
+      )
+
+      wallet.requestSignTransactions({
+        transactions: nearTransactions,
+        callbackUrl: options?.callbackUrl,
+        meta: options?.meta,
+      })
+    }
+    
   }
 };
 </script>

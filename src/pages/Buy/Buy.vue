@@ -388,7 +388,7 @@ export default {
       dialogAdd: false,
       titleAdd: '',
       indexNftCollection: 0,
-      priceFilter: '',
+      priceFilter: ['true','asc'],
       filterSelect: 'asc',
       sales: 'true',
       markets: [],

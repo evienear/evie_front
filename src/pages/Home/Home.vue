@@ -58,6 +58,8 @@
                 <v-col cols="4" class="center">
                   <v-select
                     :items="filter"
+                    item-text="text"
+                    item-value="value"
                     v-model="orderBy"
                     :hide-details="true"
                     append-icon="mdi-chevron-down"
@@ -117,12 +119,16 @@ export default {
     return {
       menuCollections: false,
       search: '',
-      filter: [ 'desc', 'asc' ],
+      // filter: [ 'desc', 'asc' ],
+      filter: [
+        {value: 'desc',  text: 'Highest to lowest'},
+        {value: 'asc',  text: 'Lowest to highest'},
+      ],
       resultsCollection: [],
       dataMenuCollections: [],
       indexPag: 0,
-      order: 'asc',
-      orderBy: 'acs',
+      order: 'desc',
+      orderBy: 'desc',
     }
   },
   
