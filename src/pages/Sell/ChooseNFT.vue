@@ -501,6 +501,17 @@ export default {
       console.log('listar nft')
       const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
+      if(!this.selectedItem) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'You must select the marketplace'
+        return
+      } else if(!this.price) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'the amount field must not be empty'
+        return
+      }
 
       if (this.storageBalance > this.minimumStorage) {
         console.log('if storage')
