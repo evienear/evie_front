@@ -41,7 +41,7 @@
 import MenuHeader from "./MenuHeader.vue"
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
-const { connect, keyStores, WalletConnection} = nearAPI;
+const { connect, keyStores, WalletConnection, Contract} = nearAPI;
 // const contractId = 'backend.evie.testnet'
 const contractId = 'backend.eviepro.near'
 let scrollValue =
@@ -170,6 +170,18 @@ export default {
         const walletAccountId = wallet.getAccountId();
         this.user = walletAccountId
         localStorage.walletAccountId = walletAccountId
+
+        const contract = new Contract(wallet.account(), contractId, {
+          viewMethods: ["is_admin"],
+          sender: wallet.account(),
+        })
+        await contract.is_admin({
+          admin: walletAccountId
+        }).then((response) => {
+          localStorage.isAdmin = response
+        }).catch(err => {
+          console.log(err)
+        })
       }
     },
     logout() {

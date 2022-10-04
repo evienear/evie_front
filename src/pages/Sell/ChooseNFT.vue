@@ -133,7 +133,7 @@
         </section>
 
         <v-col class="center">
-          <button class="button btn2" @click="approve()">
+          <button class="button btn2" @click="listar_nft()">
             SELL
           </button>
         </v-col>
@@ -261,6 +261,9 @@ export default {
       titleDM: '',
       messageDM:'',
       transactionHashes: '',
+      storageBalance: 0,
+      minimumStorage: 0,
+      txs: [],
     }
   },
   mounted() {
@@ -282,6 +285,9 @@ export default {
     if (urlParams.get("errorCode") !== null) {
       history.replaceState(null, location.href.split("?")[0], '/#/choose-nft');
     }
+    setTimeout(() => {
+        axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
+      }, 35000)
     this.viewTokens()
     this.listMarkets()
   },
@@ -435,6 +441,7 @@ export default {
     },
     async viewMarketplace(item) {
       console.log(item.collection)
+      this.marketplace = []
       axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
       // axios.post('http://157.230.2.213:3071/api/v1/listmarketplacecollection', {
       // axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
@@ -451,8 +458,120 @@ export default {
           $event.preventDefault();
       }
     },
-    //FUNCIONES DEL BATCH
-    async createTransactionFn(receiverId, actions){
+   
+   // FUNCIONES DEL BATCH
+
+   async storage_minimum() {
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
+      const contract = new Contract(wallet.account(), this.selectedItem, {
+        viewMethods: ["storage_minimum_balance"],
+        sender: wallet.account(),
+      })
+      await contract.storage_minimum_balance()
+      .then((response) => {
+        console.log("MINIMOOO",response)
+        this.minimumStorage = utils.format.formatNearAmount(response)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    async storage_balance() {
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
+      const contract = new Contract(wallet.account(), this.selectedItem, {
+        viewMethods: ["storage_balance_of"],
+        sender: wallet.account(),
+      })
+      await contract.storage_balance_of({
+        account_id: wallet.getAccountId(),
+      }).then((response) => {
+        console.log(response)
+        this.storageBalance = utils.format.formatNearAmount(response)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+
+    async listar_nft() {
+      this.storage_minimum()
+      this.storage_balance()
+      console.log('listar nft')
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
+      if (this.storageBalance > this.minimumStorage) {
+        console.log('if storage')
+        this.approve()
+      } else {  
+        console.log('else storage')
+        let msgs = {
+          price: utils.format.parseNearAmount((this.price).toString()),
+          market_type: "sale",
+          ft_token_id: "near"
+        }
+        console.log(msgs)
+        let txs = [
+          {
+            receiverId: this.selectedItem,
+            functionCalls: [
+              {
+                methodName: "storage_deposit",
+                receiverId: this.selectedItem,
+                gas: "200000000000000",
+                args: {
+                  receiverId: wallet.getAccountId(),
+                },
+                deposit: utils.format.parseNearAmount(this.minimumStorage),
+              },
+            ],
+          },
+          {
+            receiverId: this.dataSellSettings[0].collection,
+            functionCalls: [
+              {
+                methodName: "nft_approve",
+                receiverId: this.dataSellSettings[0].collection,
+                gas: "200000000000000",
+                args: {
+                  token_id: this.dataSellSettings[0].token_id,
+                  account_id: this.selectedItem,
+                  msg: JSON.stringify(msgs),
+                },
+                deposit: "350000000000000000000",
+              },
+            ],
+          },
+        ]
+        console.log('termino el let')
+        await this.batchTransaction(
+          txs,
+          {
+            meta: "list",
+          },
+        );
+        console.log('termino el bactch')
+        setTimeout(() => {
+          axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
+        }, 35000)
+      }
+    },
+
+    async batchTransactions() {
+      await this.batchTransaction(
+          this.txs,
+          {
+            meta: "list",
+          },
+        );
+    },
+
+    async createTransactionFn(
+      receiverId,
+      actions
+    ){
       const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
@@ -523,6 +642,7 @@ export default {
         meta: options?.meta,
       })
     }
+
     
   }
 };

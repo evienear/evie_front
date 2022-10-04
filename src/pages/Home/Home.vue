@@ -151,10 +151,10 @@ export default {
         this.dataMenuCollections = []
         // console.log(response.data)
         response.data.forEach(item => {
-          
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
               data = res.data.data.results
+              console.log(data, 'jhffhsh')
               if(data.length) {
                 data.forEach(element => {          
                   if (data.length > 1) {

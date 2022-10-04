@@ -35,14 +35,14 @@
 
       <section class="contRight">
         <aside>
-          <img class="images" :src="dataProjectProposal.description[0].images[0]" alt="nft">
+          <img class="images" :src="dataProjectProposal.description.form.images[0]" alt="nft">
           <div>
-            <h3 class="Title">{{ dataProjectProposal.description[0].title }}</h3>
-            <span><strong>Origianl Supply: </strong>{{ dataProjectProposal.description[0].supply }}</span>
-            <span><strong>Website: </strong>{{ dataProjectProposal.description[0].website }}</span>
-            <span><strong>Twitter: </strong>{{ dataProjectProposal.description[0].twitter }}</span>
-            <span><strong>Instagram: </strong>{{ dataProjectProposal.description[0].instagram }}</span>
-            <span><strong>Discord: </strong>{{ dataProjectProposal.description[0].discord }}</span>
+            <h3 class="Title">{{ dataProjectProposal.description.form.title }}</h3>
+            <span><strong>Origianl Supply: </strong>{{ dataProjectProposal.description.form.supply }}</span>
+            <span><strong>Website: </strong>{{ dataProjectProposal.description.form.website }}</span>
+            <span><strong>Twitter: </strong>{{ dataProjectProposal.description.form.twitter }}</span>
+            <span><strong>Instagram: </strong>{{ dataProjectProposal.description.form.instagram }}</span>
+            <span><strong>Discord: </strong>{{ dataProjectProposal.description.form.discord }}</span>
           </div>
         </aside>
 
@@ -50,15 +50,15 @@
           <!-- <img v-if="dataProjectProposal.description.img" :src="dataProjectProposal.description.img" 
             alt="image">-->
           <h3 class="Title">ABOUT:</h3>
-          <span>{{ dataProjectProposal.description[0].descriptions[0] }}</span>
+          <span>{{ dataProjectProposal.description.form.descriptions[0] }}</span>
         </aside>
         <aside>
           <v-col>
             <!-- <button class="button h9 btn2" @click="addForm()"> -->
-            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near' || account_id === 'leyner.near'" class="button h9 btn2" @click="updateForm()">
+            <button v-show="isAdmin==='true'" class="button h9 btn2" @click="updateForm()">
               EDIT
             </button>
-            <button v-show="account_id === 'lindaley16.near' || account_id === 'sirs.near' || account_id === 'andresdom.near' || account_id === 'leyner.near'" class="button h9 btn2 ml-3" @click="deleteForm()">
+            <button v-show="isAdmin==='true'" class="button h9 btn2 ml-3" @click="deleteForm()">
               DELETE
             </button>
           </v-col>
@@ -146,7 +146,7 @@ export default {
       ],
       dataProjectProposal: {
         lista: [],
-        description: {}
+        description: [],
       },
       idForm: 0,
       dialogDelete: false,
@@ -157,6 +157,7 @@ export default {
       vieneDe: '',
       nft_contract: '',
       collectionView: [],
+      isAdmin: localStorage.isAdmin,
     }
   },
   mounted() {
@@ -167,6 +168,7 @@ export default {
   },
   methods: {
     async getFormId() {
+      console.log(this.idForm, 'idform')
       var id = null
       if (this.vieneDe === 'buy') {
         id = this.idBuy
@@ -175,13 +177,38 @@ export default {
         id = this.idForm
       }
       this.$store.commit('Load', true)
-      axios.post('https://evie.pro:3070/api/v1/descformedu', {
-        'id': id 
-      }).then(response => {
-        this.searchCollections(response.data[0].title)
-        this.dataProjectProposal.description = response.data
-        this.$store.commit('Load', false)
+      // axios.post('https://evie.pro:3070/api/v1/descformedu', {
+      //   'id': id 
+      // }).then(response => {
+      //   this.searchCollections(response.data[0].title)
+      //   this.dataProjectProposal.description = response.data
+      //   this.$store.commit('Load', false)
+      // })
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore()
+        )
+      );
+      // create wallet connection
+      const wallet = new WalletConnection(near);
+      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+        viewMethods: ["get_form_by_id"],
+        sender: wallet.account(),
       })
+      await contract.get_form_by_id({
+        form_id: id
+      }).then((response) => {
+        this.$store.commit('Load', false)
+        setTimeout(() => {
+          this.searchCollections(response.form.title)
+          this.dataProjectProposal.description = response
+          console.log(response, 'response by id')
+        }, 1000)
+        
+      }).catch(err => {
+        console.log(err)
+      })
+      setTimeout(() => {console.log(this.dataProjectProposal.description.form.title, 'var data')}, 1200)
+      
     },
     updateForm() {
       this.$router.push('/form')
@@ -248,6 +275,7 @@ export default {
       axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
         "collection": item
       }).then(response => {
+        console.log(response.data, 'markets')
         response.data.forEach(i => {
           this.dataProjectProposal.lista.push({
             listen: i.marketplace,

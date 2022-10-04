@@ -15,27 +15,27 @@
             <span class="tituloBack" style="max-width:max-content">{{ collection.name }}</span>
             <!-- desktop -->
             <div class="contenidoInfo divrow eliminarmobile">
-              <template v-for="(item,i) in dataBuy">
-                <p :key="i" class="p space">
+              <template>
+                <p class="p space">
                   Minted
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.minted }}</strong>
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
                 <i class="center color">&bullet;</i>
                 </p>
-                <p :key="i" class="p space">
+                <p class="p space">
                   Owners
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.owners }}</strong>
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
                 <i class="center color">&bullet;</i>
                 </p>
-                <p :key="i" class="p space">
+                <p class="p space">
                   Floor Prince
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.floor }}
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}
                     <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
                   </strong>
                 <i class="center color">&bullet;</i>
                 </p>
-                <p :key="i" class="p space">
+                <p class="p space">
                   Daily Volume
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.daily }}</strong>
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
                 </p>
               </template>
             </div>
@@ -51,27 +51,27 @@
         <aside class="sectdown">
           <!-- mobile -->
           <div class="contenidoInfo divrow divwrapmobile vermobile">
-            <template v-for="(item,i) in dataBuy">
-              <p :key="i" class="p space">
+            <template>
+              <p class="p space">
                 Minted
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.minted }}</strong>
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
               <i class="center color">&bullet;</i>
               </p>
-              <p :key="i" class="p space">
+              <p class="p space">
                 Owners
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.owners }}</strong>
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
               <i class="center color">&bullet;</i>
               </p>
-              <p :key="i" class="p space">
+              <p class="p space">
                 Floor Prince
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.floor }}
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}
                   <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
                 </strong>
               <i class="center color">&bullet;</i>
               </p>
-              <p :key="i" class="p space">
+              <p class="p space">
                 Daily Volume
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ item.daily }}</strong>
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
               </p>
             </template>
           </div>
@@ -417,6 +417,7 @@ export default {
     }
     
     this.collection = JSON.parse(localStorage.collections)
+    console.log(this.collection, 'colecciones')
     this.viewTokens()
     this.getCartItems()
   },

@@ -184,7 +184,7 @@
           </span>
         </v-col>
         <v-col cols="12">
-          <button  class="button h9 btn2" @click="dialogMessage = false">
+          <button  class="button h9 btn2" @click="closeModalMessage()">
             CLOSE
           </button>
         </v-col>
@@ -241,7 +241,6 @@ export default {
     // }
   },
   methods: {
-    
     async collections () {
       // this.$store.commit('Load', true)
       var data = []
@@ -443,7 +442,16 @@ export default {
           this.collection.title = item.name
         }
       });
-      // 
+    },
+    closeModalMessage() {
+      this.dialogMessage = false
+      if(this.update) {
+        localStorage.idForm = this.idForm
+        localStorage.vieneDe = 'nftprojects'
+        this.$router.push('/project-proposal')
+      } else {
+        this.$router.push('/nft-projects')
+      }
     },
   }
 };
