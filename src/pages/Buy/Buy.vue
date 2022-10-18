@@ -18,24 +18,24 @@
               <template>
                 <p class="p space">
                   Minted
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.minted) }}</strong>
                 <i class="center color">&bullet;</i>
                 </p>
                 <p class="p space">
                   Owners
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.owners) }}</strong>
                 <i class="center color">&bullet;</i>
                 </p>
                 <p class="p space">
                   Floor Prince
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.floor_price).toFixed(2) }}
                     <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
                   </strong>
                 <i class="center color">&bullet;</i>
                 </p>
                 <p class="p space">
                   Daily Volume
-                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
+                  <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.daily_volumen).toFixed(2) }}</strong>
                 </p>
               </template>
             </div>
@@ -54,24 +54,24 @@
             <template>
               <p class="p space">
                 Minted
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.minted) }}</strong>
               <i class="center color">&bullet;</i>
               </p>
               <p class="p space">
                 Owners
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.owners) }}</strong>
               <i class="center color">&bullet;</i>
               </p>
               <p class="p space">
                 Floor Prince
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.floor_price).toFixed(2) }}
                   <img class="nearBalanceLogo filter" src="@/assets/logo/near.svg" alt="near">
                 </strong>
               <i class="center color">&bullet;</i>
               </p>
               <p class="p space">
                 Daily Volume
-                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.volumen_near).toFixed(2) }}</strong>
+                <strong class="divrow" style="align-items: center; margin-left: 0.3125rem">{{ parseFloat(collection.daily_volumen).toFixed(2) }}</strong>
               </p>
             </template>
           </div>
@@ -285,7 +285,7 @@
           </span>
         </v-col>
         <v-col v-show="transactionHashes !== ''" cols="12" class="center">
-          <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes">
+          <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes" target="_blank">
             View Transaction
           </a>
         </v-col>
@@ -356,9 +356,8 @@ export default {
           selection: [
             {value: 'asc', text: 'Lowest Price' },
             {value: 'desc', text: 'Highest Price' },
-            {value: 'true', text: 'On sale' },
-            {value: 'false', text: 'Not sale' },
-            {value: '%', text: 'All' },
+            {value: true, text: 'On sale' },
+            {value: false, text: 'Not sale' },
           ]
         },
         // {
@@ -388,13 +387,14 @@ export default {
       dialogAdd: false,
       titleAdd: '',
       indexNftCollection: 0,
-      priceFilter: ['true','asc'],
+      priceFilter: [true,'asc'],
       filterSelect: 'asc',
-      sales: 'true',
+      sales: true,
       markets: [],
       marketplaceCart: [],
       slider: 0,
       filterGeneral: [],
+      excess: null,
     }
   },
   mounted() {
@@ -417,7 +417,6 @@ export default {
     }
     
     this.collection = JSON.parse(localStorage.collections)
-    console.log(this.collection, 'colecciones')
     this.viewTokens()
     this.getCartItems()
   },
@@ -446,11 +445,12 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
-        // console.log(response.data)
-        response.data.forEach(async item => {
+        console.log(response.data, 'data nft')
+        this.excess = response.data.excess
+        response.data.data.forEach(async item => {
           var price = ''
           if(item.precio !== null) {
-            price = utils.format.formatNearAmount((item.precio.toString()))
+            price = item.precio_near
           } else {
             price = 0
           }
@@ -480,6 +480,7 @@ export default {
               console.log(err)
             })
           } 
+          //console.log(item)
           item.price = parseFloat(price)
           item.select = false
           // if(item.attributes == undefined) {}
@@ -720,11 +721,11 @@ export default {
       localStorage.priceTotal = this.priceTotal.toString()
     },
     nextItems() {
-      this.indexNftCollection = this.indexNftCollection + 50
+      this.indexNftCollection = this.indexNftCollection + 50 + this.excess
       this.viewTokens()
     },
     prevItems() {
-      this.indexNftCollection = this.indexNftCollection - 50
+      this.indexNftCollection = this.indexNftCollection - 50 - this.excess
       this.viewTokens()
     },
     filterPrice() {

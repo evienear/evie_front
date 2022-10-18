@@ -207,7 +207,7 @@
           </span>
         </v-col>
         <v-col v-show="transactionHashes !== ''" cols="12" class="center">
-          <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes">
+          <a :href="'https://explorer.mainnet.near.org/transactions/' + transactionHashes" target="_blank">
             View Transaction
           </a>
         </v-col>
@@ -285,9 +285,6 @@ export default {
     if (urlParams.get("errorCode") !== null) {
       history.replaceState(null, location.href.split("?")[0], '/#/choose-nft');
     }
-    setTimeout(() => {
-        axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
-      }, 35000)
     this.viewTokens()
     this.listMarkets()
   },
@@ -300,8 +297,8 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
-        console.log(response.data)
         response.data.forEach(item => {
+          console.log(item)
           this.market(item.token_id, item.precio, item.base_uri, item.marketplace, item.collection)
         });
       }).catch(err => console.log(err))
@@ -339,9 +336,7 @@ export default {
           item.price = parseFloat(price)
           item.precio = precio
           item.collection = collection
-          console.log(item)
           this.dataChooseNFTTable.push(item)
-          console.log(this.dataChooseNFTTable)
         });
       }).catch(err => {
         console.log(err)
@@ -440,7 +435,6 @@ export default {
       });
     },
     async viewMarketplace(item) {
-      console.log(item.collection)
       this.marketplace = []
       axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
       // axios.post('http://157.230.2.213:3071/api/v1/listmarketplacecollection', {
@@ -471,7 +465,6 @@ export default {
       })
       await contract.storage_minimum_balance()
       .then((response) => {
-        console.log("MINIMOOO",response)
         this.minimumStorage = utils.format.formatNearAmount(response)
       }).catch(err => {
         console.log(err)
@@ -488,7 +481,6 @@ export default {
       await contract.storage_balance_of({
         account_id: wallet.getAccountId(),
       }).then((response) => {
-        console.log(response)
         this.storageBalance = utils.format.formatNearAmount(response)
       }).catch(err => {
         console.log(err)
@@ -496,9 +488,8 @@ export default {
     },
 
     async listar_nft() {
-      this.storage_minimum()
-      this.storage_balance()
-      console.log('listar nft')
+      await this.storage_minimum()
+      await this.storage_balance()
       const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
       if(!this.selectedItem) {
@@ -514,16 +505,13 @@ export default {
       }
 
       if (this.storageBalance > this.minimumStorage) {
-        console.log('if storage')
         this.approve()
       } else {  
-        console.log('else storage')
         let msgs = {
           price: utils.format.parseNearAmount((this.price).toString()),
           market_type: "sale",
           ft_token_id: "near"
         }
-        console.log(msgs)
         let txs = [
           {
             receiverId: this.selectedItem,
@@ -556,17 +544,12 @@ export default {
             ],
           },
         ]
-        console.log('termino el let')
         await this.batchTransaction(
           txs,
           {
             meta: "list",
           },
         );
-        console.log('termino el bactch')
-        setTimeout(() => {
-          axios.post('https://evie.pro:3070/api/v1/refrescarnft').then(response => { console.log(response) }).catch(err => { console.log(err) })
-        }, 35000)
       }
     },
 
@@ -632,7 +615,6 @@ export default {
     },
 
     async batchTransaction(transactions, options) {
-
       const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
@@ -646,15 +628,14 @@ export default {
           )
         })
       )
-
       wallet.requestSignTransactions({
         transactions: nearTransactions,
         callbackUrl: options?.callbackUrl,
         meta: options?.meta,
-      })
+      }).then(res => {
+        console.log(res)
+      }).catch(err => console.log(err))
     }
-
-    
   }
 };
 </script>

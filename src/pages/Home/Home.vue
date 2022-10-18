@@ -151,10 +151,22 @@ export default {
         this.dataMenuCollections = []
         // console.log(response.data)
         response.data.forEach(item => {
+
+          // axios.get('https://gateway.pinata.cloud/ipfs/QmQrkYjoExd597duR56n7j4DTEive6a2xe8fSs7RLANG7R/' + item.nft_contract + '.avif').then(resp => {
+          //   console.log(resp, 'res ipfs')
+          // }).catch(erro => { console.log(erro) })
+          
+          axios.post('https://evie.pro:3070/api/v1/collectiondetails', {
+            'collection': item.nft_contract
+          }).then(respData => {
+            item.daily_volumen = respData.data[0].daily_volumen
+            item.floor_price = respData.data[0].floor_price
+            item.minted = respData.data[0].minted
+            item.owners = respData.data[0].owners
+          }).catch(erro => console.log(erro))
           if(item.icon == null) {
             axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
               data = res.data.data.results
-              console.log(data, 'jhffhsh')
               if(data.length) {
                 data.forEach(element => {          
                   if (data.length > 1) {
@@ -171,6 +183,9 @@ export default {
               } else {
                 item.icon = require('@/assets/azul-color.png')
               }
+            }).catch(erro => {
+              console.log(erro)
+              item.icon = require('@/assets/azul-color.png')
             })
           }
           this.dataMenuCollections.push(item)
