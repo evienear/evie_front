@@ -151,10 +151,6 @@ export default {
         this.dataMenuCollections = []
         // console.log(response.data)
         response.data.forEach(item => {
-
-          // axios.get('https://gateway.pinata.cloud/ipfs/QmQrkYjoExd597duR56n7j4DTEive6a2xe8fSs7RLANG7R/' + item.nft_contract + '.avif').then(resp => {
-          //   console.log(resp, 'res ipfs')
-          // }).catch(erro => { console.log(erro) })
           
           axios.post('https://evie.pro:3070/api/v1/collectiondetails', {
             'collection': item.nft_contract

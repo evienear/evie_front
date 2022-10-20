@@ -479,6 +479,11 @@ export default {
             }).catch(err => {
               console.log(err)
             })
+            if(item.media_pinata == null || item.media_pinata === '') {
+              item.icon = item.media
+            } else {
+              item.icon = item.media_pinata
+            }
           } 
           //console.log(item)
           item.price = parseFloat(price)
@@ -752,34 +757,34 @@ export default {
         this.filterSelect = 'desc'
         console.log(this.priceFilter)
       }
-      if(this.clickValueFilter === 'true') {
+      if(this.clickValueFilter === true) {
         index = this.priceFilter.findIndex(i => i === 'false')
         if(index > -1) {
           this.priceFilter.splice(index, 1)
         }
-        this.sales = 'true'
+        this.sales = true
       }
-      if(this.clickValueFilter === 'false') {
+      if(this.clickValueFilter === false) {
         index = this.priceFilter.findIndex(i => i === 'true')
         console.log(index, 'index')
         if(index > -1) {
           this.priceFilter.splice(index, 1)
         }
-        this.sales = 'false'
+        this.sales = false
       }
-      if(this.clickValueFilter === '%') {
-        this.priceFilter.forEach(i => {
-          this.priceFilter.splice(i, 1)
-        });
-        this.sales = '%'
-        this.filterSelect = ''
-      } 
+      // if(this.clickValueFilter === '%') {
+      //   this.priceFilter.forEach(i => {
+      //     this.priceFilter.splice(i, 1)
+      //   });
+      //   this.sales = '%'
+      //   this.filterSelect = ''
+      // } 
 
       
 
       if (this.priceFilter.length == 0) {
         this.filterSelect = ''
-        this.sales = '%'
+        this.sales = true
       } 
       console.log(this.priceFilter, 'variable del select')
       this.viewTokens()
