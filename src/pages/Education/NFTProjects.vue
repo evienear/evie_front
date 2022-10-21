@@ -80,9 +80,9 @@ export default {
     }
   },
   mounted() {
-    axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
-      console.log(response)
-    })
+    // axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
+    //   console.log(response)
+    // })
     console.log(typeof(this.isAdmin), 'admin')
     this.getForm()
   },

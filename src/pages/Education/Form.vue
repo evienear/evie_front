@@ -228,24 +228,26 @@ export default {
   },
   mounted() {
     // console.log(localStorage.idForm)
-    this.collections()
     if(localStorage.idForm) {
       this.idForm = parseInt(localStorage.idForm)
       this.update = true
       this.addEdit = 'EDIT'
       this.getFormId()
     }
+    this.collections()
   },
   methods: {
     async collections () {
       // this.$store.commit('Load', true)
+      //https://evie.pro:3070/api/v1/SearchCollections
       await axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
         'input': '',
-        'limit': 20000,
+        'limit': 1000,
         'index': 0,
         "order": "volumen",
         "type_order": "asc"
       }).then(response => {
+        console.log(response, 'respuesta colecciones')
         response.data.forEach(item => {
           if(item.icon == null) {
             item.icon = require('@/assets/azul-color.png')
@@ -319,11 +321,12 @@ export default {
         this.images[0] = this.collection.images[0]
         axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
           'input': this.collection.title,
-          'limit': 20000,
+          'limit': 1000,
           'index': 0,
           "order": "volumen",
           "type_order": 'asc'
         }).then(res => {
+          console.log(res)
           this.collection.contract = res.data[0].nft_contract
         }).catch(erro => console.log(erro))
         this.$store.commit('Load', false)
