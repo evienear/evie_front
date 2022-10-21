@@ -195,12 +195,12 @@
 
 <script>
 import axios from 'axios'
-import * as nearAPI from "near-api-js";
-import { CONFIG } from "@/services/api";
-const { connect, keyStores, WalletConnection, Contract } = nearAPI;
+// import * as nearAPI from "near-api-js";
+// import { CONFIG } from "@/services/api";
+// const { connect, keyStores, WalletConnection, Contract } = nearAPI;
 // const CONTRACT_NAME = 'backend.evie.testnet'
 // import { NFTStorage, File } from 'nft.storage'
-const CONTRACT_NAME = 'backend.eviepro.near'
+// const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "Form",
   data() {
@@ -228,46 +228,27 @@ export default {
   },
   mounted() {
     // console.log(localStorage.idForm)
+    this.collections()
     if(localStorage.idForm) {
       this.idForm = parseInt(localStorage.idForm)
       this.update = true
       this.addEdit = 'EDIT'
       this.getFormId()
     }
-
-    this.collections()
-    // if(this.account_id !== 'lindaley16.near' || this.account_id !== 'sirs.near' || this.account_id !== 'andresdom.near') {
-    //   this.$router.push('/nft-projects')
-    // }
   },
   methods: {
     async collections () {
       // this.$store.commit('Load', true)
-      var data = []
-      await axios.post('https://evie.pro:3070/api/v1/listcollections', {
-      // await axios.post('http://157.230.2.213:3071/api/v1/listcollections', {
-      // await axios.post('http://157.230.2.213:3072/api/v1/listcollections', {
+      await axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
+        'input': '',
         'limit': 20000,
         'index': 0,
+        "order": "volumen",
+        "type_order": "asc"
       }).then(response => {
         response.data.forEach(item => {
           if(item.icon == null) {
-            axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
-              // console.log(res.data.data.results)
-              data = res.data.data.results
-              data.forEach(element => {
-                if (data.length > 1) {
-                  if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
-                    item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
-                  }
-                } else if ((element.creator_id).toLowerCase() === (item.nft_contract).toLowerCase()) {
-                  item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
-                }
-                if (item.nft_contract === 'mara-smartcontract.near') {
-                  item.icon = 'https://paras-cdn.imgix.net/bafybeid7fbyflawy24hsttpriucgbc26hv3rnegsbcrvqww72prr2jdhoq?w=300&auto=format,compress'
-                }
-              });
-            })
+            item.icon = require('@/assets/azul-color.png')
           }
           this.dataMenuCollections.push(item)
         })
@@ -303,137 +284,106 @@ export default {
         this.titleDM = 'Empty fields'
         this.messageDM = 'The description field must not be empty'
       } else {
-        var idFormAdd = null
-        axios.post('https://evie.pro:3070/api/v1/GenerateId').then(async response => {
-          idFormAdd = response.data.id
-          this.$store.commit('Load', true)
-          var EduForm = {
-            title: this.collection.title,
-            supply: this.collection.supply,
-            website: this.collection.website,
-            twitter: this.collection.twitter,
-            discord: this.collection.discord,
-            instagram: this.collection.instagram,
-            descriptions: this.descriptions,
-            images: this.images,
-          }
-          console.log(idFormAdd, 'este es el id')
-          //connect to NEAR
-          const near = await connect(
-            CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-          );
-          // create wallet connection
-          const wallet = new WalletConnection(near);
-          const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-            changeMethods: ["add_form"],
-            sender: wallet.account(),
-          })
-          await contract.add_form({
-            form_id: idFormAdd,
-            form: EduForm
-          }, '85000000000000',
-          ).then((response) => {
-            console.log(response, idFormAdd);
-            this.$store.commit('Load', false)
-            this.dialogMessage = true
-            this.titleDM = 'Successfully saved'
-            this.messageDM = 'The data was saved successfully'
-            setTimeout(() => {
-              axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
-                console.log(response)
-              }).catch(erro => {console.log(erro)})
-            }, 35000)
-          }).catch(err => {
-            console.log(err)
-            this.$store.commit('Load', false)
-            this.dialogMessage = true
-            this.titleDM = 'Error'
-            this.messageDM = 'An error has occurred' + err
-          })
-        }).catch(erro => console.log(erro))
+        this.$store.commit('Load', true)
+        var EduForm = {
+          "title": this.collection.title,
+          "supply": this.collection.supply,
+          "website": this.collection.website,
+          "twitter": this.collection.twitter,
+          "discord": this.collection.discord,
+          "instagram": this.collection.instagram,
+          "descriptions": this.descriptions,
+          "images": this.images,
+          "user": localStorage.walletAccountId,
+          "pass": localStorage.pass,
+        }
+
+        axios.post('https://evie.pro:3070/api/v1/addform', EduForm).then(response => {
+          console.log(response)
+          this.$store.commit('Load', false)
+          this.dialogMessage = true
+          this.titleDM = 'Successfully saved'
+          this.messageDM = 'The data was saved successfully'
+        }).catch(err => {
+          console.log(err)
+        })
       }
-      
-      
     },
     async getFormId() {
-      // connect to NEAR
       this.$store.commit('Load', true)
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["get_form_by_id"],
-        sender: wallet.account(),
-      })
-      await contract.get_form_by_id({
-        form_id: this.idForm
-      }, '85000000000000',
-      ).then((response) => {
-        console.log(response)
-        this.collection = response.form
-        this.descriptions[0] = response.form.descriptions[0]
-        this.images[0] = response.form.images[0]
-        this.$store.commit('Load', false)
-        //this.searchCollections(this.collection.title)
-         axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
+      axios.post('https://evie.pro:3070/api/v1/descformedu', {
+        'id': this.idForm 
+      }).then(response => {
+        this.collection = response.data[0]
+        this.descriptions[0] = this.collection.descriptions[0]
+        this.images[0] = this.collection.images[0]
+        axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
           'input': this.collection.title,
-          'limit': 1,
+          'limit': 20000,
           'index': 0,
+          "order": "volumen",
+          "type_order": 'asc'
         }).then(res => {
-          console.log(res.data)
           this.collection.contract = res.data[0].nft_contract
         }).catch(erro => console.log(erro))
-        setTimeout(() => {
-          console.log(this.collection, 'colection')
-        }, 1000);
-        
-      }).catch(err => {
-        console.log(err)
+        this.$store.commit('Load', false)
       })
     },
     async updateForm() {
+      console.log('updte', this.idForm)
       this.$store.commit('Load', true)
       var EduForm = {
-        title: this.collection.title,
-        supply: this.collection.supply,
-        website: this.collection.website,
-        twitter: this.collection.twitter,
-        discord: this.collection.discord,
-        instagram: this.collection.instagram,
-        descriptions: this.descriptions,
-        images: this.images,
+        "id": this.idForm,
+        "title": this.collection.title,
+        "supply": this.collection.supply,
+        "website": this.collection.website,
+        "twitter": this.collection.twitter,
+        "discord": this.collection.discord,
+        "instagram": this.collection.instagram,
+        "descriptions": this.descriptions,
+        "images": this.images,
+        "user": localStorage.walletAccountId,
+        "pass": localStorage.pass,
       }
 
-      //connect to NEAR
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["update_form"],
-        sender: wallet.account(),
-      })
-      await contract.update_form({
-        form_id: this.idForm,
-        form: EduForm
-      }, '85000000000000',
-      ).then((response) => {
-        console.log(response);
+      axios.post('https://evie.pro:3070/api/v1/updateform', EduForm).then(response => {
+        console.log(response,);
         this.$store.commit('Load', false)
         this.dialogMessage = true
         this.titleDM = 'Successfully modified'
         this.messageDM = 'The data was modified successfully'
-        setTimeout(() => {
-          axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
-            console.log(response)
-          }).catch(erro => {console.log(erro)})
-        }, 35000)
       }).catch(err => {
         console.log(err)
       })
+
+      //connect to NEAR
+      // const near = await connect(
+      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+      // );
+      // // create wallet connection
+      // const wallet = new WalletConnection(near);
+      // const contract = new Contract(wallet.account(), CONTRACT_NAME, {
+      //   changeMethods: ["update_form"],
+      //   sender: wallet.account(),
+      // })
+      // await contract.update_form({
+      //   form_id: this.idForm,
+      //   form: EduForm
+      // }, '85000000000000',
+      // ).then((response) => {
+      //   console.log(response);
+      //   this.$store.commit('Load', false)
+      //   this.dialogMessage = true
+      //   this.titleDM = 'Successfully modified'
+      //   this.messageDM = 'The data was modified successfully'
+      //   setTimeout(() => {
+      //     axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
+      //       console.log(response)
+      //     }).catch(erro => {console.log(erro)})
+      //   }, 35000)
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
     dataCollection() {
       this.dataMenuCollections.forEach(item => {

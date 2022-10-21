@@ -137,7 +137,7 @@ export default {
   },
   methods: {
     async searchCollections () {
-      var data = []
+      // var data = []
       if(this.search === '') {
         this.$store.commit('Load', true)
       }
@@ -149,7 +149,7 @@ export default {
         "type_order": this.order
       }).then(response => {
         this.dataMenuCollections = []
-        // console.log(response.data)
+        console.log(response.data)
         response.data.forEach(item => {
           
           axios.post('https://evie.pro:3070/api/v1/collectiondetails', {
@@ -161,29 +161,31 @@ export default {
             item.owners = respData.data[0].owners
           }).catch(erro => console.log(erro))
           if(item.icon == null) {
-            axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
-              data = res.data.data.results
-              if(data.length) {
-                data.forEach(element => {          
-                  if (data.length > 1) {
-                    if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
-                      item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
-                    }
-                  } else if ((element.creator_id).toLowerCase() === (item.nft_contract).toLowerCase()) {
-                    item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
-                  }
-                  if (item.nft_contract === 'mara-smartcontract.near') {
-                    item.icon = 'https://paras-cdn.imgix.net/bafybeid7fbyflawy24hsttpriucgbc26hv3rnegsbcrvqww72prr2jdhoq?w=300&auto=format,compress'
-                  }
-                })
-              } else {
-                item.icon = require('@/assets/azul-color.png')
-              }
-            }).catch(erro => {
-              console.log(erro)
-              item.icon = require('@/assets/azul-color.png')
-            })
+            item.icon = require('@/assets/azul-color.png')
           }
+          //   axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
+          //     data = res.data.data.results
+          //     if(data.length) {
+          //       data.forEach(element => {          
+          //         if (data.length > 1) {
+          //           if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
+          //             item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+          //           }
+          //         } else if ((element.creator_id).toLowerCase() === (item.nft_contract).toLowerCase()) {
+          //           item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
+          //         }
+          //         if (item.nft_contract === 'mara-smartcontract.near') {
+          //           item.icon = 'https://paras-cdn.imgix.net/bafybeid7fbyflawy24hsttpriucgbc26hv3rnegsbcrvqww72prr2jdhoq?w=300&auto=format,compress'
+          //         }
+          //       })
+          //     } else {
+          //       item.icon = require('@/assets/azul-color.png')
+          //     }
+          //   }).catch(erro => {
+          //     console.log(erro)
+          //     item.icon = require('@/assets/azul-color.png')
+          //   })
+          // }
           this.dataMenuCollections.push(item)
         })
         this.$store.commit('Load', false)

@@ -33,16 +33,16 @@
         </li>
       </ul>
 
-      <section class="contRight">
+      <section class="contRight" v-for="item, i in dataProjectProposal.description" :key="i">
         <aside>
-          <img class="images" :src="dataProjectProposal.description.form.images[0]" alt="nft">
+          <img class="images" :src="item.images[0]" alt="nft">
           <div>
-            <h3 class="Title">{{ dataProjectProposal.description.form.title }}</h3>
-            <span><strong>Origianl Supply: </strong>{{ dataProjectProposal.description.form.supply }}</span>
-            <span><strong>Website: </strong>{{ dataProjectProposal.description.form.website }}</span>
-            <span><strong>Twitter: </strong>{{ dataProjectProposal.description.form.twitter }}</span>
-            <span><strong>Instagram: </strong>{{ dataProjectProposal.description.form.instagram }}</span>
-            <span><strong>Discord: </strong>{{ dataProjectProposal.description.form.discord }}</span>
+            <h3 class="Title">{{ item.title }}</h3>
+            <span><strong>Origianl Supply: </strong>{{ item.supply }}</span>
+            <span><strong>Website: </strong>{{ item.website }}</span>
+            <span><strong>Twitter: </strong>{{ item.twitter }}</span>
+            <span><strong>Instagram: </strong>{{ item.instagram }}</span>
+            <span><strong>Discord: </strong>{{ item.discord }}</span>
           </div>
         </aside>
 
@@ -50,7 +50,7 @@
           <!-- <img v-if="dataProjectProposal.description.img" :src="dataProjectProposal.description.img" 
             alt="image">-->
           <h3 class="Title">ABOUT:</h3>
-          <span>{{ dataProjectProposal.description.form.descriptions[0] }}</span>
+          <span>{{ item.descriptions[0] }}</span>
         </aside>
         <aside>
           <v-col>
@@ -124,16 +124,55 @@
         </v-col>
       </section>
     </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialog"
+      max-width="500"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              Verify password
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12">
+          <p>
+            <span>You must enter your administrator password to create an educational form</span>
+          </p>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-text-field
+            v-model="pass"
+            class="custome"
+            solo dense
+          >
+            <template v-slot:prepend>
+              <label>Password</label>
+            </template>
+          </v-text-field>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="savePass()">
+            SAVE
+          </button>
+          <button  class="button h9 btn2 ml-2" @click="closeModal()">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
 <script>
 import axios from 'axios'
-import * as nearAPI from "near-api-js";
-import { CONFIG } from "@/services/api";
-const { connect, keyStores, WalletConnection, Contract } = nearAPI;
+// import * as nearAPI from "near-api-js";
+// import { CONFIG } from "@/services/api";
+// const { connect, keyStores, WalletConnection, Contract } = nearAPI;
 // const CONTRACT_NAME = 'backend.evie.testnet'
-const CONTRACT_NAME = 'backend.eviepro.near'
+// const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "ProjectProposal",
   data() {
@@ -158,6 +197,8 @@ export default {
       nft_contract: '',
       collectionView: [],
       isAdmin: localStorage.isAdmin,
+      dialog: false,
+      pass: '',
     }
   },
   mounted() {
@@ -177,75 +218,48 @@ export default {
         id = this.idForm
       }
       this.$store.commit('Load', true)
-      // axios.post('https://evie.pro:3070/api/v1/descformedu', {
-      //   'id': id 
-      // }).then(response => {
-      //   this.searchCollections(response.data[0].title)
-      //   this.dataProjectProposal.description = response.data
-      //   this.$store.commit('Load', false)
-      // })
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore()
-        )
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        viewMethods: ["get_form_by_id"],
-        sender: wallet.account(),
-      })
-      await contract.get_form_by_id({
-        form_id: id
-      }).then((response) => {
+      axios.post('https://evie.pro:3070/api/v1/descformedu', {
+        'id': id 
+      }).then(response => {
+        // console.log(response.data)
+        this.searchCollections(response.data[0].title)
+        this.dataProjectProposal.description = response.data
         this.$store.commit('Load', false)
-        setTimeout(() => {
-          this.searchCollections(response.form.title)
-          this.dataProjectProposal.description = response
-          console.log(response, 'response by id')
-        }, 1000)
-        
-      }).catch(err => {
-        console.log(err)
       })
-      setTimeout(() => {console.log(this.dataProjectProposal.description.form.title, 'var data')}, 1200)
-      
     },
     updateForm() {
-      this.$router.push('/form')
+      if(localStorage.pass) {
+        this.$router.push('/form')
+      } else {
+        this.dialog = true
+      }
     },
     async deleteFormId() {
       this.dialogDelete = false
-      // connect to NEAR
       this.$store.commit('Load', true)
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore()
-        )
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        changeMethods: ["remove_form"],
-        sender: wallet.account(),
-      })
-      await contract.remove_form({
-        form_id: this.idForm
-      }, '85000000000000',
-      ).then((response) => {
+      axios.post('https://evie.pro:3070/api/v1/removeform', {
+        "id": this.idForm,
+        "user": localStorage.walletAccountId,
+        "pass": localStorage.pass
+      }).then(response => {
         this.$store.commit('Load', false)
         console.log(response)
         this.dialogMessage = true
         this.titleDM = 'Successful'
         this.messageDM = 'Delete form education successful'
-        setTimeout(() => this.$router.push('/nft-projects'), 4000)
+        setTimeout(() => this.$router.push('/nft-projects'), 3000)
       }).catch(err => {
         console.log(err)
       })
     },
     async deleteForm() {
-      this.dialogDelete = true
+      if(localStorage.pass) {
+        this.dialogDelete = true
+      } else {
+        this.dialog = true
+      }
     },
     async searchCollections (title) {
-      var data = []
       await axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
         'input': title,
         'limit': 1,
@@ -254,15 +268,7 @@ export default {
         response.data.forEach(item => {
           //console.log(item)
           if(item.icon == null) {
-            axios.get("https://api-v2-mainnet.paras.id/collections?creator_id=" + item.nft_contract).then(res => {
-              data = res.data.data.results
-              data.forEach(element => {
-                if ((element.collection).toLowerCase() === (item.name).toLowerCase()) {
-                  item.icon = 'https://ipfs.fleek.co/ipfs/' + element.media
-                  localStorage.collections = JSON.stringify(item)
-                }
-              });
-            })
+            item.icon = require('@/assets/azul-color.png')
           }          
         })
         this.nft_contract = response.data[0].nft_contract
@@ -295,6 +301,15 @@ export default {
           id: this.nft_contract,
         }
       })
+    },
+    savePass() {
+      localStorage.pass = this.pass
+      this.dialog = false
+      this.pass = ''
+    },
+    closeModal() {
+      this.dialog = false
+      this.pass = ''
     }
   },
 };

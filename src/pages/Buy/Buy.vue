@@ -213,7 +213,7 @@
           <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
             class="containerMarketplace" :class="{active: item.select}">
 
-            <v-img class="images" :src="item.media" alt="NFT Market Place" @click="addCart(item)" />
+            <v-img class="images" :src="item.icon" alt="NFT Market Place" @click="addCart(item)" />
 
             <span class="marketplaceId btn2" style="bottom: -5% !important">
               # {{ item.token_id.substr(0,10)}}

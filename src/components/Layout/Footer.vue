@@ -13,10 +13,10 @@
         </span>
 
         <aside class="divrow" style="gap: 1em">
-          <button v-if="themeButton" class="themeBtn dark eliminarmobile" @click="CambiarTheme('dark'), $store.commit('OverlayMethod', 'dark')">
+          <button v-if="themeButton" class="themeBtn dark" @click="CambiarTheme('dark'), $store.commit('OverlayMethod', 'dark')">
             <div class="switch" />
           </button>
-          <button v-else class="themeBtn light eliminarmobile" @click="CambiarTheme('light'), $store.commit('OverlayMethod', 'light')">
+          <button v-else class="themeBtn light" @click="CambiarTheme('light'), $store.commit('OverlayMethod', 'light')">
             <div class="switch" />
           </button>
 

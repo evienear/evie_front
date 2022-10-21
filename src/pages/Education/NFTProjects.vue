@@ -11,24 +11,63 @@
 
     <v-col class="containerNFTProjects padd">
       <v-card v-for="(item,i) in dataNFTProjects" :key="i" color="transparent" @click="viewEducation(item)">
-        <img class="images" :src="item.form.images[0]" alt="token" />
-        <span>{{ item.form.title }}</span>
+        <img class="images" :src="item.images[0]" alt="token" />
+        <span>{{ item.title }}</span>
       </v-card>
     </v-col>
 
     <button v-show="isAdmin==='true'" class="button h9 btn2" @click="viewForm()">
       PROJECT PROPOSAL<v-icon medium>mdi-chevron-right</v-icon>
     </button>
+    <v-dialog
+      id="dialogo"
+      v-model="dialog"
+      max-width="500"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              Verify password
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12">
+          <p>
+            <span>You must enter your administrator password to create an educational form</span>
+          </p>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-text-field
+            v-model="pass"
+            class="custome"
+            solo dense
+          >
+            <template v-slot:prepend>
+              <label>Password</label>
+            </template>
+          </v-text-field>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="savePass()">
+            SAVE
+          </button>
+          <button  class="button h9 btn2 ml-2" @click="closeModalMessage()">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
   </section>
 </template>
 
 <script>
 import axios from 'axios'
-import * as nearAPI from "near-api-js";
-import { CONFIG } from "@/services/api";
-const { connect, keyStores, WalletConnection, Contract } = nearAPI;
+// import * as nearAPI from "near-api-js";
+// import { CONFIG } from "@/services/api";
+// const { connect, keyStores, WalletConnection, Contract } = nearAPI;
 // // const CONTRACT_NAME = 'backend.evie.testnet'
-const CONTRACT_NAME = 'backend.eviepro.near'
+// const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "NFTProjects",
   data() {
@@ -36,6 +75,8 @@ export default {
       dataNFTProjects: [],
       account_id: localStorage.walletAccountId,
       isAdmin: localStorage.isAdmin,
+      dialog: false,
+      pass: '',
     }
   },
   mounted() {
@@ -47,29 +88,23 @@ export default {
   },
   methods: {
     viewForm() {
-      localStorage.removeItem('idForm')
-      this.$router.push('/form')
+      if(localStorage.pass) {
+        localStorage.removeItem('idForm')
+        this.$router.push('/form')
+      } else {
+        this.dialog = true
+      }
+      
     },
     async getForm() {
-      // await axios.post('https://evie.pro:3070/api/v1/ListFormEdu').then(response => {
-      //   console.log(response.data)
-      //   this.dataNFTProjects = response.data
-      // }).catch(err => { console.log(err) })
-      // connect to NEAR
       this.$store.commit('Load', true)
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore()
-        )
-      );
-      // create wallet connection
-      const wallet = new WalletConnection(near);
-      const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-        viewMethods: ["get_forms"],
-        sender: wallet.account(),
-      })
-      await contract.get_forms().then((response) => {
+      axios.post('https://evie.pro:3070/api/v1/listformedu', {
+        "limit": 10,
+        "index": 0
+      }).then(response => {
+        console.log(response.data)
+        this.dataNFTProjects = response.data
         this.$store.commit('Load', false)
-        this.dataNFTProjects = response
       }).catch(err => {
         console.log(err)
       })
@@ -81,6 +116,14 @@ export default {
         this.$router.push('/project-proposal')
       }, 1000)
     },
+    savePass() {
+      localStorage.pass = this.pass
+      this.dialog = false
+    },
+    closeModalMessage() {
+      this.dialog = false
+      this.pass = ''
+    }
   }
 };
 </script>
