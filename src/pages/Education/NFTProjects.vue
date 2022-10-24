@@ -102,7 +102,6 @@ export default {
         "limit": 10,
         "index": 0
       }).then(response => {
-        console.log(response.data)
         this.dataNFTProjects = response.data
         this.$store.commit('Load', false)
       }).catch(err => {

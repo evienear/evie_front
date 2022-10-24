@@ -238,8 +238,6 @@ export default {
   },
   methods: {
     async collections () {
-      // this.$store.commit('Load', true)
-      //https://evie.pro:3070/api/v1/SearchCollections
       await axios.post('https://evie.pro:3070/api/v1/SearchCollections', {
         'input': '',
         'limit': 1000,
@@ -247,7 +245,6 @@ export default {
         "order": "volumen",
         "type_order": "asc"
       }).then(response => {
-        console.log(response, 'respuesta colecciones')
         response.data.forEach(item => {
           if(item.icon == null) {
             item.icon = require('@/assets/azul-color.png')
@@ -326,14 +323,12 @@ export default {
           "order": "volumen",
           "type_order": 'asc'
         }).then(res => {
-          console.log(res)
           this.collection.contract = res.data[0].nft_contract
         }).catch(erro => console.log(erro))
         this.$store.commit('Load', false)
       })
     },
     async updateForm() {
-      console.log('updte', this.idForm)
       this.$store.commit('Load', true)
       var EduForm = {
         "id": this.idForm,
@@ -358,35 +353,6 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-
-      //connect to NEAR
-      // const near = await connect(
-      //   CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-      // );
-      // // create wallet connection
-      // const wallet = new WalletConnection(near);
-      // const contract = new Contract(wallet.account(), CONTRACT_NAME, {
-      //   changeMethods: ["update_form"],
-      //   sender: wallet.account(),
-      // })
-      // await contract.update_form({
-      //   form_id: this.idForm,
-      //   form: EduForm
-      // }, '85000000000000',
-      // ).then((response) => {
-      //   console.log(response);
-      //   this.$store.commit('Load', false)
-      //   this.dialogMessage = true
-      //   this.titleDM = 'Successfully modified'
-      //   this.messageDM = 'The data was modified successfully'
-      //   setTimeout(() => {
-      //     axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
-      //       console.log(response)
-      //     }).catch(erro => {console.log(erro)})
-      //   }, 35000)
-      // }).catch(err => {
-      //   console.log(err)
-      // })
     },
     dataCollection() {
       this.dataMenuCollections.forEach(item => {

@@ -209,7 +209,6 @@ export default {
   },
   methods: {
     async getFormId() {
-      console.log(this.idForm, 'idform')
       var id = null
       if (this.vieneDe === 'buy') {
         id = this.idBuy
@@ -221,7 +220,6 @@ export default {
       axios.post('https://evie.pro:3070/api/v1/descformedu', {
         'id': id 
       }).then(response => {
-        // console.log(response.data)
         this.searchCollections(response.data[0].title)
         this.dataProjectProposal.description = response.data
         this.$store.commit('Load', false)
@@ -266,7 +264,6 @@ export default {
         'index': 0,
       }).then(response => {
         response.data.forEach(item => {
-          //console.log(item)
           if(item.icon == null) {
             item.icon = require('@/assets/azul-color.png')
           }          
@@ -281,7 +278,6 @@ export default {
       axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
         "collection": item
       }).then(response => {
-        console.log(response.data, 'markets')
         response.data.forEach(i => {
           this.dataProjectProposal.lista.push({
             listen: i.marketplace,

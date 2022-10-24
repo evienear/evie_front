@@ -38,10 +38,11 @@
 </template>
 
 <script>
+import axios from 'axios'
 import MenuHeader from "./MenuHeader.vue"
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
-const { connect, keyStores, WalletConnection, Contract} = nearAPI;
+const { connect, keyStores, WalletConnection, /*Contract*/ } = nearAPI;
 // const contractId = 'backend.evie.testnet'
 const contractId = 'backend.eviepro.near'
 let scrollValue =
@@ -171,15 +172,11 @@ export default {
         this.user = walletAccountId
         localStorage.walletAccountId = walletAccountId
 
-        const contract = new Contract(wallet.account(), contractId, {
-          viewMethods: ["is_admin"],
-          sender: wallet.account(),
-        })
-        await contract.is_admin({
-          admin: walletAccountId
-        }).then((response) => {
-          localStorage.isAdmin = response
-        }).catch(err => {
+        axios.post('https://evie.pro:3070/api/v1/validadmin', {
+          "user": walletAccountId
+        }).then(response => {
+          localStorage.isAdmin = response.data.respuesta
+        }).catch(err =>{
           console.log(err)
         })
       }
