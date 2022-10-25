@@ -1235,7 +1235,7 @@
     @media (max-width: 880px) {grid-template-columns: repeat(2, 1fr)}
     @media (max-width: 600px) {grid-template-columns: repeat(1, 1fr)}
     .file {
-      grid-row: span 4;
+      grid-row: span 1;
       max-width: 21em;
       min-width: 16.875em;
       @media (max-width: 600px) {

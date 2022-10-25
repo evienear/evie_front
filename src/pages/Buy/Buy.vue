@@ -428,9 +428,8 @@ export default {
   },
   methods: {
     viewTokens() {
+      this.$store.commit('Load', true)
       axios.post('https://evie.pro:3070/api/v1/listnft', {
-      // axios.post('http://157.230.2.213:3071/api/v1/listnft', {
-      // axios.post('http://157.230.2.213:3072/api/v1/listnft', {
         'collection': this.collectionId,
         'limit': 50,
         'index': this.indexNftCollection,
@@ -445,7 +444,6 @@ export default {
         this.dataNftTokens = []
         this.dataNftTokens2 = []
         var referenceJson = ''
-        console.log(response.data, 'data nft')
         this.excess = response.data.excess
         response.data.data.forEach(async item => {
           var price = ''
@@ -493,6 +491,7 @@ export default {
           this.dataNftTokens = this.dataNftTokens2
         });
         this.armarAtributos()
+        this.$store.commit('Load', false)
       }).catch(err => console.log(err))
     },
     // COMIENZAN LOS FILTROS
@@ -727,10 +726,13 @@ export default {
     },
     nextItems() {
       this.indexNftCollection = this.indexNftCollection + 50 + this.excess
+      window.scrollTo(0,0)
       this.viewTokens()
+
     },
     prevItems() {
       this.indexNftCollection = this.indexNftCollection - 50 - this.excess
+      window.scrollTo(0,0)
       this.viewTokens()
     },
     filterPrice() {
