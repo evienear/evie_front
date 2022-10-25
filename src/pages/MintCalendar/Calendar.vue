@@ -24,7 +24,7 @@
       hide-header
     >
       <template v-slot:day>
-        <div class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`" @click="addEvent(weekday)"></div>
+        <div class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`"></div>
       </template>
 
       <!-- idont know how to dynamic for now -->
@@ -39,6 +39,11 @@
         PROJECT PROPOSAL<v-icon medium>mdi-chevron-right</v-icon>
       </button>
     </v-col> -->
+    <v-col class="end paddlateral">
+      <button class="button h9 btn2" @click="addEvent()">
+        ADD EVENT<v-icon medium>mdi-chevron-right</v-icon>
+      </button>
+    </v-col>
     <v-dialog
       id="dialogo"
       v-model="dialog"
@@ -51,6 +56,39 @@
               Add event
             </span>
           </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <v-menu
+          ref="menu1"
+          v-model="menu1"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="dateFormatted"
+              label="Date"
+              hint="MM/DD/YYYY format"
+              persistent-hint
+              v-bind="attrs"
+              @blur="date = parseDate(dateFormatted)"
+              v-on="on"
+              class="custome"
+            solo dense
+            >
+            <template v-slot:prepend>
+              <label>DATE</label>
+            </template></v-text-field>
+          </template>
+          <v-date-picker
+            v-model="date"
+            no-title
+            @input="menu1 = false"
+          ></v-date-picker>
+        </v-menu>
         </v-col>
         <v-col cols="12" class="center">
           <v-text-field
@@ -124,9 +162,19 @@ export default {
       ],
       dialog: false,
       calendario: [],
+      menu1: false,
+      date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      dateFormatted: this.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
     }
   },
   methods: {
+    formatDate (date) {
+        if (!date) return null
+
+        const [year, month, day] = date.split('-')
+        return `${month}/${day}/${year}`
+      },
+
     getEvents ( start, end ) {
       console.log('eventos')
       const events = []
@@ -151,7 +199,6 @@ export default {
           timed: !allDay,
         })
       }
-
       this.events = events
     },
     getEventColor (event) {
