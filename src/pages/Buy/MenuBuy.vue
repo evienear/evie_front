@@ -110,7 +110,6 @@
             v-model="sliderB"
             center-active
             :show-arrows="true"
-            style="width: 85%"
           >
             <v-slide-item v-for="(item, index) in nftCart" :key="index">
               <v-card
@@ -163,13 +162,12 @@
               <img class="nearBalanceLogo" src="@/assets/logo/near.png" alt="near">
             </span>
           </aside>
-
-          <!-- <button class="button btn2" @click="purchase()">
-            COMPLETE PURCHASE<v-icon medium>mdi-chevron-right</v-icon>
-          </button> -->
           
         </v-col>
         <v-col class="center mt-5">
+          <button class="button btn2" @click="buyAll()">
+            Buy All Items<v-icon medium>mdi-chevron-right</v-icon>
+          </button>
           <button class="button btn2" @click="clearCart()">
             Delete All Items
           </button>
@@ -233,6 +231,9 @@ import axios from 'axios'
 import * as nearApi from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ } = nearApi;
+import {/*Action,*/ createTransaction, functionCall} from 'near-api-js/lib/transaction'
+import { base_decode } from 'near-api-js/lib/utils/serialize'
+import { PublicKey } from 'near-api-js/lib/utils'
 // const CONTRACT_NAME = 'backend.evie.testnet'
 const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
@@ -424,6 +425,138 @@ export default {
         console.log(err)
       })
     },
+    //INICIA EL BACHT
+    async buyAll () {
+      var txs = []
+      this.nftCart.forEach(item => {
+        txs.push({
+          receiverId: item.contract_market,
+          functionCalls: [
+            {
+              methodName: "buy",
+              receiverId: item.contract_market,
+              gas: "300000000000000",
+              args: {
+                nft_contract_id: item.contract_id ,
+                token_id: item.token_id,
+                ft_token_id: 'near',
+                price: item.price
+              },
+              deposit: item.price,
+            },
+          ],
+        })
+      })
+      // let txs = [
+      //   {
+      //     receiverId: item.contract_market,
+      //     functionCalls: [
+      //       {
+      //         methodName: "nft_approve",
+      //         receiverId: item.contract_market,
+      //         gas: "300000000000000",
+      //         args: {
+      //           nft_contract_id: item.contract_id ,
+      //           token_id: item.token_id,
+      //           ft_token_id: 'near',
+      //           price: item.price
+      //         },
+      //         deposit: item.price,
+      //       },
+      //     ],
+      //   },
+      // ]
+      console.log(txs, 'compra masiva')
+      await this.batchTransaction(
+        txs,
+        {
+          meta: "list",
+        },
+      );
+    },
+    async batchTransactions() {
+      await this.batchTransaction(
+        this.txs,
+        {
+          meta: "list",
+        },
+      );
+    },
+    async createTransactionFn(
+      receiverId,
+      actions
+    ){
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
+      if (!wallet || !near) {
+        throw new Error(`No active wallet or NEAR connection.`)
+      }
+
+      const localKey =
+        await near?.connection.signer.getPublicKey(
+          wallet?.account().accountId,
+          near.connection.networkId
+        )
+
+      const accessKey = await wallet
+        ?.account()
+        .accessKeyForTransaction(receiverId, actions, localKey)
+
+      if (!accessKey) {
+        throw new Error(
+          `Cannot find matching key for transaction sent to ${receiverId}`
+        )
+      }
+
+      const block = await near?.connection.provider.block({
+        finality: 'final',
+      })
+
+      if (!block) {
+        throw new Error(`Cannot find block for transaction sent to ${receiverId}`)
+      }
+
+      const blockHash = base_decode(block?.header?.hash)
+      //const blockHash = nearAPI.utils.serialize.base_decode(accessKey.block_hash);
+
+      const publicKey = PublicKey.from(accessKey.public_key)
+      //const nonce = accessKey.access_key.nonce + nonceOffset
+      const nonce = ++accessKey.access_key.nonce;
+
+      return createTransaction(
+        wallet?.account().accountId,
+        publicKey,
+        receiverId,
+        nonce,
+        actions,
+        blockHash
+      )
+    },
+
+    async batchTransaction(transactions, options) {
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
+      const nearTransactions = await Promise.all(
+        transactions.map(async (tx) => {
+          return await this.createTransactionFn(
+            tx.receiverId,
+            tx.functionCalls.map((fc) => {
+              return functionCall(fc.methodName, fc.args, fc.gas, fc.deposit)
+            })
+          )
+        })
+      )
+      wallet.requestSignTransactions({
+        transactions: nearTransactions,
+        callbackUrl: options?.callbackUrl,
+        meta: options?.meta,
+      }).then(res => {
+        console.log(res)
+      }).catch(err => console.log(err))
+    },
+    //TERMINA EL BACHT
     prev(e) {
       const slide = e.path[3].querySelector('.buttons__wrapper')
       if (slide.scrollTop >= 0) {

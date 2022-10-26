@@ -506,7 +506,7 @@ export default {
 
       if (this.storageBalance > this.minimumStorage) {
         this.approve()
-      } else {  
+      } else {
         let msgs = {
           price: utils.format.parseNearAmount((this.price).toString()),
           market_type: "sale",
