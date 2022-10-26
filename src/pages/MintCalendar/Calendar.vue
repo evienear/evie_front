@@ -23,8 +23,8 @@
       @change="getEvents"
       hide-header
     >
-      <template v-slot:day>
-        <div class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`"></div>
+      <template v-slot:day="{ day, month, year }">
+        <div class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`" @click="getEvent(day, month, year)"></div>
       </template>
 
       <!-- idont know how to dynamic for now -->
@@ -50,6 +50,9 @@
       max-width="600"
     >
       <section class="menuCollections colorCartas">
+        <button class="buttonClose center">
+          <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
+        </button>
         <v-col cols="12" class="center pa-0 ma-0">
           <h5>
             <span class="font-weight-medium">
@@ -59,36 +62,36 @@
         </v-col>
         <v-col cols="12" class="center">
           <v-menu
-          ref="menu1"
-          v-model="menu1"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          max-width="290px"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="dateFormatted"
-              label="Date"
-              hint="MM/DD/YYYY format"
-              persistent-hint
-              v-bind="attrs"
-              @blur="date = parseDate(dateFormatted)"
-              v-on="on"
-              class="custome"
-            solo dense
-            >
-            <template v-slot:prepend>
-              <label>DATE</label>
-            </template></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="date"
-            no-title
-            @input="menu1 = false"
-          ></v-date-picker>
-        </v-menu>
+            ref="menu1"
+            v-model="menu1"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            max-width="290px"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="date"
+                label="Date"
+                hint="MM/DD/YYYY format"
+                persistent-hint
+                v-bind="attrs"
+                v-on="on"
+                class="custome"
+                solo dense
+              >
+                <template v-slot:prepend>
+                  <label>Date</label>
+                </template>
+              </v-text-field>
+            </template>
+            <v-date-picker
+              v-model="date"
+              no-title
+              @input="change()"
+            ></v-date-picker>
+          </v-menu>
         </v-col>
         <v-col cols="12" class="center">
           <v-text-field
@@ -98,7 +101,7 @@
             :rules="rules"
           >
             <template v-slot:prepend>
-              <label>TITLE</label>
+              <label>Title</label>
             </template>
           </v-text-field>
         </v-col>
@@ -119,6 +122,31 @@
             SAVE
           </button>
           <button  class="button h9 btn2" @click="dialog = false">
+            CLOSE
+          </button>
+        </v-col>
+      </section>
+    </v-dialog>
+    <v-dialog
+      id="dialogo"
+      v-model="dialogMessage"
+      max-width="400"
+    >
+      <section class="menuCollections colorCartas">
+        <v-col cols="12" class="center pa-0 ma-0">
+          <h5>
+            <span>
+              {{ titleDM }}
+            </span>
+          </h5>
+        </v-col>
+        <v-col cols="12" class="center">
+          <span>
+            {{ messageDM }}
+          </span>
+        </v-col>
+        <v-col cols="12">
+          <button  class="button h9 btn2" @click="dialogMessage = false">
             CLOSE
           </button>
         </v-col>
@@ -165,41 +193,56 @@ export default {
       menu1: false,
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateFormatted: this.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
+      dialogMessage: false,
+      titleDM: '',
+      messageDM: '',
     }
+  },
+  mounted() {
+    this.getEvent()
   },
   methods: {
     formatDate (date) {
-        if (!date) return null
+      if (!date) return null
 
-        const [year, month, day] = date.split('-')
-        return `${month}/${day}/${year}`
-      },
+      const [year, month, day] = date.split('-')
+      return `${month}/${day}/${year}`
+    },
+    change () {
+      this.menu1 = false
+    },
+    getEvents ({start, end }) {
+      axios.post('https://evie.pro:3070/api/v1/ListEventDays', {
+        "mes": start.month,
+        "ano": end.year
+      }).then(response => {
+        console.log(response.data)
+      }).catch(err => {
+        console.log(err)
+      })
+      // const events = []
 
-    getEvents ( start, end ) {
-      console.log('eventos')
-      const events = []
+      // const min = new Date(`${start.date}T00:00:00`)
+      // const max = new Date(`${end.date}T23:59:59`)
+      // const days = (max.getTime() - min.getTime()) / 86400000
+      // const eventCount = this.rnd(days, days + 20)
 
-      const min = new Date(`${start.date}T00:00:00`)
-      const max = new Date(`${end.date}T23:59:59`)
-      const days = (max.getTime() - min.getTime()) / 86400000
-      const eventCount = this.rnd(days, days + 20)
+      // for (let i = 0; i < eventCount; i++) {
+      //   const allDay = this.rnd(0, 3) === 0
+      //   const firstTimestamp = this.rnd(min.getTime(), max.getTime())
+      //   const first = new Date(firstTimestamp - (firstTimestamp % 900000))
+      //   const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
+      //   const second = new Date(first.getTime() + secondTimestamp)
 
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-        const second = new Date(first.getTime() + secondTimestamp)
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
-        })
-      }
-      this.events = events
+      //   events.push({
+      //     name: this.names[this.rnd(0, this.names.length - 1)],
+      //     start: first,
+      //     end: second,
+      //     color: this.colors[this.rnd(0, this.colors.length - 1)],
+      //     timed: !allDay,
+      //   })
+      // }
+      // this.events = events
     },
     getEventColor (event) {
       return event.color
@@ -212,33 +255,36 @@ export default {
       this.dialog = true
     },
     addEventPost() {
-      const formData = new FormData(this.$refs.formImgPinata)
-      formData.append('dia', 'Chris');
-      formData.append('mes', 'Chris');
-      formData.append('ano', 'Chris');
-      formData.append('titulo', this.calendario.title);
-      formData.append('uploaded_img', this.calendario.images.files[0]);
-      formData.append('user', localStorage.walletAccountId);
-      formData.append('pass', localStorage.pass);
-
+      const [year, month, day] = this.date.split('-')
+      const formData = new FormData()
+      formData.append('dia', parseInt(day))
+      formData.append('mes', parseInt(month))
+      formData.append('ano', parseInt(year))
+      formData.append('titulo', this.calendario.title)
+      formData.append('uploaded_img', this.calendario.images)
+      formData.append('user', localStorage.walletAccountId)
+      formData.append('pass', localStorage.pass)
+      console.log(formData)
       axios.post('https://evie.pro:3070/api/v1/saveevent', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       }).then(response => {
         console.log(response.data)
+        this.dialogMessage = true,
+        this.titleDM = 'Successful'
+        this.messageDM = 'The data was saved successfully'
       }).catch(err => {
         console.log(err)
       })
     },
-    updateEvent() {
-      axios.post('https://evie.pro:3070/api/v1/saveevent').then(response => {
-        console.log(response.data)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    deleteEvent() {
-      axios.post('https://evie.pro:3070/api/v1/saveevent').then(response => {
-        console.log(response.data)
+    getEvent(day, month, year) {
+      axios.post('https://evie.pro:3070/api/v1/desceventday', {
+        "dia": day,
+        "mes": month,
+        "ano": year
+      }).then(response => {
+        // console.log(response)
+        var data = response.data
+        this.$emit('eventos_dia', data)
       }).catch(err => {
         console.log(err)
       })
