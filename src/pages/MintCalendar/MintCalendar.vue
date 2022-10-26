@@ -123,6 +123,7 @@ export default {
   },
   methods: {
     eventosDias(data) {
+      this.dataReminder = []
       // console.log(data, 'en el padre')
       data.forEach(item => {
         this.dataReminder.push({
