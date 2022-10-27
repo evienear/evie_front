@@ -28,9 +28,14 @@
       </template>
 
       <!-- idont know how to dynamic for now -->
-      <template v-slot:event="{ day }">
-        <!-- <span class="textEvent">event name</span> -->
-        <img class="nftEvent" src="@/assets/icons/select.svg" alt="NFT" @click="getEvent(day.day, day.month, day.year)">
+      <template v-slot:event="{ day, event }">
+        <div v-for="item, i in event.events" :key="i" class="flex-grow overflow-y-auto overflow-x-auto">
+          <span class="textEvent" >
+            {{ item.titulo }}
+          </span>
+          <img class="nftEvent" :src="item.imagen" alt="NFT" @click="getEvent(event, day.day, day.month, day.year)">
+        </div>
+        
       </template>
     </v-calendar>
 
@@ -207,7 +212,7 @@ export default {
         "mes": start.month,
         "ano": end.year
       }).then(response => {
-        console.log(response.data)
+        console.log(response.data, 'eventos del mes')
         response.data.forEach(item => {
           var dia = item.dia.toString()
           var mes = item.mes.toString()
@@ -220,6 +225,7 @@ export default {
           var fecha = item.ano + '-' + mes + '-' + dia
           this.events.push({
             start: fecha,
+            events:item.eventos
           })
         });
         this.$store.commit('Load', false)
@@ -267,7 +273,8 @@ export default {
         console.log(err)
       })
     },
-    getEvent(day, month, year) {
+    getEvent(item, day, month, year) {
+      console.log(item, 'eventos dia')
       axios.post('https://evie.pro:3070/api/v1/desceventday', {
         "dia": day,
         "mes": month,
