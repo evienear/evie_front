@@ -30,7 +30,7 @@
           <span>UPLOAD</span>
         </template>
       </v-file-input> -->
-      <img class="file" :src="images[0]" :alt="collection.title" width="">
+      <img class="file" :src="images[0]" :alt="collection.title">
       <v-autocomplete
         v-model="collection.contract"
         :items="dataMenuCollections"
@@ -144,11 +144,12 @@
       
     <div class="divcol desc">
       <label>ABOUT DESCRIPTION</label>
-      <vue-editor
+      <v-textarea
         v-model="descriptions[0]"
-        class="editor"
-        :class="{ rules: editorRules }"
-      ></vue-editor>
+        solo
+        class="custome"
+        :rules="rules"
+      ></v-textarea>
     </div>
 
     <v-col class="center">
@@ -194,8 +195,6 @@
 
 <script>
 import axios from 'axios'
-import { VueEditor } from "vue2-editor";
-
 // import * as nearAPI from "near-api-js";
 // import { CONFIG } from "@/services/api";
 // const { connect, keyStores, WalletConnection, Contract } = nearAPI;
@@ -204,12 +203,8 @@ import { VueEditor } from "vue2-editor";
 // const CONTRACT_NAME = 'backend.eviepro.near'
 export default {
   name: "Form",
-  components: {
-    VueEditor
-  },
   data() {
     return {
-      editorRules: false,
       rules: [
         value => !!value || 'This field is required.',
       ],
@@ -231,24 +226,7 @@ export default {
       addEdit: '',
     }
   },
-  watch: {
-    editorRules(current) {
-      const message = document.createElement("div")
-      message.id = "editor-message"
-      message.className = "v-messages__message error-message"
-      message.innerText = "This field is required."
-      if (current) {
-        document.querySelector(".editor").insertAdjacentElement("afterend", message)
-      } else {
-        document.getElementById("editor-message").remove()
-      }
-    }
-  },
   mounted() {
-    const editor = document.querySelector(".editor .ql-editor");
-    editor?.addEventListener("keyup", () => {
-      if (this.$router.currentRoute.path === '/form') { this.validatorEditor(this.descriptions[0]) }
-    })
     // console.log(localStorage.idForm)
     if(localStorage.idForm) {
       this.idForm = parseInt(localStorage.idForm)
@@ -302,7 +280,6 @@ export default {
         this.messageDM = 'The instagram field must not be empty'
       } else if(!this.descriptions.length) {
         this.dialogMessage = true
-        this.editorRules = true
         this.titleDM = 'Empty fields'
         this.messageDM = 'The description field must not be empty'
       } else {
@@ -394,10 +371,6 @@ export default {
       } else {
         this.$router.push('/nft-projects')
       }
-    },
-    validatorEditor(model) {
-      if (model) return (this.editorRules = false);
-      this.editorRules = true;
     },
   }
 };

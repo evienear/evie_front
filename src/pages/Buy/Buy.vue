@@ -131,7 +131,7 @@
             <button class="rightButton btn2 fill-w paddleftmobile"
               @click="$refs.menu.dialog=true">
               CART:{{ cantCart }}
-              <span class="acenter">{{ priceTotal }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
+              <span class="acenter">{{ priceTotal.toFixed(2) }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
             </button>
           </div>
         </v-col>

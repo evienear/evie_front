@@ -50,7 +50,7 @@
           <!-- <img v-if="dataProjectProposal.description.img" :src="dataProjectProposal.description.img" 
             alt="image">-->
           <h3 class="Title">ABOUT:</h3>
-          <span>{{ item.descriptions[0] }}</span>
+          <span v-html="item.descriptions[0]"></span>
         </aside>
         <aside>
           <v-col>
@@ -224,6 +224,8 @@ export default {
         this.dataProjectProposal.description = response.data
         this.$store.commit('Load', false)
       })
+      setTimeout(() => console.log(this.dataProjectProposal.description), 3000)
+      
     },
     updateForm() {
       if(localStorage.pass) {
