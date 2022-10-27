@@ -224,8 +224,7 @@ export default {
         this.dataProjectProposal.description = response.data
         this.$store.commit('Load', false)
       })
-      setTimeout(() => console.log(this.dataProjectProposal.description), 3000)
-      
+      // setTimeout(() => console.log(this.dataProjectProposal.description), 3000)
     },
     updateForm() {
       if(localStorage.pass) {
