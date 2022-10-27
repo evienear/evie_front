@@ -139,12 +139,14 @@ export default {
       this.dialogDelete = true
     },
     deleteEvent() {
+      this.$store.commit('Load', true)
       this.dialogDelete = false
       axios.post('https://evie.pro:3070/api/v1/deleteevent', {
         "id": localStorage.deleteIdEvent,
         "user": localStorage.walletAccountId,
         "pass": localStorage.pass
       }).then(response => {
+        this.$store.commit('Load', false)
         this.dialogMessage = true
         this.titleDM = 'Successful'
         this.messageDM = 'The event has been deleted successfully'

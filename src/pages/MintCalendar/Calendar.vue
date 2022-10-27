@@ -201,12 +201,13 @@ export default {
       this.menu1 = false
     },
     getEvents ({start, end }) {
+      this.$store.commit('Load', true)
       this.events = []
       axios.post('https://evie.pro:3070/api/v1/ListEventDays', {
         "mes": start.month,
         "ano": end.year
       }).then(response => {
-        // console.log(response.data)
+        console.log(response.data)
         response.data.forEach(item => {
           var dia = item.dia.toString()
           var mes = item.mes.toString()
@@ -221,6 +222,7 @@ export default {
             start: fecha,
           })
         });
+        this.$store.commit('Load', false)
       }).catch(err => {
         console.log(err)
       })
@@ -239,6 +241,7 @@ export default {
       this.dialog = true
     },
     addEventPost() {
+      this.$store.commit('Load', true)
       // const [year, month, day] = this.date.split('-')
       const formData = new FormData()
       formData.append('dia', parseInt(this.day))
@@ -253,10 +256,13 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' }
       }).then(response => {
         console.log(response.data)
+        this.$store.commit('Load', false)
+        this.dialog = false
         this.dialogMessage = true,
         this.titleDM = 'Successful'
         this.messageDM = 'The data was saved successfully'
-        this.getEvents()
+        // this.getEvents()
+        setTimeout(() => this.$router.go(0), 3000)
       }).catch(err => {
         console.log(err)
       })
