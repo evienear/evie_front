@@ -24,7 +24,7 @@
       hide-header
     >
       <template v-slot:day="{ day, month, year }">
-        <div class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`" @click="getEvent(day, month, year)"></div>
+        <div class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`" @click="addEvent(day, month, year), getEvent(day, month, year)"></div>
       </template>
 
       <!-- idont know how to dynamic for now -->
@@ -39,11 +39,11 @@
         PROJECT PROPOSAL<v-icon medium>mdi-chevron-right</v-icon>
       </button>
     </v-col> -->
-    <v-col class="end paddlateral">
+    <!-- <v-col class="end paddlateral">
       <button class="button h9 btn2" @click="addEvent()">
         ADD EVENT<v-icon medium>mdi-chevron-right</v-icon>
       </button>
-    </v-col>
+    </v-col> -->
     <v-dialog
       id="dialogo"
       v-model="dialog"
@@ -60,7 +60,7 @@
             </span>
           </h5>
         </v-col>
-        <v-col cols="12" class="center">
+        <!-- <v-col cols="12" class="center">
           <v-menu
             ref="menu1"
             v-model="menu1"
@@ -92,7 +92,7 @@
               @input="change()"
             ></v-date-picker>
           </v-menu>
-        </v-col>
+        </v-col> -->
         <v-col cols="12" class="center">
           <v-text-field
             v-model="calendario.title"
@@ -182,6 +182,9 @@ export default {
       dialogMessage: false,
       titleDM: '',
       messageDM: '',
+      day: null,
+      month: null,
+      year: null,
     }
   },
   mounted() {
@@ -228,16 +231,19 @@ export default {
     rnd (a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a
     },
-    addEvent(day) {
-      console.log(day)
+    addEvent(day, month, year) {
+      console.log(day, month, year)
+      this.day = day
+      this.month = month
+      this.year = year
       this.dialog = true
     },
     addEventPost() {
-      const [year, month, day] = this.date.split('-')
+      // const [year, month, day] = this.date.split('-')
       const formData = new FormData()
-      formData.append('dia', parseInt(day))
-      formData.append('mes', parseInt(month))
-      formData.append('ano', parseInt(year))
+      formData.append('dia', parseInt(this.day))
+      formData.append('mes', parseInt(this.month))
+      formData.append('ano', parseInt(this.year))
       formData.append('titulo', this.calendario.title)
       formData.append('uploaded_img', this.calendario.images)
       formData.append('user', localStorage.walletAccountId)
