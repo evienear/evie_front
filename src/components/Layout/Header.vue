@@ -184,6 +184,7 @@ export default {
     logout() {
       // console.log('logout')
       localStorage.login = 'false'
+      localStorage.removeItem('isAdmin')
       this.$router.push('/login')
     }
   },
