@@ -24,7 +24,7 @@
       hide-header
     >
       <template v-slot:day="{ day, month, year }">
-        <v-tooltip bottom>
+        <v-tooltip top>
           <template v-slot:activator="{ on }">
             <div v-on="on" class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`" title="Click to add events" @click="addEvent(day, month, year), getEvent(day, month, year)"></div>
           </template>
@@ -34,7 +34,7 @@
 
       <!-- idont know how to dynamic for now -->
       <template v-slot:event="{ day, event }">
-        <v-tooltip bottom>
+        <v-tooltip top>
           <template v-slot:activator="{ on }">
             <div v-on="on" class="flex-grow overflow-y-auto overflow-x-auto" @dblclick="addEvent(day.day, day.month, day.year)">
               <aside v-for="item, i in event.events" :key="i" style="height: 2px">
