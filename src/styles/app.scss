@@ -231,3 +231,9 @@
     font-weight: 400 !important;
   }
 }
+
+.v-tooltip__content  {
+  background-color: var(--color) !important;
+  color: var(--colorInverted) !important;
+  * {color: var(--colorInverted) !important}
+}
