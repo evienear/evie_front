@@ -20,10 +20,16 @@
                 <span class="light">{{ item.desc }}</span>
                 <span class="bold">{{ item.date }}</span>
               </div>
-              <button class="buttonDel float-end" @click="openDialogDelete(item.id)">
-                <!-- <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false"> -->
-                <span><v-icon class="close" style="margin: -15px">delete</v-icon></span>
-              </button>
+              <v-tooltip top v-if="isAdmin==='true'">
+                <template v-slot:activator="{ on }">
+                  <button v-on="on" class="buttonDel float-end" @click="openDialogDelete(item.id)">
+                    <!-- <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false"> -->
+                    <span><v-icon class="close" style="margin: -15px">delete</v-icon></span>
+                  </button>
+                </template>
+                <span>Click to delete event</span>
+              </v-tooltip>
+              
             </v-img>
           </aside>
           <aside v-show="!dataReminder.length" class="center">
@@ -102,6 +108,7 @@ export default {
       dialogMessage: false,
       titleDM: '',
       messageDM: '',
+      isAdmin: localStorage.isAdmin,
       dataReminder: [
         // {
         //   img: require("@/assets/image2.png"),
