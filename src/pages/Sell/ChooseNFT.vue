@@ -2,18 +2,18 @@
   <section id="chooseNFT">
     <h1 class="titulo h2mobile">SELL</h1>
 
-    <v-col class="padd" style="gap: 20px">
-      <aside class="divrow" style="gap: 20px">
+    <v-col class="padd" style="gap: 20px" >
+      <aside class="divrow" style="gap: 20px; margin-bottom: 20px">
         <button class="botonBack center" @click="$router.push('/sell')">
           <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
         </button>
         <h3 class="tituloBack p">CHOOSE NFT's</h3>
       </aside>
       <aside class="end">
-        <button class="button btn2" @click="dialog=true">
+        <!-- <button class="button btn2" @click="dialog=true">
           Deposit
-        </button>
-        <v-tooltip top>
+        </button> -->
+        <!-- <v-tooltip top>
           <template v-slot:activator="{ on, attrs }">
             <v-btn class="button2" color="transparent" v-bind="attrs" v-on="on">
               <v-icon x-large>mdi-information-outline</v-icon>
@@ -26,7 +26,7 @@
         <span>
           deposit for storage in the corresponding market
         </span>
-      </v-tooltip>
+      </v-tooltip> -->
       </aside>
 
       <!-- <aside class="start">
