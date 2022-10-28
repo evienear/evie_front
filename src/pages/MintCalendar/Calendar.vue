@@ -24,17 +24,18 @@
       hide-header
     >
       <template v-slot:day="{ day, month, year }">
-        <v-tooltip top>
+        <v-tooltip top v-if="isAdmin==='true'">
           <template v-slot:activator="{ on }">
             <div v-on="on" class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`" title="Click to add events" @click="addEvent(day, month, year), getEvent(day, month, year)"></div>
           </template>
           <span>Click to add events</span>
-        </v-tooltip>        
+        </v-tooltip>
+        <div v-else class="contNft images" :style="`background-color: ${img?'#FDFFB1':'transparent'}`" title="Click to add events"></div>   
       </template>
 
       <!-- idont know how to dynamic for now -->
       <template v-slot:event="{ day, event }">
-        <v-tooltip top>
+        <v-tooltip top v-if="isAdmin==='true'">
           <template v-slot:activator="{ on }">
             <div v-on="on" class="flex-grow overflow-y-auto overflow-x-auto" @dblclick="addEvent(day.day, day.month, day.year)">
               <aside v-for="item, i in event.events" :key="i" style="height: 2px">
@@ -47,8 +48,20 @@
           </template>
           <span>Click to see the events of the day</span> <br>
           <span>Double click to add events</span>
-        </v-tooltip>  
-        
+        </v-tooltip> 
+        <v-tooltip top v-else>
+          <template v-slot:activator="{ on }">
+            <div v-on="on" class="flex-grow overflow-y-auto overflow-x-auto">
+              <aside v-for="item, i in event.events" :key="i" style="height: 2px">
+                <span class="textEvent" >
+                  {{ item.titulo.substr(0,9) }}
+                </span>
+                <img class="nftEvent" :src="item.imagen" alt="NFT" @click="getEvent(day.day, day.month, day.year)">
+              </aside>
+            </div>
+          </template>
+          <span>Click to see the events of the day</span>
+        </v-tooltip> 
       </template>
     </v-calendar>
 
@@ -203,6 +216,7 @@ export default {
       day: null,
       month: null,
       year: null,
+      isAdmin: localStorage.isAdmin,
     }
   },
   mounted() {
