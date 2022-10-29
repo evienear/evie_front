@@ -99,7 +99,7 @@ export default {
     async getForm() {
       this.$store.commit('Load', true)
       axios.post('https://evie.pro:3070/api/v1/listformedu', {
-        "limit": 10,
+        "limit": 1000,
         "index": 0
       }).then(response => {
         this.dataNFTProjects = response.data
