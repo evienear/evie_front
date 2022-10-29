@@ -8,8 +8,13 @@
           </a>
         </aside>
         
-        <span class="center" style="font-weight: bold; gap: 5px">Powered by 
-          <img src="@/assets/logo/near.svg" alt="near">
+        <span class="center divwrap" style="font-weight: bold; gap: 5px">
+          <div>
+            Powered by <a href="https://near.org" target="_blank"><img src="@/assets/logo/near.svg" alt="near"></a>
+          </div>
+          <div>
+            &amp; <a href="https://www.dvconsultores.com" target="_blank">GlobalDv</a>
+          </div>
         </span>
 
         <aside class="divrow" style="gap: 1em">
@@ -20,7 +25,7 @@
             <div class="switch" />
           </button>
 
-          <span class="center" style="font-weight: bold; cursor: pointer">
+          <span v-show="!isMobile" class="center" style="font-weight: bold; cursor: pointer">
             <v-icon v-show="themeButton" medium>mdi-weather-night</v-icon>
             <v-icon v-show="!themeButton" medium>mdi-white-balance-sunny</v-icon>
           </span>
@@ -34,6 +39,7 @@
 export default {
   data() {
     return {
+      isMobile: false,
       themeButton: true,
       dataIconos: [
         {
@@ -62,7 +68,21 @@ export default {
     if (theme == "light") {this.themeButton = true}
     if (theme == "dark") {this.themeButton = false}
   },
+  mounted() {
+    this.mobile()
+    window.addEventListener("resize", this.mobile)
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.mobile)
+  },
   methods: {
+    mobile() {
+      if (window.innerWidth <= 880) {
+        this.isMobile = true
+      } else {
+        this.isMobile = false
+      }
+    },
     CambiarTheme(theme) {
       this.$store.dispatch("CambiarTheme", { theme, element: this.element });
       this.themeButton = !this.themeButton;
