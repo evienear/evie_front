@@ -86,7 +86,7 @@
                   <span class="h8" style="font-weight: 400">{{ item.name }}</span>
                 </aside>
                 <span class="h8">
-                  <strong>{{ parseFloat(item.volumen_near).toFixed(4) }} </strong>
+                  <strong>{{ parseFloat(item.volumen_near).toFixed(4).split('.').join(',') }} </strong>
                   <img src="@/assets/logo/near.svg" alt="near">
                 </span>
                 

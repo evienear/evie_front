@@ -312,6 +312,9 @@
   max-height: auto !important;
   min-height: auto !important;
 }
+.overflow {
+  overflow: hidden !important;
+}
 @media (min-width: 881px) {
   .vermobile {
     display: none !important;

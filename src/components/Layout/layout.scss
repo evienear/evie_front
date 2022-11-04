@@ -77,12 +77,15 @@
     .sesionBtn {
       font-size: var(--font-size-navbar) !important;
       padding-inline: clamp(1em, 2vw, 2em) !important;
+      &::before {
+        background-color: var(--colorBtn3) !important;
+      }
       &::after {
         content: "";
         @include absolute(0,calc(var(--corner-size) - .2em),0);
-        width: calc(100% - (calc(var(--corner-size) * 2 + .6em)));
+        width: calc(100% - (calc(var(--corner-size) * 2 + 1em)));
         height: var(--corner-size);
-        background-color: var(--lineBtn);
+        background-color: #cdcdcd;
       }
     }
   }

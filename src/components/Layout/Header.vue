@@ -14,8 +14,11 @@
 
           <aside class="contNavbar" style="gap:1em">
             <button v-for="(item,i) in dataNavbar" :key="i" class="navBtn divcol center eliminarmobile"
-              @click="$router.push(item.to);dataNavbar.forEach(e=>{e.state='-outline'});item.state=''">
-              <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/${item.key}${item.state}.svg`" alt="navigation icons">
+              @click="$router.push(item.to)">
+            <!-- <button v-for="(item,i) in dataNavbar" :key="i" class="navBtn divcol center eliminarmobile"
+              @click="$router.push(item.to);dataNavbar.forEach(e=>{e.state='-outline'});item.state=''"> -->
+              <!-- <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/${item.key}${item.state}.svg`" alt="navigation icons"> -->
+              <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/${item.key}.svg`" alt="navigation icons">
               <span>{{item.name}}</span>
             </button>
 

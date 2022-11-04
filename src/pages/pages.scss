@@ -154,6 +154,9 @@
     height: 100%;
   }
   #tableCollections {
+    button aside img {
+      background-color: var(--bg-img) !important;
+    }
     .v-data-table__wrapper > table > tbody > tr > td {
       border-bottom: none;
       position: relative;
@@ -434,6 +437,9 @@
 .sliderReview .v-slide-group__content {
   padding-block: .5em;
 }
+.containerMenuReview {
+  overflow-x: auto !important;
+}
 :is(.containerMenuBuy, .containerMenuReview) {
   .v-slide-group__content {
     --padding: 10px;
@@ -678,7 +684,7 @@
   }
   .containerLeft {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 225px),1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px),1fr));
     grid-gap: 1.25rem 1em;
     place-items: center;
     max-height: 458.4px !important;
@@ -686,7 +692,8 @@
     overflow-x: hidden;
     .containerMarketplace {
       display: grid;
-      &:only-of-type {width: min(100%, 20em)}
+      max-width: 200px !important;
+      // &:only-of-type {width: min(100%, 20em)}
       &.active:after {width: 13.5% !important}
       // .images {
       //   width: 10.4375em !important;
@@ -1565,4 +1572,8 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+.v-dialog {
+  overflow: hidden !important;
 }
