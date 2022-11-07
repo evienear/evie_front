@@ -1577,3 +1577,33 @@
 .v-dialog {
   overflow: hidden !important;
 }
+
+.doggy-slider {
+  .v-slider__track-background.primary.lighten-3 {
+    background-color: var(--color) !important;
+  }
+  .v-slider__track-fill.primary {
+    background-image: url(../assets/doggy-slider/gradient.png) !important;
+    background-color: transparent !important;
+    background-size: cover;
+  }
+  // &-track {
+  //   position: absolute;
+  //   top: 0;
+  //   bottom: 0;
+  //   left: 0;
+  //   right: 0;
+  //   margin: auto;
+
+  //   object-fit: fill;
+  //   width: 100%;
+  // }
+
+  &-thumb {
+    --size: 20px;
+    position: absolute;
+    left: calc(var(--size) * -1);
+    top: -30px;
+    width: calc(var(--size) * 2);
+  }
+}

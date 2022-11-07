@@ -127,12 +127,22 @@
             <button class="vermobile" @click="$refs.drawer.drawer=true">
               <v-icon style="color: var(--color) !important">mdi-filter</v-icon>
             </button>
-
-            <button class="rightButton btn2 fill-w paddleftmobile"
-              @click="$refs.menu.dialog=true">
-              CART:{{ cantCart }}
-              <span class="acenter">{{ priceTotal.toFixed(2) }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
-            </button>
+            
+            <div class="divcol" style="gap: 15px">
+              <button class="rightButton btn2 fill-w paddleftmobile"
+                @click="$refs.menu.dialog=true">
+                CART:{{ cantCart }}
+                <span class="acenter">{{ priceTotal.toFixed(2) }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
+              </button>
+              
+              <v-slider
+                v-model="doggySlider"
+                :max="dataNftTokens.length"
+                hide-details
+                class="doggy-slider"
+                @change="sliderSelect($event)"
+              ></v-slider>
+            </div>
           </div>
         </v-col>
       </v-row>
@@ -395,6 +405,7 @@ export default {
       slider: 0,
       filterGeneral: [],
       excess: null,
+      doggySlider: undefined,
     }
   },
   mounted() {
@@ -419,6 +430,24 @@ export default {
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
     this.getCartItems()
+
+
+    // slider thumb
+    // const containerTrack = document.querySelector(".doggy-slider .v-slider__track-container");
+    // const imgTrack = document.createElement("img");
+    // imgTrack.src = require("@/assets/doggy-slider/track.png")
+    // imgTrack.className = "doggy-slider-track"
+    
+    // containerTrack.querySelector(".v-slider__track-background").remove()
+    // containerTrack.appendChild(imgTrack)
+    
+    const containerThumb = document.querySelector(".doggy-slider .v-slider__thumb-container");
+    const imgThumb = document.createElement("img");
+    imgThumb.src = require("@/assets/doggy-slider/thumb.gif")
+    imgThumb.className = "doggy-slider-thumb"
+    
+    containerThumb.querySelector(".v-slider__thumb").remove()
+    containerThumb.appendChild(imgThumb)
   },
   computed: {
     // DataBuyTable() {
@@ -830,6 +859,16 @@ export default {
         this.slider = 'disabled'
       }
     },
+    sliderSelect(value) {
+      for (let i = 0; i < this.dataNftTokens.length; i++) {
+        const item = this.dataNftTokens[i];
+        if (i < this.dataNftTokens.slice(0, value).length) {
+          item.select = true
+        } else {
+          item.select = false
+        }
+      }
+    }
   }
 };
 </script>
