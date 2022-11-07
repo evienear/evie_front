@@ -140,7 +140,7 @@
                 :max="dataNftTokens.length"
                 hide-details
                 class="doggy-slider"
-                @change="sliderSelect($event)"
+                @input="sliderSelect($event)"
               ></v-slider>
             </div>
           </div>
