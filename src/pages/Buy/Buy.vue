@@ -897,11 +897,13 @@ export default {
         this.dialogMessage = true
         this.titleDM = 'Session error'
         this.messageDM = 'You are not logged in to add to cart'
-      } else if (!this.dataNftTokens.some(data => data.select)) {
-        this.dialogMessage = true
-        this.titleDM = 'Select someone NFT'
-        this.messageDM = 'You must select NFT to open cart'
-      } else {
+      }
+      // else if (!this.dataNftTokens.some(data => data.select)) {
+      //   this.dialogMessage = true
+      //   this.titleDM = 'Select someone NFT'
+      //   this.messageDM = 'You must select NFT to open cart'
+      // }
+      else {
         this.nftCart = this.dataNftTokens.filter(data => data.select)
         this.$refs.menu.dialog=true
       }

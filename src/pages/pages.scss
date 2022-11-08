@@ -428,6 +428,7 @@
 
 #menuCheckout, #menuReview {
   padding-top: 2em;
+  padding-inline: 10px;
   border: 8px solid #EB92CA;
   clip-path: $clip-path;
   .buttonClose {@include absolute(auto,-8px,-8px)}
@@ -1579,15 +1580,17 @@
 }
 
 .doggy-slider {
+  --height: 10px;
   .v-slider--horizontal {margin: 0}
   .v-slider__track-background.primary.lighten-3 {
     background-color: var(--color) !important;
-    min-height: 10px;
+    min-height: var(--height);
   }
   .v-slider__track-fill.primary {
     background-image: url(../assets/doggy-slider/gradient.png) !important;
     background-color: transparent !important;
     background-size: cover;
+    min-height: var(--height);
   }
   // &-track {
   //   position: absolute;
