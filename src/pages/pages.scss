@@ -1579,8 +1579,10 @@
 }
 
 .doggy-slider {
+  .v-slider--horizontal {margin: 0}
   .v-slider__track-background.primary.lighten-3 {
     background-color: var(--color) !important;
+    min-height: 10px;
   }
   .v-slider__track-fill.primary {
     background-image: url(../assets/doggy-slider/gradient.png) !important;
