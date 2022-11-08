@@ -114,27 +114,27 @@
             <v-slide-item v-for="(item, index) in nftCart" :key="index">
               <v-card
                 color="transparent"
-                style="display: flex"
+                style="display: flex; margin-top: 10px"
                 class="containerMarketplace relative"
               >
-                <img class="images" :src="item.base_uri" alt="NFT">
+                <img class="images" :src="item.icon" alt="NFT">
 
                 <span class="marketplaceNumber btn2">
                   # {{ item.token_id.substr(0,10) }}
                 </span>
 
                 <span class="marketplaceAmount btn2 center">
-                  {{ item.precio}}
+                  {{ parseFloat(item.precio_near).toFixed(2)}}
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
                 <aside class="buttons">
-                  <v-tooltip right>
+                  <v-tooltip right v-if="item.marketplace">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn v-bind="attrs" v-on="on">
-                        <img :src="require('@/assets/markets/' + item.contract_market + '.svg')" :alt="item.contract_market">
+                        <img :src="require('@/assets/markets/' + item.marketplace + '.svg')" :alt="item.marketplace">
                       </v-btn>
                     </template>
-                    <span>{{ item.contract_market }}</span>
+                    <span>{{ item.marketplace }}</span>
                   </v-tooltip>
                 </aside>
 
@@ -142,7 +142,9 @@
                   <button class="btn2" @click="purchase(item)">
                     BUY
                   </button>
-                  <button title="Delete item to cart" @click="removeCartItem(item)">
+                  <button title="Delete item to cart"
+                    @click="$parent.dataNftTokens.find(e => e === item).select = false; $parent.nftCart.splice(index, 1);
+                    $parent.doggySlider > 0 ? $parent.doggySlider-- : undefined">
                     <v-icon color="red" class="btn2">mdi-trash-can-outline</v-icon>
                   </button>
                 </aside>
@@ -157,8 +159,8 @@
             <span class="desc h9 color">Balance: {{ balance }}</span>
           </aside>
           <aside class="divcol">
-            <span class="h6 color">{{ cantCart }} IN CART</span>
-            <span class="h9 color center">Total: {{ priceTotal }}
+            <span class="h6 color">{{ nftCart.length }} IN CART</span>
+            <span class="h9 color center">Total: {{ parseFloat(totalPrice).toFixed(2) }}
               <img class="nearBalanceLogo" src="@/assets/logo/near.png" alt="near">
             </span>
           </aside>
@@ -168,7 +170,7 @@
           <button class="button btn2" @click="buyAll()">
             Buy All Items<v-icon medium>mdi-chevron-right</v-icon>
           </button>
-          <button class="button btn2" @click="clearCart()">
+          <button class="button btn2" @click="$parent.nftCart.forEach(e => e.select = false); $parent.nftCart = []; $parent.doggySlider = 0">
             Delete All Items
           </button>
         </v-col>
@@ -227,7 +229,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import * as nearApi from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, Contract, utils, /*transactions*/ } = nearApi;
@@ -251,7 +253,6 @@ export default {
       overlay_color: "white",
       dataMenuBuy: [],
       dataMenuReview: [],
-      totalPrice: 0,
       cantNft: this.nftCart.length,
       balance: 0,
       accountId: '',
@@ -271,23 +272,34 @@ export default {
     this.OverlayMethod(theme);
   },
   mounted() {
-    var price = 0
-    this.dataMenuBuy = []
-    this.nftCart.forEach(element => {
-      price = utils.format.formatNearAmount((element.precio.toString()))
-      price = parseFloat(price)
-      element.price = price      
-    });
-    this.dataMenuBuy = this.nftCart
-    this.getBalance()
-    if (localStorage.refreshCart === 'true') {
-      this.refreshCart = false
-      localStorage.refreshCart = this.refreshCart
-      setTimeout(() => {
-        axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
-          console.log(res)
-        }).catch(erro => {console.log(erro)})
-      }, 35000)
+    // var price = 0
+    // this.dataMenuBuy = []
+    // this.nftCart.forEach(element => {
+    //   price = utils.format.formatNearAmount((element.precio.toString()))
+    //   price = parseFloat(price)
+    //   element.price = price      
+    // });
+    // this.dataMenuBuy = this.nftCart
+    // this.getBalance()
+    // if (localStorage.refreshCart === 'true') {
+    //   this.refreshCart = false
+    //   localStorage.refreshCart = this.refreshCart
+    //   setTimeout(() => {
+    //     axios.post('https://evie.pro:3070/api/v1/refrescarcarrito').then(res => {
+    //       console.log(res)
+    //     }).catch(erro => {console.log(erro)})
+    //   }, 35000)
+    // }
+  },
+  computed: {
+    totalPrice() {
+      const prices = []
+      for (const item of this.nftCart) {
+        prices.push(Number(item.precio_near))
+      }
+
+      if (this.nftCart.length > 1) return prices.reduce((a, b) => a + b)
+      return this.nftCart[0]?.precio_near ?? 0
     }
   },
   methods: {

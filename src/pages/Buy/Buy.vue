@@ -130,9 +130,9 @@
             
             <div class="divcol" style="gap: 15px">
               <button class="rightButton btn2 fill-w paddleftmobile"
-                @click="$refs.menu.dialog=true">
-                CART:{{ cantCart }}
-                <span class="acenter">{{ priceTotal.toFixed(2) }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
+                @click="openCart()">
+                CART:{{ nftCart.length }}
+                <span class="acenter">{{ parseFloat(totalPrice).toFixed(2) }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
               </button>
               
               <v-slider
@@ -141,6 +141,7 @@
                 hide-details
                 class="doggy-slider"
                 @input="sliderSelect($event)"
+                @change="sliderPush()"
               ></v-slider>
             </div>
           </div>
@@ -223,7 +224,7 @@
           <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
             class="containerMarketplace" :class="{active: item.select}">
 
-            <v-img class="images" :src="item.icon" alt="NFT Market Place" @click="addCart(item)" />
+            <v-img class="images" :src="item.icon" alt="NFT Market Place" @click="nftSelect(item)" />
 
             <span class="marketplaceId btn2" style="bottom: -5% !important">
               # {{ item.token_id.substr(0,10)}}
@@ -454,6 +455,15 @@ export default {
     //   if (window.innerWidth <= 880) {return this.dataBuyTable.slice(0,4)}
     //   else {return this.dataBuyTable.slice(0,10)}
     // }
+    totalPrice() {
+      const prices = []
+      for (const item of this.nftCart) {
+        prices.push(Number(item.precio_near))
+      }
+
+      if (this.nftCart.length > 1) return prices.reduce((a, b) => a + b)
+      return this.nftCart[0]?.precio_near ?? 0
+    }
   },
   methods: {
     viewTokens() {
@@ -641,25 +651,25 @@ export default {
     //FIN DE FILTROS
 
     // COMIENZA EL CARRITO
-    addCart(item) {
-      const index = this.nftCart.findIndex(i =>
-        i.token_id === item.token_id && item.marketplace === i.contract_market
-      )
-      if (index > -1) {
-        this.dialogMessage = true
-        this.titleDM = 'Already exists'
-        this.messageDM = 'The token already exists in the cart'
-      } else {
-        if(item.precio !== null) {
-          this.$store.commit('Load', true)
-          this.addCartItem(item)
-        } else {
-          this.dialogMessage = true
-          this.titleDM = 'Not for sale'
-          this.messageDM = 'This NFT is not for sale'
-        }
-      }
-    },
+    // addCart(item) {
+    //   const index = this.nftCart.findIndex(i =>
+    //     i.token_id === item.token_id && item.marketplace === i.contract_market
+    //   )
+    //   if (index > -1) {
+    //     this.dialogMessage = true
+    //     this.titleDM = 'Already exists'
+    //     this.messageDM = 'The token already exists in the cart'
+    //   } else {
+    //     if(item.precio !== null) {
+    //       this.$store.commit('Load', true)
+    //       this.addCartItem(item)
+    //     } else {
+    //       this.dialogMessage = true
+    //       this.titleDM = 'Not for sale'
+    //       this.messageDM = 'This NFT is not for sale'
+    //     }
+    //   }
+    // },
     async addCartItem(item) {
       // connect to NEAR
       const near = await connect(
@@ -859,6 +869,16 @@ export default {
         this.slider = 'disabled'
       }
     },
+    nftSelect(item) {
+      if (item.select) {
+        item.select = false
+        this.doggySlider--
+      } else {
+        item.select = true
+        this.doggySlider++
+      }
+      this.nftCart = this.dataNftTokens.filter(data => data.select)
+    },
     sliderSelect(value) {
       for (let i = 0; i < this.dataNftTokens.length; i++) {
         const item = this.dataNftTokens[i];
@@ -868,7 +888,24 @@ export default {
           item.select = false
         }
       }
-    }
+    },
+    sliderPush() {
+      this.nftCart = this.dataNftTokens.filter(data => data.select)
+    },
+    async openCart() {
+      if (!localStorage.sesion) {
+        this.dialogMessage = true
+        this.titleDM = 'Session error'
+        this.messageDM = 'You are not logged in to add to cart'
+      } else if (!this.dataNftTokens.some(data => data.select)) {
+        this.dialogMessage = true
+        this.titleDM = 'Select someone NFT'
+        this.messageDM = 'You must select NFT to open cart'
+      } else {
+        this.nftCart = this.dataNftTokens.filter(data => data.select)
+        this.$refs.menu.dialog=true
+      }
+    },
   }
 };
 </script>
