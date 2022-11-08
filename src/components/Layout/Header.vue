@@ -195,11 +195,11 @@ export default {
     this.isSigned()
     document.getElementById("headerApp").style.background = "transparent";
     document.addEventListener('scroll', this.scrollListener);
-    var root = this.$router.currentRoute.name;
-    if (root=='home') {root='buy'}
-    const index = this.dataNavbar.findIndex(e=>e.key==root)
-    this.dataNavbar.forEach(e=>{e.state='-outline'});
-    this.dataNavbar[index].state=''
+    // var root = this.$router.currentRoute.name;
+    // if (root=='home') {root='buy'}
+    // const index = this.dataNavbar.findIndex(e=>e.key==root)
+    // this.dataNavbar.forEach(e=>{e.state='-outline'});
+    // this.dataNavbar[index].state=''
   },
   beforeDestroy() {
     document.removeEventListener('scroll', this.scrollListener);

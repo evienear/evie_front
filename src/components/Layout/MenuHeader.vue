@@ -18,11 +18,13 @@
 
       <v-list color="transparent" class="containerMenuHeader">
         <section class="cardMenuHeader colorCartas" style="box-shadow: none !important">
-          <v-list-item class="cardItems" v-for="(item, i) in dataMenuHeader" :key="i" :to="item.to"
-            @click="dataMenuHeader.forEach(e=>{e.state='-outline'});item.state=''">
+          <!-- <v-list-item class="cardItems" v-for="(item, i) in dataMenuHeader" :key="i" :to="item.to"
+            @click="dataMenuHeader.forEach(e=>{e.state='-outline'});item.state=''"> -->
+          <v-list-item class="cardItems" v-for="(item, i) in dataMenuHeader" :key="i" :to="item.to">
             <v-list-item-title class="space">
               <div class="center" style="gap: 10px">
-                <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/${item.key}${item.state}.svg`" alt="navigation icons">
+                <!-- <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/${item.key}${item.state}.svg`" alt="navigation icons"> -->
+                <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/${item.key}.svg`" alt="navigation icons">
                 <span :href="item.to" style="font-size:1.5rem; font-weight: 600">{{ item.name }}</span>
               </div>
               <v-icon large color="var(--color)">mdi-chevron-right</v-icon>
@@ -114,11 +116,11 @@ export default {
     if (theme == "dark") {this.themeButton = false}
   },
   mounted() {
-    var root = this.$router.currentRoute.name;
-    if (root=='home') {root='buy'}
-    const index = this.dataMenuHeader.findIndex(e=>e.key==root)
-    this.dataMenuHeader.forEach(e=>{e.state='-outline'});
-    this.dataMenuHeader[index].state=''
+    // var root = this.$router.currentRoute.name;
+    // if (root=='home') {root='buy'}
+    // const index = this.dataMenuHeader.findIndex(e=>e.key==root)
+    // this.dataMenuHeader.forEach(e=>{e.state='-outline'});
+    // this.dataMenuHeader[index].state=''
   },
   methods: {
     CambiarTheme(theme) {
