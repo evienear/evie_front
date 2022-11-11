@@ -7,6 +7,15 @@
         </button>
         <h1 class="tituloBack p">NFT PROJECTS</h1>
       </aside>
+
+
+      <!-- <aside class="acenter gap mt-3" style="flex-wrap: wrap">
+        <v-btn
+          v-for="marketplace in dataMarketplaces" :key="marketplace" min-width="max-content"
+          style="padding: 0; border-radius: 5px; overflow: hidden">
+          <img :src="require('@/assets/markets/' + marketplace + '.svg')" :alt="marketplace">
+        </v-btn>
+      </aside> -->
     </v-col>
 
     <v-col class="containerNFTProjects padd">
@@ -72,6 +81,9 @@ export default {
   name: "NFTProjects",
   data() {
     return {
+      // dataMarketplaces: [
+      //   "marketplace.paras.near", "market.tradeport.near"
+      // ],
       dataNFTProjects: [],
       account_id: localStorage.walletAccountId,
       isAdmin: localStorage.isAdmin,

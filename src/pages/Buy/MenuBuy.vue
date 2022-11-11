@@ -434,7 +434,7 @@ export default {
       item.price).then((response) => {
         console.log(response);
       }).catch(err => {
-        console.log(err)
+        console.error(err)
       })
     },
     //INICIA EL BACHT
@@ -566,7 +566,7 @@ export default {
         meta: options?.meta,
       }).then(res => {
         console.log(res)
-      }).catch(err => console.log(err))
+      }).catch(err => console.error(err))
     },
     //TERMINA EL BACHT
     prev(e) {
