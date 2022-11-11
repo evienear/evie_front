@@ -440,21 +440,22 @@ export default {
     //INICIA EL BACHT
     async buyAll () {
       var txs = []
+      //console.log(this.nftCart)
       this.nftCart.forEach(item => {
         txs.push({
-          receiverId: item.contract_market,
+          receiverId: item.marketplace,
           functionCalls: [
             {
               methodName: "buy",
-              receiverId: item.contract_market,
+              receiverId: item.marketplace,
               gas: "300000000000000",
               args: {
                 nft_contract_id: item.contract_id ,
                 token_id: item.token_id,
                 ft_token_id: 'near',
-                price: item.price
+                price: item.precio
               },
-              deposit: item.price,
+              deposit: item.precio,
             },
           ],
         })
@@ -478,7 +479,7 @@ export default {
       //     ],
       //   },
       // ]
-      console.log(txs, 'compra masiva')
+      //console.log(txs, 'compra masiva')
       await this.batchTransaction(
         txs,
         {
@@ -574,7 +575,7 @@ export default {
       if (slide.scrollTop >= 0) {
         slide.scrollTop -= 80;
         this.slider = slide.scrollTop -= 80;
-        console.log(this.slider)
+        // console.log(this.slider)
       }
     },
     next(e) {
@@ -586,7 +587,7 @@ export default {
       } else {
         this.slider = 'disabled'
       }
-      console.log(this.slider)
+      //console.log(this.slider)
     },
     scroll(e) {
       const wrapper = e.path[1];
