@@ -85,7 +85,7 @@
 
     <v-col class="containerDown padd">
       <v-row>
-        <v-col class="space aendmobile divcolmobile" style="padding-block: 0 2em;gap: 1em">
+        <v-col class="space aendmobile divcolmobile" style="padding-block: 0 2em;gap: 50px">
           <div class="fill-w jend">
             <v-col v-for="(item,i) in dataFilter" :key="i" sm="6" md="4" lg="3"
               class="center paddvertical">
@@ -128,8 +128,8 @@
               <v-icon style="color: var(--color) !important">mdi-filter</v-icon>
             </button>
             
-            <div class="divcol" style="gap: 15px">
-              <button class="rightButton btn2 fill-w paddleftmobile"
+            <div class="divcol" style="gap: 30px">
+              <button class="rightButton btn2 fill-w paddleftmobile" style="--corner-size: 3.5px"
                 @click="openCart()">
                 CART:{{ nftCart.length }}
                 <span class="acenter">{{ parseFloat(totalPrice).toFixed(2) }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
@@ -142,6 +142,8 @@
                 class="doggy-slider"
                 @input="sliderSelect($event)"
                 @change="sliderPush()"
+                @mousedown="playDoggy()"
+                @mouseup="stopDoggy()"
               ></v-slider>
             </div>
           </div>
@@ -434,17 +436,10 @@ export default {
 
 
     // slider thumb
-    // const containerTrack = document.querySelector(".doggy-slider .v-slider__track-container");
-    // const imgTrack = document.createElement("img");
-    // imgTrack.src = require("@/assets/doggy-slider/track.png")
-    // imgTrack.className = "doggy-slider-track"
-    
-    // containerTrack.querySelector(".v-slider__track-background").remove()
-    // containerTrack.appendChild(imgTrack)
-    
     const containerThumb = document.querySelector(".doggy-slider .v-slider__thumb-container");
     const imgThumb = document.createElement("img");
-    imgThumb.src = require("@/assets/doggy-slider/thumb.gif")
+
+    imgThumb.src = require("@/assets/doggy-slider/thumb.svg")
     imgThumb.className = "doggy-slider-thumb"
     
     containerThumb.querySelector(".v-slider__thumb").remove()
@@ -907,6 +902,14 @@ export default {
         this.nftCart = this.dataNftTokens.filter(data => data.select)
         this.$refs.menu.dialog=true
       }
+    },
+    playDoggy() {
+      const imgThumb = document.querySelector(".doggy-slider .doggy-slider-thumb");
+      imgThumb.src = require("@/assets/doggy-slider/thumb.gif")
+    },
+    stopDoggy() {
+      const imgThumb = document.querySelector(".doggy-slider .doggy-slider-thumb");
+      imgThumb.src = require("@/assets/doggy-slider/thumb.svg")
     },
   }
 };

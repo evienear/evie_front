@@ -1580,7 +1580,10 @@
 }
 
 .doggy-slider {
-  --height: 10px;
+  --height: 18px;
+  --w-distance: var(--height);
+  transform: translateX(calc(var(--w-distance) * -1));
+  min-width: calc(100% + var(--w-distance));
   .v-slider--horizontal {margin: 0}
   .v-slider__track-background.primary.lighten-3 {
     background-color: var(--color) !important;
@@ -1605,10 +1608,10 @@
   // }
 
   &-thumb {
-    --size: 20px;
+    --size: 40px;
     position: absolute;
     left: calc(var(--size) * -1);
-    top: -30px;
+    top: -50px;
     width: calc(var(--size) * 2);
   }
 }
