@@ -90,7 +90,7 @@
       </section> -->
 
       <!-- review dialog-->
-      <section id="menuReview" class="colorCartas relative" style="min-height: 550.5px">
+      <section id="menuReview" class="colorCartas relative pt-2" style="min-height: 550.5px">
         <button class="buttonClose center">
           <img class="close" src="@/assets/icons/close.svg" alt="close" @click="dialog = false">
         </button>
@@ -105,7 +105,7 @@
           <span class="subtitleBack">SELECT MARKETPLACE</span>
         </v-col>
 
-        <v-col class="containerMenuReview">
+        <v-col class="containerMenuReview mt-0">
           <v-slide-group
             v-model="sliderB"
             center-active
