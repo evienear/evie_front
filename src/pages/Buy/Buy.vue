@@ -124,11 +124,11 @@
           </div>
 
           <div class="end gap">
-            <button class="vermobile" @click="$refs.drawer.drawer=true">
+            <!-- <button class="vermobile" @click="$refs.drawer.drawer=true">
               <v-icon style="color: var(--color) !important">mdi-filter</v-icon>
-            </button>
+            </button> -->
             
-            <div class="divcol" style="gap: 30px">
+            <div class="divcol" style="gap: 40px">
               <button class="rightButton btn2 fill-w paddleftmobile" style="--corner-size: 3.5px"
                 @click="openCart()">
                 CART:{{ nftCart.length }}
@@ -144,6 +144,7 @@
                 @change="sliderPush()"
                 @mousedown="playDoggy()"
                 @mouseup="stopDoggy()"
+                :style="`--clip: ${doggySlider === dataNftTokens.length ? 'var(--clip-path2)' : 'var(--clip-path2-left)'}`"
               ></v-slider>
             </div>
           </div>
@@ -879,9 +880,9 @@ export default {
         const item = this.dataNftTokens[i];
         if (i < this.dataNftTokens.slice(0, value).length) {
           item.select = true
-        } else {
-          item.select = false
+          continue;
         }
+        item.select = false
       }
     },
     sliderPush() {
