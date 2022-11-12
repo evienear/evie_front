@@ -1612,9 +1612,9 @@
     &-background.primary.lighten-3 {background-color: transparent !important}
     
     &-fill.primary {
-      background-image: url(../assets/doggy-slider/gradient.png) !important;
+      background: center url(../assets/doggy-slider/gradient.png) !important;
       background-color: transparent !important;
-      background-size: cover;
+      background-size: cover !important;
       clip-path: var(--clip);
     }
   }
