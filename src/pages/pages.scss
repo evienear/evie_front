@@ -1579,36 +1579,53 @@
   overflow: hidden !important;
 }
 
-.doggy-slider {
-  --height: 10px;
-  .v-slider--horizontal {margin: 0}
-  .v-slider__track-background.primary.lighten-3 {
-    background-color: var(--color) !important;
-    min-height: var(--height);
-  }
-  .v-slider__track-fill.primary {
-    background-image: url(../assets/doggy-slider/gradient.png) !important;
-    background-color: transparent !important;
-    background-size: cover;
-    min-height: var(--height);
-  }
-  // &-track {
-  //   position: absolute;
-  //   top: 0;
-  //   bottom: 0;
-  //   left: 0;
-  //   right: 0;
-  //   margin: auto;
+@layer layout {
+  .doggy-slider {
+    --height: 19px;
+    --w-distance: var(--height);
+    transform: translateX(calc(var(--w-distance) * -1));
+    min-width: calc(100% + var(--w-distance));
+    
+    .v-slider--horizontal {margin: 0}
+    
+    .v-slider__track {
+      &-container {
+        min-height: var(--height);
+        isolation: isolate;
+        &::before {
+          content: "";
+          @include absoluteCenter;
+          inset: calc(var(--corner-size2) * -1);
+          background-color: var(--color) !important;
+          clip-path: var(--clip-path2);
+          z-index: -1;
+        }
+        &::after {
+          content: "";
+          @include absoluteCenter;
+          inset: 0;
+          background-color: var(--colorBtn2) !important;
+          clip-path: var(--clip-path2);
+          z-index: -1;
+        }
+      }
+      
+      &-background {background: transparent !important}
+      
+      &-fill {
+        background: center url(../assets/doggy-slider/gradient.png) !important;
+        background-size: cover !important;
+        background-color: transparent !important;
+        clip-path: var(--clip);
+      }
+    }
 
-  //   object-fit: fill;
-  //   width: 100%;
-  // }
-
-  &-thumb {
-    --size: 20px;
-    position: absolute;
-    left: calc(var(--size) * -1);
-    top: -30px;
-    width: calc(var(--size) * 2);
+    &-thumb {
+      --size: 40px;
+      position: absolute;
+      left: calc(var(--size) * -1);
+      top: -62px;
+      width: calc(var(--size) * 2);
+    }
   }
 }

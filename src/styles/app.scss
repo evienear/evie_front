@@ -237,3 +237,7 @@
   color: var(--colorInverted) !important;
   * {color: var(--colorInverted) !important}
 }
+
+.v-dialog {
+  margin-block: 0 !important;
+}

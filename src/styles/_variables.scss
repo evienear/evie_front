@@ -3,7 +3,46 @@
 @import '~vuetify/src/styles/styles.sass';
 
 //global size
-:root {--corner-size: .4em}
+:root {
+  --corner-size: .4em;
+  --corner-size2: 4px;
+  --clip-path2: polygon(
+    0% calc(var(--corner-size2) * 2),
+    var(--corner-size2) calc(var(--corner-size2) * 2),
+    var(--corner-size2) var(--corner-size2),
+    calc(var(--corner-size2) * 2) var(--corner-size2),
+    calc(var(--corner-size2) * 2) 0%,
+    calc(100% - (var(--corner-size2) * 2)) 0%,
+    calc(100% - (var(--corner-size2) * 2)) var(--corner-size2),
+    calc(100% - var(--corner-size2)) var(--corner-size2),
+    calc(100% - var(--corner-size2)) calc(var(--corner-size2) * 2),
+    100% calc(var(--corner-size2) * 2),
+    100% calc(100% - var(--corner-size2) * 2),
+    calc(100% - var(--corner-size2)) calc(100% - var(--corner-size2) * 2),
+    calc(100% - var(--corner-size2)) calc(100% - var(--corner-size2)),
+    calc(100% - var(--corner-size2) * 2) calc(100% - var(--corner-size2)),
+    calc(100% - var(--corner-size2) * 2) 100%,
+    calc(var(--corner-size2) * 2) 100%,
+    calc(var(--corner-size2) * 2) calc(100% - var(--corner-size2)),
+    var(--corner-size2) calc(100% - var(--corner-size2)),
+    var(--corner-size2) calc(100% - var(--corner-size2) * 2),
+    0% calc(100% - var(--corner-size2) * 2)
+  );
+  --clip-path2-left: polygon(
+    0% calc(var(--corner-size2) * 2),
+    var(--corner-size2) calc(var(--corner-size2) * 2),
+    var(--corner-size2) var(--corner-size2),
+    calc(var(--corner-size2) * 2) var(--corner-size2),
+    calc(var(--corner-size2) * 2) 0%,
+    100% 0%,
+    100% 100%,
+    calc(var(--corner-size2) * 2) 100%,
+    calc(var(--corner-size2) * 2) calc(100% - var(--corner-size2)),
+    var(--corner-size2) calc(100% - var(--corner-size2)),
+    var(--corner-size2) calc(100% - var(--corner-size2) * 2),
+    0% calc(100% - var(--corner-size2) * 2)
+  );
+}
 $border: 15px;
 
 // Sidebar //
