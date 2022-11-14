@@ -430,7 +430,7 @@ export default {
     
     this.collection = JSON.parse(localStorage.collections)
     this.viewTokens()
-    this.getCartItems()
+    // this.getCartItems()
 
 
     // slider thumb
@@ -704,7 +704,7 @@ export default {
           }, 35000)
           this.$store.commit('Load', false)
           console.log(response);
-          this.getCartItems()
+          // this.getCartItems()
           item.select = true
           this.dialogAdd = false
         }).catch(err => {
