@@ -128,7 +128,7 @@
               <v-icon style="color: var(--color) !important">mdi-filter</v-icon>
             </button> -->
             
-            <div class="divcol" style="gap: 40px">
+            <div class="divcol" style="gap: 45px">
               <button class="rightButton btn2 fill-w paddleftmobile" style="--corner-size: 3.5px"
                 @click="openCart()">
                 CART:{{ nftCart.length }}

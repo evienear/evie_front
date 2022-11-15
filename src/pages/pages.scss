@@ -1579,34 +1579,37 @@
   overflow: hidden !important;
 }
 
+
 @layer layout {
   .doggy-slider {
-    --height: 19px;
+    --height: 25px;
     --w-distance: var(--height);
-    transform: translateX(calc(var(--w-distance) * -1));
+    transform: translateX(calc(var(--w-distance) * -1 + 5px));
     min-width: calc(100% + var(--w-distance));
     
     .v-slider--horizontal {margin: 0}
     
     .v-slider__track {
       &-container {
-        min-height: var(--height);
-        isolation: isolate;
+        min-height: var(--height) !important;
+        isolation: isolate !important;
         &::before {
-          content: "";
-          @include absoluteCenter;
-          inset: calc(var(--corner-size2) * -1);
+          content: "" !important;
+          display: initial !important;
+          position: absolute !important;
+          inset: calc(var(--corner-size2) * -1) !important;
           background-color: var(--color) !important;
-          clip-path: var(--clip-path2);
-          z-index: -1;
+          clip-path: var(--clip-path2) !important;
+          z-index: -1 !important;
         }
         &::after {
-          content: "";
-          @include absoluteCenter;
-          inset: 0;
+          content: "" !important;
+          display: initial !important;
+          position: absolute !important;
+          inset: 0 !important;
           background-color: var(--colorBtn2) !important;
-          clip-path: var(--clip-path2);
-          z-index: -1;
+          clip-path: var(--clip-path2) !important;
+          z-index: -1 !important;
         }
       }
       
@@ -1616,16 +1619,16 @@
         background: center url(../assets/doggy-slider/gradient.png) !important;
         background-size: cover !important;
         background-color: transparent !important;
-        clip-path: var(--clip);
+        clip-path: var(--clip) !important;
       }
     }
 
     &-thumb {
       --size: 40px;
-      position: absolute;
-      left: calc(var(--size) * -1);
-      top: -62px;
-      width: calc(var(--size) * 2);
+      position: absolute !important;
+      left: calc(var(--size) / -2) !important;
+      top: -65px !important;
+      width: calc(var(--size) * 2) !important;
     }
   }
 }
