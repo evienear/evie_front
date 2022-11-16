@@ -1,6 +1,8 @@
 <template>
   <section>
     <MenuHeader ref="menu"></MenuHeader>
+    <ModalConnect ref="connect"></ModalConnect>
+    
     <v-app-bar
       id="headerApp"
       height="120px"
@@ -22,7 +24,7 @@
               <span>{{item.name}}</span>
             </button>
 
-            <button class="sesionBtn btn" @click="loginNear()">
+            <button class="sesionBtn btn" @click="!sesion ? $refs.connect.modalConnect = true : loginNear()">
               <span>{{user}}</span>
             </button>
 
@@ -43,6 +45,7 @@
 <script>
 import axios from 'axios'
 import MenuHeader from "./MenuHeader.vue"
+import ModalConnect from "@/components/modals/connect";
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, /*Contract*/ } = nearAPI;
@@ -65,7 +68,7 @@ function resizeThrottler(actualResizeHandler) {
 }
 export default {
   name: "Header",
-  components: {MenuHeader},
+  components: {MenuHeader, ModalConnect},
   i18n: require("./i18n"),
   data() {
     return {
@@ -145,20 +148,30 @@ export default {
       }
     },
     scrollListener() {resizeThrottler(this.OcultarNavbar)},
-    async loginNear() {
+    async loginNear(key) {
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       const wallet = new WalletConnection(near);
-      if (!this.sesion) {
-        wallet.requestSignIn(contractId);
+
+      const nearWallet = "https://wallet.mainnet.near.org"
+      const myNearWallet = "https://app.mynearwallet.com/"
+      if (!this.sesion && key === 'near') {
+        localStorage.setItem("walletBaseUrl", nearWallet)
+        wallet._walletBaseUrl = nearWallet
+      } else if (!this.sesion && key === 'myNear') {
+        localStorage.setItem("walletBaseUrl", myNearWallet)
+        wallet._walletBaseUrl = myNearWallet
+      } else if (!this.sesion && key === 'sender') {
+        return alert("comming soon")
       } else if (this.sesion) {
         wallet.signOut();
         this.user = "Connect Wallet";
         this.sesion = false;
         localStorage.sesion = false;
-        this.$router.go();
+        return this.$router.go();
       }
+      wallet.requestSignIn(contractId);
     },
     async isSigned() {
       // connect to NEAR
