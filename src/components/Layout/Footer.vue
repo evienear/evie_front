@@ -8,14 +8,14 @@
           </a>
         </aside>
         
-        <span class="center divwrap" style="font-weight: bold; gap: 5px">
+        <!-- <span class="center divwrap" style="font-weight: bold; gap: 5px">
           <div>
             Powered by <a href="https://near.org" target="_blank"><img src="@/assets/logo/near.svg" alt="near"></a>
           </div>
           <div>
             &amp; <a href="https://www.dvconsultores.com" target="_blank">GlobalDv</a>
           </div>
-        </span>
+        </span> -->
 
         <aside class="divrow" style="gap: 1em">
           <button v-if="themeButton" class="themeBtn dark" @click="CambiarTheme('dark'), $store.commit('OverlayMethod', 'dark')">
