@@ -8,18 +8,30 @@
         <h1 class="tituloBack p">NFT PROJECTS</h1>
       </aside>
 
-
-      <!-- <aside class="acenter gap mt-3" style="flex-wrap: wrap">
-        <v-btn
-          v-for="marketplace in dataMarketplaces" :key="marketplace" min-width="max-content"
-          style="padding: 0; border-radius: 5px; overflow: hidden">
-          <img :src="require('@/assets/markets/' + marketplace + '.svg')" :alt="marketplace">
-        </v-btn>
-      </aside> -->
+      <v-carousel
+        id="blockhain-carousel"
+        class="my-1"
+        v-model="modelCarousel"
+        height="max-content"
+        hide-delimiters
+        :show-arrows="dataBlockchain.length > columnsCarousel() ? true : false"
+      >
+        <template v-for="(item, index) in dataBlockchain">
+          <v-carousel-item v-if="(index + 1) % columnsCarousel() === 1 || columnsCarousel() === 1" :key="index">
+            <template v-for="(n,i) in columnsCarousel()">
+              <template v-if="(+index + i) < dataBlockchain.length">
+                <button :key="i" @click="selectBlockchain(dataBlockchain[+index + i].chain)">
+                  <img :src="require(`@/assets/chains/${dataBlockchain[+index + i].chain}.svg`)" :alt="`${dataBlockchain[+index + i].chain} chain`">
+                </button>
+              </template>
+            </template>
+          </v-carousel-item>
+        </template>
+      </v-carousel>
     </v-col>
 
     <v-col class="containerNFTProjects padd">
-      <v-card v-for="(item,i) in dataNFTProjects" :key="i" color="transparent" @click="viewEducation(item)">
+      <v-card v-for="(item,i) in filter_dataNFTProjects" :key="i" color="transparent" @click="viewEducation(item)">
         <img class="images" :src="item.images[0]" alt="token" />
         <span>{{ item.title }}</span>
       </v-card>
@@ -81,15 +93,35 @@ export default {
   name: "NFTProjects",
   data() {
     return {
-      // dataMarketplaces: [
-      //   "marketplace.paras.near", "market.tradeport.near"
-      // ],
       dataNFTProjects: [],
       account_id: localStorage.walletAccountId,
       isAdmin: localStorage.isAdmin,
       dialog: false,
       pass: '',
+      
+      modelCarousel: 0,
+      currentBlockchain: "near",
+      dataBlockchain: [
+        {chain: "near"},
+        {chain: "ethereum"},
+        {chain: "solana"},
+        {chain: "aptos"},
+      ],
     }
+  },
+  computed: {
+    filter_dataNFTProjects() {
+      if (this.currentBlockchain === 'near') {
+        return this.dataNFTProjects.filter(data => data.blockchain === "NEAR")
+      } else if (this.currentBlockchain === 'ethereum') {
+        return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
+      } else if (this.currentBlockchain === 'solana') {
+        return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
+      } else if (this.currentBlockchain === 'aptos') {
+        return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
+      }
+      return []
+    },
   },
   mounted() {
     // axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
@@ -97,8 +129,17 @@ export default {
     // })
     console.log(typeof(this.isAdmin), 'admin')
     this.getForm()
+    window.addEventListener("resize", this.reloadCarousel)
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.reloadCarousel)
   },
   methods: {
+    reloadCarousel() {
+      const reload = this.modelCarousel
+      this.modelCarousel = -1
+      this.modelCarousel = reload
+    },
     viewForm() {
       if(localStorage.pass) {
         localStorage.removeItem('idForm')
@@ -114,6 +155,7 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
+        // console.log(response)
         this.dataNFTProjects = response.data
         this.$store.commit('Load', false)
       }).catch(err => {
@@ -134,7 +176,26 @@ export default {
     closeModalMessage() {
       this.dialog = false
       this.pass = ''
-    }
+    },
+    columnsCarousel() {
+      if (window.innerWidth >= 1110) {
+        return 21
+      } else if (window.innerWidth >= 880) {
+        return 15
+      } else if (window.innerWidth >= 600) {
+        return 10
+      } else if (window.innerWidth >= 450) {
+        return 7
+      } else if (window.innerWidth >= 300) {
+        return 5
+      } else {
+        return 4
+      }
+    },
+    selectBlockchain(chain) {
+      localStorage.setItem("currentBlockchain", chain)
+      this.currentBlockchain = chain
+    },
   }
 };
 </script>

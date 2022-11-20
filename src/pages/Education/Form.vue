@@ -7,7 +7,7 @@
       <h1 class="tituloBack p">PROJECT PROPOSAL {{ addEdit }}</h1>
     </v-col>
 
-    <section id="container-content">
+    <section id="container-content" class="mb-5">
       <!-- <VueFileAgent
         :uploadUrl="uploadUrl"
         v-model="fileRecord"
@@ -30,41 +30,72 @@
           <span>UPLOAD</span>
         </template>
       </v-file-input> -->
-      <img class="file" :src="images[0]" :alt="collection.title" width="">
-      <v-autocomplete
-        v-model="collection.contract"
-        :items="dataMenuCollections"
-        chips
-        item-text="name"
-        item-value="nft_contract"
-        class="custome"
-        solo
-        @change="dataCollection()"
-      >
-        <template v-slot:prepend>
-          <label>COLLECTION</label>
-        </template>
-        <template v-slot:selection="data">
-          <template>
-            <v-list-item-avatar class="ml-3">
-              <v-img :src="data.item.icon" /> 
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title v-html="data.item.name"></v-list-item-title>
-            </v-list-item-content>
+
+      <!-- if near blockchain -->
+      <template v-if="currentBlockchain === 'near'">
+        <img class="file" :src="images[0]" :alt="collection.title" width="100%" height="100%">
+        <v-autocomplete
+          v-model="collection.contract"
+          :items="dataMenuCollections"
+          chips
+          item-text="name"
+          item-value="nft_contract"
+          class="custome"
+          solo
+          @change="dataCollection()"
+        >
+          <template v-slot:prepend>
+            <label>COLLECTION</label>
           </template>
-        </template>
-        <template v-slot:item="data">
-          <template>
-            <v-list-item-avatar>
-              <v-img :src="data.item.icon" /> 
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title v-html="data.item.name"></v-list-item-title>
-            </v-list-item-content>
+          <template v-slot:selection="data">
+            <template>
+              <v-list-item-avatar class="ml-3">
+                <v-img :src="data.item.icon" /> 
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-html="data.item.name"></v-list-item-title>
+              </v-list-item-content>
+            </template>
           </template>
-        </template>        
-      </v-autocomplete>
+          <template v-slot:item="data">
+            <template>
+              <v-list-item-avatar>
+                <v-img :src="data.item.icon" /> 
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-html="data.item.name"></v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </template>        
+        </v-autocomplete>
+      </template>
+
+
+      <!-- if not near blockchain -->
+      <template v-else>
+        <v-file-input
+          v-model="image_model"
+          class="file"
+          prepend-icon="" solo
+          label=""
+          hide-details
+          @change="imagePreview()"
+        >
+          <template v-slot:label>
+            <img src="@/assets/upload.svg" alt="label">
+          </template>
+          
+          <template v-slot:selection>
+            <img :src="images[0]" :alt="collection.title" width="100%" height="100%">
+          </template>
+        </v-file-input>
+        
+        <v-text-field
+          v-model="collection.title"
+          class="custome"
+          solo
+        ></v-text-field>
+      </template>
       
       <!-- <v-text-field
         v-model="collection.title"
@@ -229,6 +260,7 @@ export default {
       dataMenuCollections: [],
       account_id: localStorage.walletAccountId,
       addEdit: '',
+      image_model: undefined,
     }
   },
   watch: {
@@ -243,6 +275,11 @@ export default {
         document.getElementById("editor-message").remove()
       }
     }
+  },
+  computed: {
+    currentBlockchain() {
+      return localStorage.getItem("currentBlockchain")
+    },
   },
   mounted() {
     const editor = document.querySelector(".editor .ql-editor");
@@ -308,6 +345,7 @@ export default {
       } else {
         this.$store.commit('Load', true)
         var EduForm = {
+          "blockchain": this.currentBlockchain,
           "title": this.collection.title,
           "supply": this.collection.supply,
           "website": this.collection.website,
@@ -355,6 +393,7 @@ export default {
       this.$store.commit('Load', true)
       var EduForm = {
         "id": this.idForm,
+        "blockchain": this.collection.blockchain,
         "title": this.collection.title,
         "supply": this.collection.supply,
         "website": this.collection.website,
@@ -382,6 +421,7 @@ export default {
         if (item.nft_contract === this.collection.contract) {
           this.images[0] = item.icon
           this.collection.title = item.name
+          this.image_model = {name: item.name + ".png"} // <-- temporary
         }
       });
     },
@@ -398,6 +438,9 @@ export default {
     validatorEditor(model) {
       if (model) return (this.editorRules = false);
       this.editorRules = true;
+    },
+    imagePreview() {
+      if (this.image_model) this.images[0] = URL.createObjectURL(this.image_model)
     },
   }
 };
