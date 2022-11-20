@@ -102,10 +102,16 @@ export default {
       modelCarousel: 0,
       currentBlockchain: "near",
       dataBlockchain: [
-        {chain: "near"},
         {chain: "ethereum"},
         {chain: "solana"},
         {chain: "aptos"},
+        {chain: "near"},
+        {chain: "aurora"},
+        {chain: "cardano"},
+        {chain: "polygon"},
+        {chain: "algorand"},
+        {chain: "binance"},
+        {chain: "avax"},
       ],
     }
   },

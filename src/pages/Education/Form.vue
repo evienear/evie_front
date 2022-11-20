@@ -187,7 +187,7 @@
       <button
         v-show="!update"
         class="button h9 btn2"
-        @click="addForm()"
+        @click="currentBlockchain === 'near' ? addForm() : addOtherForm()"
       >
         SAVE
       </button>
@@ -314,6 +314,63 @@ export default {
     },
     addForm() {
       if (!this.collection.contract) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'You must select a collection'
+      } else if(!this.collection.supply) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The supply field must not be empty'
+      } else if(!this.collection.website) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The website field must not be empty'
+      } else if(!this.collection.twitter) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The twitter field must not be empty'
+      } else if(!this.collection.discord) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The discord field must not be empty'
+      } else if(!this.collection.instagram) {
+        this.dialogMessage = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The instagram field must not be empty'
+      } else if(!this.descriptions.length) {
+        this.dialogMessage = true
+        this.editorRules = true
+        this.titleDM = 'Empty fields'
+        this.messageDM = 'The description field must not be empty'
+      } else {
+        this.$store.commit('Load', true)
+        var EduForm = {
+          "blockchain": this.currentBlockchain,
+          "title": this.collection.title,
+          "supply": this.collection.supply,
+          "website": this.collection.website,
+          "twitter": this.collection.twitter,
+          "discord": this.collection.discord,
+          "instagram": this.collection.instagram,
+          "descriptions": this.descriptions,
+          "images": this.images,
+          "user": localStorage.walletAccountId,
+          "pass": localStorage.pass,
+        }
+
+        axios.post('https://evie.pro:3070/api/v1/addform', EduForm).then(response => {
+          console.log(response)
+          this.$store.commit('Load', false)
+          this.dialogMessage = true
+          this.titleDM = 'Successfully saved'
+          this.messageDM = 'The data was saved successfully'
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+    },
+    addOtherForm() {
+      if (!this.collection.title) {
         this.dialogMessage = true
         this.titleDM = 'Empty fields'
         this.messageDM = 'You must select a collection'
