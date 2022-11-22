@@ -1524,7 +1524,7 @@
         height: 1px;
         background-color: #fff;
       }
-      * {color: var(--color);fill: var(--color);stroke: var(--color);}
+      * {color: var(--color);stroke: var(--color);}
     }
     &-container.ql-snow {
       background-color: #ffffff26;
@@ -1612,9 +1612,9 @@
     --w-distance: var(--height);
     transform: translateX(calc(var(--w-distance) * -1 + 5px));
     min-width: calc(100% + var(--w-distance));
-    
+
     .v-slider--horizontal {margin: 0}
-    
+
     .v-slider__track {
       &-container {
         min-height: var(--height) !important;
@@ -1638,9 +1638,9 @@
           z-index: -1 !important;
         }
       }
-      
+
       &-background {background: transparent !important}
-      
+
       &-fill {
         background: center url(../assets/doggy-slider/gradient.png) !important;
         background-size: cover !important;
@@ -1701,6 +1701,9 @@
         height: 100% !important;
         transition: .2s ease;
       }
+      // &:has(img[alt="aurora chain"]) {
+      //   --size: 50px;
+      // }
       &:hover img {transform: translateY(-10px)}
     }
   }
