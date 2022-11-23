@@ -20,9 +20,16 @@
           <v-carousel-item v-if="(index + 1) % columnsCarousel() === 1 || columnsCarousel() === 1" :key="index">
             <template v-for="(n,i) in columnsCarousel()">
               <template v-if="(+index + i) < dataBlockchain.length">
-                <button :key="i" @click="selectBlockchain(dataBlockchain[+index + i].chain)">
-                  <img :src="require(`@/assets/chains/${dataBlockchain[+index + i].chain}.svg`)" :alt="`${dataBlockchain[+index + i].chain} chain`">
-                </button>
+
+                <v-tooltip :key="i" bottom>
+                  <template v-slot:activator="{on, attrs}">
+                    <button v-bind="attrs" v-on="on" @click="selectBlockchain(dataBlockchain[+index + i].chain)">
+                      <img :src="require(`@/assets/chains/${dataBlockchain[+index + i].chain}.svg`)" :alt="`${dataBlockchain[+index + i].chain} chain`">
+                    </button>
+                  </template>
+
+                  <span>{{dataBlockchain[+index + i].chain}}</span>
+                </v-tooltip>
               </template>
             </template>
           </v-carousel-item>
@@ -119,17 +126,13 @@ export default {
     filter_dataNFTProjects() {
       if (this.currentBlockchain === 'near') {
         return this.dataNFTProjects.filter(data => data.blockchain === "NEAR")
-      } else if (this.currentBlockchain === 'ethereum') {
-        return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
-      } else if (this.currentBlockchain === 'solana') {
-        return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
-      } else if (this.currentBlockchain === 'aptos') {
+      } else {
         return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
       }
-      return []
     },
   },
   mounted() {
+    if (localStorage.currentBlockchain) this.currentBlockchain = localStorage.currentBlockchain
     // axios.post('https://evie.pro:3070/api/v1/RefrescarFormEdu').then(response => {
     //   console.log(response)
     // })
@@ -161,7 +164,6 @@ export default {
         "limit": 1000,
         "index": 0
       }).then(response => {
-        // console.log(response)
         this.dataNFTProjects = response.data
         this.$store.commit('Load', false)
       }).catch(err => {

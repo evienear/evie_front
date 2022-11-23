@@ -353,17 +353,18 @@ export default {
           "discord": this.collection.discord,
           "instagram": this.collection.instagram,
           "descriptions": this.descriptions,
-          "images": this.images,
+          "images": this.image_model,
           "user": localStorage.walletAccountId,
           "pass": localStorage.pass,
         }
 
         axios.post('https://evie.pro:3070/api/v1/addform', EduForm).then(response => {
-          console.log(response)
-          this.$store.commit('Load', false)
-          this.dialogMessage = true
-          this.titleDM = 'Successfully saved'
-          this.messageDM = 'The data was saved successfully'
+          if (response.data.respuesta === "exito" ) {
+            this.$store.commit('Load', false)
+            this.dialogMessage = true
+            this.titleDM = 'Successfully saved'
+            this.messageDM = 'The data was saved successfully'
+          }
         }).catch(err => {
           console.log(err)
         })
@@ -416,11 +417,12 @@ export default {
         }
 
         axios.post('https://evie.pro:3070/api/v1/addform', EduForm).then(response => {
-          console.log(response)
-          this.$store.commit('Load', false)
-          this.dialogMessage = true
-          this.titleDM = 'Successfully saved'
-          this.messageDM = 'The data was saved successfully'
+          if (response.data.respuesta === "exito" ) {
+            this.$store.commit('Load', false)
+            this.dialogMessage = true
+            this.titleDM = 'Successfully saved'
+            this.messageDM = 'The data was saved successfully'
+          }
         }).catch(err => {
           console.log(err)
         })
