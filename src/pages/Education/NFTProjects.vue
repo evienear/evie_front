@@ -23,8 +23,13 @@
 
                 <v-tooltip :key="i" bottom>
                   <template v-slot:activator="{on, attrs}">
-                    <button v-bind="attrs" v-on="on" @click="selectBlockchain(dataBlockchain[+index + i].chain)">
-                      <img :src="require(`@/assets/chains/${dataBlockchain[+index + i].chain}.svg`)" :alt="`${dataBlockchain[+index + i].chain} chain`">
+                    <button
+                      :class="{active: dataBlockchain[+index + i].chain === currentBlockchain}" v-bind="attrs" v-on="on"
+                      @click="selectBlockchain(dataBlockchain[+index + i].chain)">
+                      <img
+                        :src="require(`@/assets/chains/${dataBlockchain[+index + i].chain.toLowerCase()}.svg`)"
+                        :alt="`${dataBlockchain[+index + i].chain} chain`"
+                      >
                     </button>
                   </template>
 
@@ -107,28 +112,24 @@ export default {
       pass: '',
       
       modelCarousel: 0,
-      currentBlockchain: "near",
+      currentBlockchain: "NEAR",
       dataBlockchain: [
-        {chain: "ethereum"},
-        {chain: "solana"},
-        {chain: "aptos"},
-        {chain: "near"},
-        {chain: "aurora"},
-        {chain: "cardano"},
-        {chain: "polygon"},
-        {chain: "algorand"},
-        {chain: "binance"},
-        {chain: "avax"},
+        {chain: "Ethereum"},
+        {chain: "Solana"},
+        {chain: "Aptos"},
+        {chain: "NEAR"},
+        {chain: "Aurora"},
+        {chain: "Cardano"},
+        {chain: "Polygon"},
+        {chain: "Algorand"},
+        {chain: "Binance"},
+        {chain: "AVAX"},
       ],
     }
   },
   computed: {
     filter_dataNFTProjects() {
-      if (this.currentBlockchain === 'near') {
-        return this.dataNFTProjects.filter(data => data.blockchain === "NEAR")
-      } else {
-        return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
-      }
+      return this.dataNFTProjects.filter(data => data.blockchain === this.currentBlockchain)
     },
   },
   mounted() {

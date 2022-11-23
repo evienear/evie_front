@@ -32,7 +32,7 @@
       </v-file-input> -->
 
       <!-- if near blockchain -->
-      <template v-if="currentBlockchain === 'near'">
+      <template v-if="currentBlockchain === 'NEAR'">
         <img class="file" :src="images[0]" :alt="collection.title" width="100%" height="100%">
         <v-autocomplete
           v-model="collection.contract"
@@ -353,7 +353,7 @@ export default {
           "discord": this.collection.discord,
           "instagram": this.collection.instagram,
           "descriptions": this.descriptions,
-          "images": this.image_model,
+          "images": this.images,
           "user": localStorage.walletAccountId,
           "pass": localStorage.pass,
         }

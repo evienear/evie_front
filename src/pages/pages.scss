@@ -1689,22 +1689,43 @@
     //   }
     // }
     button {
-      --size: 38px;
+      --size: 45px;
+      --corner-size: 4px;
       width: var(--size) !important;
       min-width: var(--size) !important;
       max-width: var(--size) !important;
       height: var(--size) !important;
       min-height: var(--size) !important;
       max-height: var(--size) !important;
+      padding: 10px;
+      transition: .2s ease;
+      &.active {
+        box-shadow: none !important;
+        background: center url(../assets/doggy-slider/gradient.png);
+        background-size: cover;
+        clip-path: $clip-path !important;
+        position: relative;
+        isolation: isolate;
+        &::before {
+          display: block !important;
+          content: "";
+          position: absolute;
+          inset: calc(var(--corner-size));
+          // width: calc(100% - var(--corner-size));
+          // height: calc(100% - (var(--corner-size)));
+          background-color: var(--colorBtn2) !important;
+          clip-path: $clip-path !important;
+          z-index: -1;
+        }
+      }
       img {
         width: 100% !important;
         height: 100% !important;
-        transition: .2s ease;
       }
-      // &:has(img[alt="aurora chain"]) {
+      // &:has(img:is([alt="Aurora chain"], [alt="Cardano chain"])) {
       //   --size: 50px;
       // }
-      &:hover img {transform: translateY(-10px)}
+      &:hover {transform: translateY(-3px)}
     }
   }
 }
