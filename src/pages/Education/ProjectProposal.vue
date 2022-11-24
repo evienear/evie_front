@@ -50,7 +50,7 @@
           <!-- <img v-if="dataProjectProposal.description.img" :src="dataProjectProposal.description.img" 
             alt="image">-->
           <h3 class="Title">ABOUT:</h3>
-          <span v-html="item.descriptions[0]"></span>
+          <span v-html="currentBlockchain === 'NEAR' ? item.descriptions[0] : item.descriptions" />
         </aside>
         <aside>
           <v-col>
@@ -206,6 +206,11 @@ export default {
     this.idBuy = parseInt(localStorage.idCollectionForm)
     this.vieneDe = localStorage.vieneDe
     this.getFormId()
+  },
+  computed: {
+    currentBlockchain() {
+      return localStorage.getItem("currentBlockchain")
+    },
   },
   methods: {
     async getFormId() {

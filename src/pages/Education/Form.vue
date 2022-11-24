@@ -74,7 +74,8 @@
       <!-- if not near blockchain -->
       <template v-else>
         <v-file-input
-          v-model="image_model"
+          v-model="uploaded_img"
+          name="uploaded_img"
           class="file"
           prepend-icon="" solo
           label=""
@@ -260,7 +261,7 @@ export default {
       dataMenuCollections: [],
       account_id: localStorage.walletAccountId,
       addEdit: '',
-      image_model: undefined,
+      uploaded_img: undefined,
     }
   },
   watch: {
@@ -370,7 +371,7 @@ export default {
         })
       }
     },
-    addOtherForm() {
+    async addOtherForm() {
       if (!this.collection.title) {
         this.dialogMessage = true
         this.titleDM = 'Empty fields'
@@ -402,21 +403,21 @@ export default {
         this.messageDM = 'The description field must not be empty'
       } else {
         this.$store.commit('Load', true)
-        var EduForm = {
-          "blockchain": this.currentBlockchain,
-          "title": this.collection.title,
-          "supply": this.collection.supply,
-          "website": this.collection.website,
-          "twitter": this.collection.twitter,
-          "discord": this.collection.discord,
-          "instagram": this.collection.instagram,
-          "descriptions": this.descriptions,
-          "images": this.images,
-          "user": localStorage.walletAccountId,
-          "pass": localStorage.pass,
-        }
+        
+        const formData = new FormData();
+        formData.append("blockchain", this.currentBlockchain)
+        formData.append("title", this.collection.title)
+        formData.append("supply", this.collection.supply)
+        formData.append("website", this.collection.website)
+        formData.append("twitter", this.collection.twitter)
+        formData.append("discord", this.collection.discord)
+        formData.append("instagram", this.collection.instagram)
+        formData.append("descriptions", this.descriptions)
+        formData.append("uploaded_img", this.uploaded_img)
+        formData.append("user", localStorage.walletAccountId)
+        formData.append("pass", localStorage.pass)
 
-        axios.post('https://evie.pro:3070/api/v1/addform', EduForm).then(response => {
+        axios.post('https://evie.pro:3070/api/v1/addformext', formData).then(response => {
           if (response.data.respuesta === "exito" ) {
             this.$store.commit('Load', false)
             this.dialogMessage = true
@@ -450,6 +451,34 @@ export default {
     },
     async updateForm() {
       this.$store.commit('Load', true)
+      
+      const formData = new FormData();
+      formData.append("id", this.idForm)
+      formData.append("blockchain", this.currentBlockchain)
+      formData.append("title", this.collection.title)
+      formData.append("supply", this.collection.supply)
+      formData.append("website", this.collection.website)
+      formData.append("twitter", this.collection.twitter)
+      formData.append("discord", this.collection.discord)
+      formData.append("instagram", this.collection.instagram)
+      formData.append("descriptions", this.descriptions)
+      formData.append("uploaded_img", this.uploaded_img)
+      formData.append("user", localStorage.walletAccountId)
+      formData.append("pass", localStorage.pass)
+
+      axios.post('https://evie.pro:3070/api/v1/updateformext', formData).then(response => {
+        if (response.data.respuesta === "exito" ) {
+          this.$store.commit('Load', false)
+          this.dialogMessage = true
+          this.titleDM = 'Successfully modified'
+          this.messageDM = 'The data was modified successfully'
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    async updateOtherForm() {
+      this.$store.commit('Load', true)
       var EduForm = {
         "id": this.idForm,
         "blockchain": this.collection.blockchain,
@@ -480,7 +509,7 @@ export default {
         if (item.nft_contract === this.collection.contract) {
           this.images[0] = item.icon
           this.collection.title = item.name
-          this.image_model = {name: item.name + ".png"} // <-- temporary
+          // this.uploaded_img = {name: item.name + ".png"} // <-- temporary
         }
       });
     },
@@ -499,7 +528,7 @@ export default {
       this.editorRules = true;
     },
     imagePreview() {
-      if (this.image_model) this.images[0] = URL.createObjectURL(this.image_model)
+      if (this.uploaded_img) this.images[0] = URL.createObjectURL(this.uploaded_img)
     },
   }
 };

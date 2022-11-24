@@ -28,6 +28,24 @@ export default new Vuex.Store({
       localStorage.setItem("theme", theme);
       commit( "CambiarTheme", theme)
     },
+    formData(form) {
+      const formData = new FormData();
+      for (const [keys, values] of Object.entries(form)) {
+        // set empty string in null 
+        if (form[keys] && typeof form[keys] === "object") {
+          Object.keys(values).forEach(key => { values[key] ??= "" })
+        } else { form[keys] ??= "" }
+        
+        // push to form data
+        const
+          excludeUrl = !(/\.(gif|jpg|jpeg|tiff|png)$/i).test(values),
+          file = values?.type;
+        if (typeof values === 'object' && !file) { formData.append(keys, JSON.stringify(values).toLowerCase()) } // if object only
+        else if (file) { formData.append(keys, values) } // if file object
+        else if (excludeUrl) { formData.append(keys, typeof values === 'string' ? values.toLowerCase() : values || "") } // else
+      }
+      return formData
+    }
     // OverlayMethod({commit}, {theme}) {}
   },
 });
