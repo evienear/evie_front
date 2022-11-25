@@ -417,29 +417,12 @@ export default {
         formData.append("user", localStorage.walletAccountId)
         formData.append("pass", localStorage.pass)
 
-        // test
-        console.log("formData generation :", {
-          "blockchain": this.currentBlockchain,
-          "title": this.collection.title,
-          "supply": this.collection.supply,
-          "website": this.collection.website,
-          "twitter": this.collection.twitter,
-          "discord": this.collection.discord,
-          "instagram": this.collection.instagram,
-          "descriptions": this.descriptions,
-          "uploaded_img": this.uploaded_img,
-          "user": localStorage.walletAccountId,
-          "pass": localStorage.pass,
-        })
-
         axios.post('https://evie.pro:3070/api/v1/addformext', formData).then(response => {
-          if (response.data.respuesta === "exito" ) {
-            console.log("funcionando", response)
-            this.$store.commit('Load', false)
-            this.dialogMessage = true
-            this.titleDM = 'Successfully saved'
-            this.messageDM = 'The data was saved successfully'
-          }
+          console.info(response)
+          this.$store.commit('Load', false)
+          this.dialogMessage = true
+          this.titleDM = 'Successfully saved'
+          this.messageDM = 'The data was saved successfully'
         }).catch(err => {
           console.log(err)
         })
@@ -483,12 +466,11 @@ export default {
       formData.append("pass", localStorage.pass)
 
       axios.post('https://evie.pro:3070/api/v1/updateformext', formData).then(response => {
-        if (response.data.respuesta === "exito" ) {
-          this.$store.commit('Load', false)
-          this.dialogMessage = true
-          this.titleDM = 'Successfully modified'
-          this.messageDM = 'The data was modified successfully'
-        }
+        console.info(response)
+        this.$store.commit('Load', false)
+        this.dialogMessage = true
+        this.titleDM = 'Successfully modified'
+        this.messageDM = 'The data was modified successfully'
       }).catch(err => {
         console.log(err)
       })
