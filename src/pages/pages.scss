@@ -1713,7 +1713,7 @@
           inset: calc(var(--corner-size));
           // width: calc(100% - var(--corner-size));
           // height: calc(100% - (var(--corner-size)));
-          background-color: var(--colorBtn2) !important;
+          background-color: var(--bg) !important;
           clip-path: $clip-path !important;
           z-index: -1;
         }
