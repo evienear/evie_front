@@ -419,6 +419,7 @@ export default {
 
         axios.post('https://evie.pro:3070/api/v1/addformext', formData).then(response => {
           if (response.data.respuesta === "exito" ) {
+            console.log("funcionando", response)
             this.$store.commit('Load', false)
             this.dialogMessage = true
             this.titleDM = 'Successfully saved'
@@ -495,7 +496,7 @@ export default {
       }
 
       axios.post('https://evie.pro:3070/api/v1/updateform', EduForm).then(response => {
-        console.log(response,);
+        console.log("funcionando", response)
         this.$store.commit('Load', false)
         this.dialogMessage = true
         this.titleDM = 'Successfully modified'
