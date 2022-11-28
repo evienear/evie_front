@@ -672,6 +672,8 @@
   padding-inline: 5% !important;
   margin-bottom: 2em;
   @include media(max, small) {margin-bottom: 3em !important}
+  .buttons {
+  }
   .titulo {
     color: #EB92CA !important;
     -webkit-text-stroke: .056em #EB92CA;
@@ -684,38 +686,44 @@
     @include media(min, small) {grid-template-columns: repeat(2, 1fr)}
   }
   .containerLeft {
+    --width: 12em;
+    @media (max-width: 400px) {--width: 9em}
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px),1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--width)),1fr)) !important;
     grid-gap: 1.25rem 1em;
     place-items: center;
     max-height: 458.4px !important;
     overflow-y: scroll;
     overflow-x: hidden;
-    .containerMarketplace {
-      display: grid;
-      max-width: 200px !important;
-      // &:only-of-type {width: min(100%, 20em)}
-      &.active:after {width: 13.5% !important}
-      // .images {
-      //   width: 10.4375em !important;
-      //   aspect-ratio: 1 / 1;
-      // }
-      .marketplaceId {
-        --corner-size: .25em;
-        padding-block: .4em !important;
-      }
+  }
+  .containerMarketplace {
+    display: grid;
+    max-width: var(--width) !important;
+    width: 100% !important;
+    // &:only-of-type {width: min(100%, 20em)}
+    &.active:after {width: 13.5% !important}
+    .images {
+      width: calc(100% - 32px) !important;
+      aspect-ratio: 1 / 1;
     }
-    @include media(max, 481px) {
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px),1fr)) !important;
-      @include media(max, 440px) {
-        grid-template-columns: auto !important;
-        .containerMarketplace {
-          &.active:after {width: 2.2em !important}
-          .images {width: 100% !important}
-        }
-      }
+    .marketplaceId {
+      --corner-size: .25em;
+      padding-block: .4em !important;
     }
   }
+  .buttons {
+    width: 30px !important;
+  }
+  // @include media(max, 481px) {
+  //   grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px),1fr)) !important;
+  //   @include media(max, 440px) {
+  //     grid-template-columns: auto !important;
+  //     .containerMarketplace {
+  //       &.active:after {width: 2.2em !important}
+  //       .images {width: 100% !important}
+  //     }
+  //   }
+  // }
   .containerRight {
     @include media(max, small) {min-width: 100% !important}
     .option {font-weight: 600}

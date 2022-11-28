@@ -14,6 +14,22 @@ import vueDebounce from 'vue-debounce'
 import VueFileAgent from 'vue-file-agent';
 import 'vue-file-agent/dist/vue-file-agent.css';
 
+
+if (!String.prototype.limitString) {
+  String.prototype.limitString = function(limit) {
+    if (this.length > limit) return `${this.substring(0, limit)}...`
+    return this
+  }
+}
+
+if (!String.prototype.cutString) {
+  String.prototype.cutString = function(start = 7, end = 4) {
+    if (this.length > start + end) return `${this.substring(0, start)}...${this.substring(this.length - end, this.length)}`;
+    return this
+  }
+}
+
+
 Vue.use(VueApexCharts)
 Vue.use(vueDebounce)
 Vue.component('apexchart', VueApexCharts)

@@ -58,7 +58,7 @@
           <img class="images" :src="item.metadata.media" alt="NFT Market Place" @click="item.selected=!item.selected, viewMarketplace(item), dataNftSell(item)">
 
           <span class="marketplaceId btn2 h8">
-            #{{ item.token_id }}
+            #{{ item.token_id.cutString(4, 4) }}
           </span>
           <aside class="buttons" v-if="item.marketplace !== null">
             <v-tooltip right>
