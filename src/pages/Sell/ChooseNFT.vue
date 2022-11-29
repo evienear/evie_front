@@ -55,7 +55,7 @@
         <v-card v-for="(item,i) in dataChooseNFTTable" :key="i" color="transparent"
           class="containerMarketplace relative" :class="{active: item.selected}">
 
-          <img class="images" :src="item.metadata.media" alt="NFT Market Place" @click="item.selected=!item.selected, viewMarketplace(item), dataNftSell(item)">
+          <img class="images" :src="item.metadata.media" alt="NFT Market Place" @click="selectItem(item)">
 
           <span class="marketplaceId btn2 h8">
             #{{ item.token_id.cutString(4, 4) }}
@@ -333,10 +333,21 @@ export default {
             }
           }
           item.marketplace = marketplace
+          item.marketplaces = []
           item.price = parseFloat(price)
           item.precio = precio
           item.collection = collection
-          this.dataChooseNFTTable.push(item)
+          item.selected = false
+          
+          axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
+            "collection": item.collection
+          }).then(response => {
+            for (const element of response.data) {
+              item.marketplaces.push(element.marketplace)
+            }
+            
+            this.dataChooseNFTTable.push(item)
+          }).catch(err => console.log(err))
         });
       }).catch(err => {
         console.log(err)
@@ -372,10 +383,6 @@ export default {
       }).catch(err => {
         console.log(err)
       });
-    },
-    dataNftSell(item) {
-      this.dataSellSettings = []
-      this.dataSellSettings.push(item)
     },
     async approve() {
       var msg = ''
@@ -434,18 +441,32 @@ export default {
         console.log(err)
       });
     },
-    async viewMarketplace(item) {
-      this.marketplace = []
-      axios.post('https://evie.pro:3070/api/v1/listmarketplacecollection', {
-      // axios.post('http://157.230.2.213:3071/api/v1/listmarketplacecollection', {
-      // axios.post('http://157.230.2.213:3072/api/v1/listmarketplacecollection', {
-        "collection": item.collection
-      }).then(response => {
-        response.data.forEach(item => {
-          this.marketplace.push(item.marketplace)
-        });
-      }).catch(err => console.log(err))
+    
+    selectItem(item) {
+      if (item.selected) {
+        item.selected = false
+        this.dataSellSettings.splice(this.dataSellSettings.indexOf(item), 1)
+        
+        this.marketplace = []
+        if (!this.dataSellSettings) return;
+        
+        for (const item2 of this.dataSellSettings) {
+          for (const item3 of item2.marketplaces) {
+            if (this.marketplace.some(data => data === item3)) continue;
+            this.marketplace.push(item3)
+          }
+        }
+      } else {
+        item.selected = true
+        this.dataSellSettings.push(item)
+        
+        for (const item2 of item.marketplaces) {
+          if (this.marketplace.some(data => data === item2)) continue;
+          this.marketplace.push(item2)
+        }
+      }
     },
+    
     onlyNumber ($event) {
       let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
