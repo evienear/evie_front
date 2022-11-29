@@ -141,8 +141,17 @@
           z-index: -1;
         }
       }
-      .v-input__slot {box-shadow: none !important;}
+      .v-input__slot {box-shadow: none !important}
     }
+  }
+  @layer layout {
+    .v-file-input .v-input__slot {
+      padding-inline: 1em !important;
+    }
+    .v-file-input__text {
+      color: var(--color) !important;
+    }
+    input {color: var(--color) !important}
   }
   .contentCard {
     height: 550.5px;

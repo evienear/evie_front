@@ -124,28 +124,41 @@
             ></v-date-picker>
           </v-menu>
         </v-col> -->
-        <v-col cols="12" class="center">
+        <v-col cols="12" class="divcol py-0" style="gap: 10px">
+          <label>Title</label>
           <v-text-field
             v-model="calendario.title"
             class="custome"
             solo dense
             :rules="rules"
-          >
-            <template v-slot:prepend>
-              <label>Title</label>
-            </template>
-          </v-text-field>
+          ></v-text-field>
         </v-col>
-        <v-col cols="12" class="center">
+        <v-col cols="12" class="divcol py-0" style="gap: 10px">
+          <label style="min-width: max-content">Name of NFT</label>
+          <v-text-field
+            v-model="calendario.name_nft"
+            class="custome"
+            solo dense
+            :rules="rules"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" class="divcol py-0" style="gap: 10px">
+          <label style="min-width: max-content">Twitter Link</label>
+          <v-text-field
+            v-model="calendario.twitter_link"
+            class="custome"
+            solo dense
+            :rules="rules"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" class="divcol py-0" style="gap: 10px">
+          <label>Upload Event Image</label>
           <v-file-input
             v-model="calendario.images"
             class="custome"
             solo dense
-          >
-            <template v-slot:prepend>
-              <span>UPLOAD</span>
-            </template>
-          </v-file-input>
+            prepend-icon=""
+          ></v-file-input>
         </v-col>
         <v-col cols="12">
           <button  class="button h9 btn2" @click="addEventPost()">
@@ -217,6 +230,7 @@ export default {
       month: null,
       year: null,
       isAdmin: localStorage.isAdmin,
+      rules: undefined
     }
   },
   mounted() {
@@ -281,6 +295,8 @@ export default {
       formData.append('mes', parseInt(this.month))
       formData.append('ano', parseInt(this.year))
       formData.append('titulo', this.calendario.title)
+      formData.append('name_nft', this.calendario.name_nft)
+      formData.append('twitter_link', this.calendario.twitter_link)
       formData.append('uploaded_img', this.calendario.images)
       formData.append('user', localStorage.walletAccountId)
       formData.append('pass', localStorage.pass)

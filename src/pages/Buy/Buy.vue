@@ -239,26 +239,26 @@
             </span>
 
             <aside class="buttons" >
-              <v-btn v-show="markets.length > 4" icon class="btn3" :disabled="slider <= 0" @click="prev($event)">
+              <v-btn v-show="item.marketplaces.length > 4" icon class="btn3" :disabled="slider <= 0" @click="prev($event)">
                 <v-icon small>mdi-arrow-up</v-icon>
               </v-btn>
               <div class="buttons__wrapper" @scroll="scroll($event)">
-                <!-- <v-tooltip v-for="(item2,i) in markets" :key="i" bottom>
+                <v-tooltip v-for="(item2,i) in item.marketplaces" :key="i" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on">
-                      <img :src="item2.icon" :alt="item2.marketplace">
+                      <img :src="require('@/assets/markets/' + item2.marketplace + '.svg')" :alt="item2.marketplace">
                     </v-btn>
                   </template>
                   <span>{{ item2.marketplace }}</span>
-                </v-tooltip> -->
-                <v-tooltip v-if="item.marketplace !== null" bottom>
+                </v-tooltip>
+                <!-- <v-tooltip v-if="item.marketplace !== null" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on">
                       <img :src="require('@/assets/markets/' + item.marketplace + '.svg')" :alt="item.marketplace">
                     </v-btn>
                   </template>
                   <span>{{ item.marketplace }}</span>
-                </v-tooltip>
+                </v-tooltip> -->
               </div>
               <!-- <v-btn v-show="markets.length > 4" icon class="btn3" :disabled="slider === 'disabled'" @click="next($event)">
                 <v-icon small>mdi-arrow-down</v-icon>
@@ -523,8 +523,36 @@ export default {
           item.select = false
           // if(item.attributes == undefined) {}
           this.dataNftTokens2.push(item)
-          this.dataNftTokens = this.dataNftTokens2
         });
+
+        // group repeated nfts
+        const grouped = this.dataNftTokens2.groupBy("icon")
+
+        for (const [keys, values] of Object.entries(grouped)) {
+          // set marketplaces array
+          values[0].marketplaces = []
+          
+          for (const item of values) {
+            // checkout if nft is repeated
+            if (grouped[keys][0].icon === item.icon) {
+              // fill marketplace array
+              values[0].marketplaces.push({
+                market_name: item.market_name,
+                market_web: item.market_web,
+                marketplace: item.marketplace
+              })
+            }
+          }
+          
+          // delete repeated data
+          if (values.length > 1) values.forEach(() => values.splice(1, 1))
+          delete values[0].market_name
+          delete values[0].market_web
+          delete values[0].marketplace
+
+          this.dataNftTokens.push(values[0])
+        }
+
         this.armarAtributos()
         this.$store.commit('Load', false)
       }).catch(err => console.log(err))
