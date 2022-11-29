@@ -164,7 +164,7 @@
             <span class="desc h9 color">Balance: {{ balance }}</span>
           </aside>
           <aside class="divcol">
-            <span class="h6 color">{{ nftCart.length }} IN CART</span>
+            <span class="h6 color">{{ cartLength }} IN CART</span>
             <span class="h9 color center">Total: {{ parseFloat(totalPrice).toFixed(2) }}
               <img class="nearBalanceLogo" src="@/assets/logo/near.png" alt="near">
             </span>
@@ -304,14 +304,19 @@ export default {
     // }
   },
   computed: {
+    cartLength() {
+      return this.nftCart.map(e => e.marketplaces.filter(data => data.select).length).reduce((a, b) => a + b, 0)
+    },
     totalPrice() {
       const prices = []
       for (const item of this.nftCart) {
-        prices.push(Number(item.precio_near))
+        prices.push(
+          Number(item.precio_near) * item.marketplaces.filter(data => data.select).length
+        )
       }
 
       if (this.nftCart.length > 1) return prices.reduce((a, b) => a + b)
-      return this.nftCart[0]?.precio_near ?? 0
+      return prices[0] ?? 0
     }
   },
   methods: {

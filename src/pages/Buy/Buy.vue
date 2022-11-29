@@ -461,7 +461,6 @@ export default {
           Number(item.precio_near) * item.marketplaces.filter(data => data.select).length
         )
       }
-      
 
       if (this.nftCart.length > 1) return prices.reduce((a, b) => a + b)
       return prices[0] ?? 0
