@@ -940,14 +940,14 @@ export default {
       for (let i = 0; i < this.dataNftTokens.length; i++) {
         const item = this.dataNftTokens[i];
         if (i < this.dataNftTokens.slice(0, value).length) {
-          item.select = true
+          item.marketplaces.forEach(e => e.select = true)
           continue;
         }
-        item.select = false
+        item.marketplaces.forEach(e => e.select = false)
       }
     },
     sliderPush() {
-      this.nftCart = this.dataNftTokens.filter(data => data.select)
+      this.nftCart =  this.dataNftTokens.filter(data => data.marketplaces.some(e => e.select))
     },
     async openCart() {
       if (!localStorage.sesion) {
