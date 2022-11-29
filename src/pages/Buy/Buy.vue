@@ -916,7 +916,7 @@ export default {
       }
     },
     marketSelect(item, item2) {
-      const obj = {...item}
+      // const obj = {...item}
       
       if (item.marketplaces.find(data => data === item2).select) {
         item.marketplaces.find(data => data === item2).select = false
@@ -925,9 +925,16 @@ export default {
         item.marketplaces.find(data => data === item2).select = true
         this.doggySlider++
       }
-
-      obj.marketplaces = item.marketplaces.filter(data => data.select)
+      
       this.nftCart =  this.dataNftTokens.filter(data => data.marketplaces.some(e => e.select))
+      
+      // obj.marketplaces = item.marketplaces.filter(data => data.select)
+      // if (this.nftCart.find(data => data.icon === item.icon)) {
+      //   this.nftCart.find(data => data.icon === item.icon).marketplaces = obj.marketplaces
+      // } else {
+      //   this.nftCart.push(obj)
+      // }
+      // console.log(this.nftCart)
     },
     sliderSelect(value) {
       for (let i = 0; i < this.dataNftTokens.length; i++) {
