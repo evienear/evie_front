@@ -899,18 +899,12 @@ export default {
       }
     },
     nftSelect(item) {
-      if (item.marketplaces.length > 1) {
-        this.dialogMessage = true
-        this.titleDM = "invalid selection"
-        this.messageDM = 'Try to select by click on marketplace'
-        return;
-      }
       if (item.marketplaces[0].select) {
-        item.marketplaces[0].select = false
+        item.marketplaces.forEach(e => e.select = false)
         this.doggySlider--
         this.nftCart.splice(this.nftCart.indexOf(item), 1)
       } else {
-        item.marketplaces[0].select = true
+        item.marketplaces.forEach(e => e.select = true)
         this.doggySlider++
         this.nftCart.push(item)
       }
