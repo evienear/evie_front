@@ -131,7 +131,7 @@
             <div class="divcol" style="gap: 45px">
               <button class="rightButton btn2 fill-w paddleftmobile" style="--corner-size: 3.5px"
                 @click="openCart()">
-                CART:{{ nftCart.length }}
+                CART:{{ cartLength }}
                 <span class="acenter">{{ parseFloat(totalPrice).toFixed(2) }}<img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near"></span>
               </button>
               
@@ -225,7 +225,7 @@
 
         <v-col clas id="tableBuy" class="padd">
           <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
-            class="containerMarketplace" :class="{active: item.select}">
+            class="containerMarketplace" :class="{active: item.marketplaces.some(e => e.select)}">
 
             <v-img class="images" :src="item.icon" alt="NFT Market Place" @click="nftSelect(item)" />
 
@@ -245,7 +245,7 @@
               <div class="buttons__wrapper" @scroll="scroll($event)">
                 <v-tooltip v-for="(item2,i) in item.marketplaces" :key="i" bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn v-bind="attrs" v-on="on">
+                    <v-btn v-bind="attrs" v-on="on" :class="{active: item2.select}" @click="marketSelect(item, item2)">
                       <img :src="require('@/assets/markets/' + item2.marketplace + '.svg')" :alt="item2.marketplace">
                     </v-btn>
                   </template>
@@ -447,6 +447,9 @@ export default {
     containerThumb.appendChild(imgThumb)
   },
   computed: {
+    cartLength() {
+      return this.nftCart.map(e => e.marketplaces.filter(data => data.select).length).reduce((a, b) => a + b, 0)
+    },
     // DataBuyTable() {
     //   if (window.innerWidth <= 880) {return this.dataBuyTable.slice(0,4)}
     //   else {return this.dataBuyTable.slice(0,10)}
@@ -454,11 +457,14 @@ export default {
     totalPrice() {
       const prices = []
       for (const item of this.nftCart) {
-        prices.push(Number(item.precio_near))
+        prices.push(
+          Number(item.precio_near) * item.marketplaces.filter(data => data.select).length
+        )
       }
+      
 
       if (this.nftCart.length > 1) return prices.reduce((a, b) => a + b)
-      return this.nftCart[0]?.precio_near ?? 0
+      return prices[0] ?? 0
     }
   },
   methods: {
@@ -520,7 +526,6 @@ export default {
           } 
           //console.log(item)
           item.price = parseFloat(price)
-          item.select = false
           // if(item.attributes == undefined) {}
           this.dataNftTokens2.push(item)
         });
@@ -539,13 +544,13 @@ export default {
               values[0].marketplaces.push({
                 market_name: item.market_name,
                 market_web: item.market_web,
-                marketplace: item.marketplace
+                marketplace: item.marketplace,
+                select: false,
               })
             }
           }
           
           // delete repeated data
-          if (values.length > 1) values.forEach(() => values.splice(1, 1))
           delete values[0].market_name
           delete values[0].market_web
           delete values[0].marketplace
@@ -894,14 +899,35 @@ export default {
       }
     },
     nftSelect(item) {
-      if (item.select) {
-        item.select = false
+      if (item.marketplaces.length > 1) {
+        this.dialogMessage = true
+        this.titleDM = "invalid selection"
+        this.messageDM = 'Try to select by click on marketplace'
+        return;
+      }
+      if (item.marketplaces[0].select) {
+        item.marketplaces[0].select = false
+        this.doggySlider--
+        this.nftCart.splice(this.nftCart.indexOf(item), 1)
+      } else {
+        item.marketplaces[0].select = true
+        this.doggySlider++
+        this.nftCart.push(item)
+      }
+    },
+    marketSelect(item, item2) {
+      const obj = {...item}
+      
+      if (item.marketplaces.find(data => data === item2).select) {
+        item.marketplaces.find(data => data === item2).select = false
         this.doggySlider--
       } else {
-        item.select = true
+        item.marketplaces.find(data => data === item2).select = true
         this.doggySlider++
       }
-      this.nftCart = this.dataNftTokens.filter(data => data.select)
+
+      obj.marketplaces = item.marketplaces.filter(data => data.select)
+      this.nftCart =  this.dataNftTokens.filter(data => data.marketplaces.some(e => e.select))
     },
     sliderSelect(value) {
       for (let i = 0; i < this.dataNftTokens.length; i++) {
@@ -928,7 +954,7 @@ export default {
       //   this.messageDM = 'You must select NFT to open cart'
       // }
       else {
-        this.nftCart = this.dataNftTokens.filter(data => data.select)
+        // this.nftCart = this.dataNftTokens.filter(data => data.select)
         this.$refs.menu.dialog=true
       }
     },

@@ -127,15 +127,17 @@
                   {{ parseFloat(item.precio_near).toFixed(2)}}
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
-                <aside class="buttons">
-                  <v-tooltip right v-if="item.marketplace">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn v-bind="attrs" v-on="on">
-                        <img :src="require('@/assets/markets/' + item.marketplace + '.svg')" :alt="item.marketplace">
-                      </v-btn>
-                    </template>
-                    <span>{{ item.marketplace }}</span>
-                  </v-tooltip>
+                <aside id="buttons-menubuy" class="buttons">
+                  <template v-for="(item2, i) in item.marketplaces.filter(data => data.select)">
+                    <v-tooltip :key="i" right v-if="item2.marketplace">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn v-bind="attrs" v-on="on">
+                          <img :src="require('@/assets/markets/' + item2.marketplace + '.svg')" :alt="item2.marketplace">
+                        </v-btn>
+                      </template>
+                      <span>{{ item2.marketplace }}</span>
+                    </v-tooltip>
+                  </template>
                 </aside>
 
                 <aside class="actions">
@@ -143,8 +145,11 @@
                     BUY
                   </button>
                   <button title="Delete item to cart"
-                    @click="$parent.dataNftTokens.find(e => e === item).select = false; $parent.nftCart.splice(index, 1);
-                    $parent.doggySlider > 0 ? $parent.doggySlider-- : undefined">
+                    @click="$parent.dataNftTokens.find(e => e === item).marketplaces.forEach(e => e.select = false);
+                      $parent.nftCart.splice(index, 1);
+                      $parent.doggySlider > 0 ? $parent.doggySlider-- : undefined
+                    "
+                  >
                     <v-icon color="red" class="btn2">mdi-trash-can-outline</v-icon>
                   </button>
                 </aside>
@@ -170,7 +175,14 @@
           <button class="button btn2" @click="buyAll()">
             Buy All Items<v-icon medium>mdi-chevron-right</v-icon>
           </button>
-          <button class="button btn2" @click="$parent.nftCart.forEach(e => e.select = false); $parent.nftCart = []; $parent.doggySlider = 0">
+          <button
+            class="button btn2"
+            @click="
+              $parent.dataNftTokens.forEach(e => e.marketplaces.forEach(e2 => e2.select = false));
+              $parent.nftCart = [];
+              $parent.doggySlider = 0
+            "
+          >
             Delete All Items
           </button>
         </v-col>
