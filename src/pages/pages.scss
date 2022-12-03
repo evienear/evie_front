@@ -1757,7 +1757,6 @@
 
 #buttons-menubuy {
   .v-btn {
-    cursor: default;
     --corner-size: 3px;
     min-width: 100% !important;
     width: 100% !important;
@@ -1768,6 +1767,11 @@
     overflow: hidden !important;
     clip-path: $clip-path !important;
     * {width: 100% !important}
+    &.active {
+      border: var(--corner-size) solid transparent;
+      border-image-source: url(../assets/doggy-slider/gradient.png);
+      border-image-slice: 100;
+    }
     span:not(.v-btn__content) {display: none !important}
   }
 }

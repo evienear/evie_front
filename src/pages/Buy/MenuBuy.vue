@@ -124,14 +124,17 @@
                 </span>
 
                 <span class="marketplaceAmount btn2 center">
-                  {{ parseFloat(item.precio_near).toFixed(2)}}
+                  {{ parseFloat(item.lower_price).toFixed(2)}}
                   <img class="nearBalanceLogo" src="@/assets/logo/near.svg" alt="near">
                 </span>
                 <aside id="buttons-menubuy" class="buttons">
                   <template v-for="(item2, i) in item.marketplaces.filter(data => data.select)">
                     <v-tooltip :key="i" right v-if="item2.marketplace">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn v-bind="attrs" v-on="on">
+                        <v-btn
+                          v-bind="attrs" v-on="on" :class="{active: item2.selectBuy}"
+                          @click="selectMarketplaceToBuy(item, item2)"
+                        >
                           <img :src="require('@/assets/markets/' + item2.marketplace + '.svg')" :alt="item2.marketplace">
                         </v-btn>
                       </template>
@@ -257,7 +260,7 @@ export default {
     return {
       slider: 0,
       sliderA: "",
-      sliderB: "",
+      sliderB: 0,
       checkout: true,
       review: false,
       dialog: false,
@@ -303,15 +306,25 @@ export default {
     //   }, 35000)
     // }
   },
+  watch: {
+    dialog(current) {
+      if (current) {
+        this.nftCart.forEach(e => e.marketplaces.forEach(e2 => {
+          if (e2.select && String(e.lower_price) === e2.precio_near && e.marketplaces.length > 1) e.marketplaces[0].selectBuy = true
+          else if (e2.select && String(e.lower_price) === e2.precio_near) e2.selectBuy = true
+        }))
+      }
+    },
+  },
   computed: {
     cartLength() {
-      return this.nftCart.map(e => e.marketplaces.filter(data => data.select).length).reduce((a, b) => a + b, 0)
+      return this.nftCart.length
     },
     totalPrice() {
       const prices = []
       for (const item of this.nftCart) {
         prices.push(
-          Number(item.precio_near) * item.marketplaces.filter(data => data.select).length
+          Number(item.lower_price || item.precio_near)
         )
       }
 
@@ -433,12 +446,13 @@ export default {
       })
     },
     async purchase(item) {
+      const selectedMarketplace = item.marketplaces.find(data => data.selectBuy)
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       const wallet = new WalletConnection(near);
       // const contract = new Contract(wallet.account(), item.contract_market, {
-      const contract = new Contract(wallet.account(), item.contract_market, {
+      const contract = new Contract(wallet.account(), selectedMarketplace.marketplace, {
         changeMethods: ["buy"],
         sender: wallet.account(),
       })
@@ -446,7 +460,7 @@ export default {
         nft_contract_id: item.contract_id ,
         token_id: item.token_id,
         ft_token_id: 'near',
-        price: item.price
+        price: item.lower_price
       },'300000000000000',
       item.price).then((response) => {
         console.log(response);
@@ -459,20 +473,21 @@ export default {
       var txs = []
       //console.log(this.nftCart)
       this.nftCart.forEach(item => {
+        const selectedMarketplace = item.marketplaces.find(data => data.selectBuy)
         txs.push({
-          receiverId: item.marketplace,
+          receiverId: selectedMarketplace.marketplace,
           functionCalls: [
             {
               methodName: "buy",
-              receiverId: item.marketplace,
+              receiverId: selectedMarketplace.marketplace,
               gas: "300000000000000",
               args: {
                 nft_contract_id: item.contract_id ,
                 token_id: item.token_id,
                 ft_token_id: 'near',
-                price: item.precio
+                price: item.lower_price
               },
-              deposit: item.precio,
+              deposit: item.lower_price,
             },
           ],
         })
@@ -614,6 +629,15 @@ export default {
       } else {
         this.slider = 'disabled'
       }
+    },
+    selectMarketplaceToBuy(item, item2) {
+      console.log(item, item2)
+      item.marketplaces.forEach(e => e.selectBuy = false)
+      item2.selectBuy = true
+      item.lower_price = item2.precio_near
+
+      this.sliderB = 0
+      this.sliderB = 1
     },
   },
 };

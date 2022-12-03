@@ -448,7 +448,7 @@ export default {
   },
   computed: {
     cartLength() {
-      return this.nftCart.map(e => e.marketplaces.filter(data => data.select).length).reduce((a, b) => a + b, 0)
+      return this.nftCart.length
     },
     // DataBuyTable() {
     //   if (window.innerWidth <= 880) {return this.dataBuyTable.slice(0,4)}
@@ -458,7 +458,7 @@ export default {
       const prices = []
       for (const item of this.nftCart) {
         prices.push(
-          Number(item.precio_near) * item.marketplaces.filter(data => data.select).length
+          Number(item.lower_price || item.precio_near)
         )
       }
 
@@ -544,10 +544,16 @@ export default {
                 market_name: item.market_name,
                 market_web: item.market_web,
                 marketplace: item.marketplace,
+                precio_near: item.precio_near,
+                precio: item.precio,
+                price: item.price,
                 select: false,
               })
             }
           }
+          // find lower price
+          if (values.length > 1) values[0].lower_price = values.reduce((a, b) => Math.min(a.precio_near, b.precio_near))
+          else values[0].lower_price = values[0].precio_near
           
           // delete repeated data
           delete values[0].market_name
@@ -910,15 +916,29 @@ export default {
     },
     marketSelect(item, item2) {
       // const obj = {...item}
+      const currentMarketplace = item.marketplaces.find(data => data === item2)
+      const nothingSelected = item.marketplaces.find(data => data !== item2 && !data.select)
       
-      if (item.marketplaces.find(data => data === item2).select) {
-        item.marketplaces.find(data => data === item2).select = false
-        this.doggySlider--
+      if (currentMarketplace.select) {
+        currentMarketplace.select = false
+        
+        if (!currentMarketplace.select && nothingSelected) this.doggySlider--
       } else {
-        item.marketplaces.find(data => data === item2).select = true
-        this.doggySlider++
+        currentMarketplace.select = true
+        
+        if (nothingSelected) this.doggySlider++
       }
-      
+
+      // // try filter withput marketplaces or just filter by other boolean in menuBuy <--------------------
+      // const containTrue = this.dataNftTokens.filter(data => data.marketplaces.some(e => e.select))
+      // const data = containTrue.map(element => element.marketplaces.filter(e => e.select))
+
+      // const newArr = [...containTrue]
+      // newArr.forEach(el => el.marketplaces = data)
+      // console.log(
+      //   newArr,
+      //   containTrue
+      // )
       this.nftCart =  this.dataNftTokens.filter(data => data.marketplaces.some(e => e.select))
       
       // obj.marketplaces = item.marketplaces.filter(data => data.select)
