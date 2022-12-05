@@ -948,17 +948,22 @@
     overflow-x: hidden;
     display: flex;
     flex-wrap: wrap;
-    > * {flex: 1 1}
+    > * {flex: 1 1 379px}
     div {
       width: 50%;
       display: inline-block;
       @include media(max, small) {width: 100% !important}
     }
     &--header {
-      span:first-of-type + span {
+      span:first-of-type + span:not(.container-chart--header-legend span) {
         font-size: 30px;
         font-weight: bold;
         & + span {
+          font-size: 14px;
+        }
+      }
+      &-legend {
+        span {
           font-size: 14px;
         }
       }

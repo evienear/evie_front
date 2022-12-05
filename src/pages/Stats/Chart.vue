@@ -17,11 +17,21 @@
       ></VueApexchart>
     </div>
 
-    <div class="container-chart--wrapper divcol">
-      <aside class="container-chart--header divcol">
-        <span>TRANSACTIONS</span>
-        <span>{{transactions_price}} TXs</span>
-        <span>{{transactions_date}}</span>
+    <div
+      class="container-chart--wrapper divcol"
+      :style="`--c-primary: ${chartBarOptions.colors[0]}; --c-secondary: ${chartBarOptions.colors[1]}`"
+    >
+      <aside class="container-chart--header acenter" style="display: flex; gap: 30px">
+        <div class="divcol" style="display: flex; max-width: max-content">
+          <span>TRANSACTIONS</span>
+          <span>{{transactions_price}} TXs</span>
+          <span>{{transactions_date}}</span>
+        </div>
+        
+        <div class="container-chart--header-legend divcol" style="display: flex">
+          <span style="color: var(--c-primary)">Primary: {{transactions_price_primary}}</span>
+          <span style="color: var(--c-secondary)">Secondary: {{transactions_price_secondary}}</span>
+        </div>
       </aside>
       
       <VueApexchart
@@ -55,6 +65,7 @@ function generateDayWiseTimeSeries(baseval, count, yrange) {
   return series;
 }
 // autogenerate series functioin for style test
+
 export default {
   name: "Chart",
   props: {
@@ -72,6 +83,8 @@ export default {
       volume_price: undefined,
       volume_date: undefined,
       transactions_price: undefined,
+      transactions_price_primary: undefined,
+      transactions_price_secondary: undefined,
       transactions_date: undefined,
 
 
@@ -87,9 +100,16 @@ export default {
           min: 10,
           max: 60
         })
+      },
+      {
+        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
+          min: 10,
+          max: 60
+        })
       }],
 
 
+      // volume chart options
       chartAreaOptions: {
         defaultLocale: 'en',
         grid: {
@@ -113,7 +133,8 @@ export default {
                   day = date.getDate(),
                   month = date.toLocaleString('en-US', { month: 'short' }),
                   year = date.getFullYear();
-                this.volume_price = price
+
+                this.volume_price = price.toFixed(2)
                 this.volume_date = `${month} ${day}, ${year}`
               }
             },
@@ -126,7 +147,7 @@ export default {
                 month = date.toLocaleString('en-US', { month: 'short' }),
                 yer = date.getFullYear();
 
-              this.volume_price = price
+              this.volume_price = price.toFixed(2)
               this.volume_date = `${month} ${day}, ${yer}`
             }
           }
@@ -201,6 +222,7 @@ export default {
         },
       },
 
+      // transactions chart options
       chartBarOptions: {
         defaultLocale: 'en',
         grid: {
@@ -208,70 +230,83 @@ export default {
         },
         colors: ["#eb92ca", "#28c4dc"],
         chart: {
+          stacked: true,
           toolbar: {
             show: false,
             autoSelected: "zoom",
           },
           events: {
             mouseMove: (event, chartContext, config) => {
-              const points = this.transactionsSeries[0].data[config.dataPointIndex];
+              const
+                primaryPoints = this.transactionsSeries[0].data[config.dataPointIndex],
+                secondaryPoints = this.transactionsSeries[1].data[config.dataPointIndex];
               
-              if (points) {
+              if (primaryPoints && secondaryPoints) {
                 const
-                  price = points[1],
-                  dateEpoch = points[0],
+                  primaryPrice = primaryPoints[1],
+                  secondaryPrice = secondaryPoints[1],
+                  dateEpoch = primaryPoints[0],
                   date = new Date(dateEpoch),
                   day = date.getDate(),
                   month = date.toLocaleString('en-US', { month: 'short' }),
                   year = date.getFullYear();
-                this.transactions_price = price
+
+                this.transactions_price = (primaryPrice + secondaryPrice).toFixed(2)
+                this.transactions_price_primary = primaryPrice.toFixed(2)
+                this.transactions_price_secondary = secondaryPrice.toFixed(2)
                 this.transactions_date = `${month} ${day}, ${year}`
               }
             },
             mouseLeave: () => {
               const
-                price = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
+                primaryPrice = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
+                secondaryPrice = this.transactionsSeries[1].data[this.transactionsSeries[0].data.length-1][1],
                 dateEpoch = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][0],
                 date = new Date(dateEpoch),
                 day = date.getDate(),
                 month = date.toLocaleString('en-US', { month: 'short' }),
                 yer = date.getFullYear();
 
-              this.transactions_price = price
+              this.transactions_price = (primaryPrice + secondaryPrice).toFixed(2)
+              this.transactions_price_primary = primaryPrice.toFixed(2)
+              this.transactions_price_secondary = secondaryPrice.toFixed(2)
               this.transactions_date = `${month} ${day}, ${yer}`
             }
           }
         },
-        fill: {
-          type: "gradient",
-          gradient: {
-            type: "vertical",
-            shadeIntensity: 1,
-            opacityFrom: 0.7,
-            opacityTo: 0.9,
-            colorStops: [
-              {
-                offset: 0,
-                color: "#ebe6b4",
-                opacity: 1
-              },
-              {
-                offset: 20,
-                color: "#ebbcc4",
-                opacity: 0.9
-              },
-              {
-                offset: 60,
-                color: "#28c4dc",
-                opacity: 0.8
-              },
-              {
-                offset: 100,
-                color: "#2291e2",
-                opacity: 0.8
-              },
-            ]
-          }
+        // fill: {
+        //   type: "gradient",
+        //   gradient: {
+        //     type: "vertical",
+        //     shadeIntensity: 1,
+        //     opacityFrom: 0.7,
+        //     opacityTo: 0.9,
+        //     colorStops: [
+        //       {
+        //         offset: 0,
+        //         color: "#ebe6b4",
+        //         opacity: 1
+        //       },
+        //       {
+        //         offset: 20,
+        //         color: "#ebbcc4",
+        //         opacity: 0.9
+        //       },
+        //       {
+        //         offset: 60,
+        //         color: "#28c4dc",
+        //         opacity: 0.8
+        //       },
+        //       {
+        //         offset: 100,
+        //         color: "#2291e2",
+        //         opacity: 0.8
+        //       },
+        //     ]
+        //   }
+        // },
+        legend: {
+          show: false,
         },
         dataLabels: {
           enabled: false,
@@ -322,6 +357,12 @@ export default {
           min: 10,
           max: 60
         })
+      },
+      {
+        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
+          min: 10,
+          max: 60
+        })
       }])
       
       this.updateData(this.filter)
@@ -351,18 +392,23 @@ export default {
           volumeDay = volumeDate.getDate(),
           volumeMonth = volumeDate.toLocaleString('en-US', { month: 'short' }),
           volumeYear = volumeDate.getFullYear();
-        this.volume_price = volumePrice
+
+        this.volume_price = volumePrice.toFixed(2)
         this.volume_date = `${volumeMonth} ${volumeDay}, ${volumeYear}`
         
-        // set initial volume
+        // set initial transactions
         const
-          transactionsPrice = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
+          transactionsPricePrimary = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
+          transactionsPriceSecondary = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
           transactionsDateEpoch = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][0],
           transactionsDate = new Date(transactionsDateEpoch),
           transactionsDay = transactionsDate.getDate(),
           transactionsMonth = transactionsDate.toLocaleString('en-US', { month: 'short' }),
           transactionsYear = transactionsDate.getFullYear();
-        this.transactions_price = transactionsPrice
+
+        this.transactions_price = (transactionsPricePrimary + transactionsPriceSecondary).toFixed(2)
+        this.transactions_price_primary = transactionsPricePrimary.toFixed(2)
+        this.transactions_price_secondary = transactionsPriceSecondary.toFixed(2)
         this.transactions_date = `${transactionsMonth} ${transactionsDay}, ${transactionsYear}`
         
         this.updateData(this.filter)
