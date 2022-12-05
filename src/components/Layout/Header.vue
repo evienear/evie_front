@@ -98,7 +98,7 @@ export default {
           key: "stats",
           state: "-outline",
           name: "Stats",
-          to: "/coming-soon"
+          to: "/stats"
         },
         {
           key: "education",

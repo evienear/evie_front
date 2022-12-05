@@ -1346,6 +1346,7 @@
           border: .2em solid transparent;
           isolation: isolate;
           .contNft {
+            background-color: hsl(0, 0%, 70%) !important;
             --corner-size: .3em;
             --border-size: .4em;
             max-width: 7.1525em;

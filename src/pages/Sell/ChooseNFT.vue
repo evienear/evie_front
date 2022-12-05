@@ -101,7 +101,7 @@
           </v-select>
 
         <section class="containerSellSettings mt-2">
-          <v-card v-for="(item, i) in dataSellSettings" :key="i" color="transparent">
+          <v-card v-for="(item, i) in filter_dataSellSettings" :key="i" color="transparent">
             <aside class="space fill-w" style="gap:clamp(.5em, 1vw, 1em)">
               <div class="acenter" style="gap:clamp(.5em, 1vw, 1em)">
                 <v-img class="images" width="clamp(5.5em, 7vw, 7em)" height="clamp(5.5em, 7vw, 7em)" :src="item.metadata.media" alt="nft" style="--border-size: 4px" />
@@ -112,7 +112,7 @@
               </div>
               
               <div class="center marginright" style="gap: 3px">
-                <span style="font-size: clamp(1.2em, 1.5vw, 1.5em)">{{ item.price.toFixed(2) }}</span>
+                <span style="font-size: clamp(1.2em, 1.5vw, 1.5em)">{{ parseFloat(item.near_amount || 0).toFixed(2) }}</span>
                 <img class="filter" src="@/assets/logo/near.svg" alt="near"
                   style="width:1.5em; height:1.5em">
               </div>
@@ -120,10 +120,11 @@
             
             <v-text-field
               v-show="!sameSellPrice && dataSellSettings.length"
-              v-model="price"
+              v-model="item.near_amount"
               class="custome"
               solo dense
               @keypress="onlyNumber"
+              @input="updateField()"
             >
               <template v-slot:prepend>
                 <label>Amount in Near</label>
@@ -288,6 +289,15 @@ export default {
     this.viewTokens()
     this.listMarkets()
   },
+  computed: {
+    filter_dataSellSettings() {
+      let filter = this.dataSellSettings
+      
+      if (this.selectedItem) filter = filter.filter(data => data.marketplaces.find(data2 => data2 === this.selectedItem))
+
+      return filter
+    },
+  },
   methods: {
     async viewTokens() {
       axios.post('https://evie.pro:3070/api/v1/listnftowner', {
@@ -393,7 +403,8 @@ export default {
           this.titleDM = 'Empty fields'
           this.messageDM = 'You must select the marketplace'
           return
-        } else if(!this.price) {
+        } else if(!this.dataSellSettings.every(data => data.near_amount)) {
+          console.log("error here")
           this.dialogMessage = true
           this.titleDM = 'Empty fields'
           this.messageDM = 'the amount field must not be empty'
@@ -403,6 +414,7 @@ export default {
           msg = JSON.stringify({
             market_type: "sale", price: price, ft_token_id: "near"
           })
+          console.log(price, msg)
         }
         
       } else if(this.sameSellPrice) {
@@ -415,6 +427,7 @@ export default {
           msg = JSON.stringify({
             market_type: "sale", price: this.dataSellSettings[0].precio, ft_token_id: "near"
           })
+          console.log(price, msg)
         }
         
       }
@@ -443,6 +456,8 @@ export default {
     },
     
     selectItem(item) {
+      item.near_amount = null
+      
       if (item.selected) {
         item.selected = false
         this.dataSellSettings.splice(this.dataSellSettings.indexOf(item), 1)
@@ -509,72 +524,76 @@ export default {
     },
 
     async listar_nft() {
-      await this.storage_minimum()
-      await this.storage_balance()
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
-      const wallet = new WalletConnection(near);
       if(!this.selectedItem) {
         this.dialogMessage = true
         this.titleDM = 'Empty fields'
         this.messageDM = 'You must select the marketplace'
         return
-      } else if(!this.price) {
+      } else if(!this.dataSellSettings.every(data => data.near_amount)) {
         this.dialogMessage = true
         this.titleDM = 'Empty fields'
         this.messageDM = 'the amount field must not be empty'
         return
       }
 
+      await this.storage_minimum()
+      await this.storage_balance()
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
+      const wallet = new WalletConnection(near);
+
       if (this.storageBalance > this.minimumStorage) {
         this.approve()
       } else {
-        let msgs = {
-          price: utils.format.parseNearAmount((this.price).toString()),
-          market_type: "sale",
-          ft_token_id: "near"
+        const txs = []
+        for (const item of this.dataSellSettings) {
+          txs.push(
+            {
+              receiverId: this.selectedItem,
+              functionCalls: [
+                {
+                  methodName: "storage_deposit",
+                  receiverId: this.selectedItem,
+                  gas: "200000000000000",
+                  args: {
+                    receiverId: wallet.getAccountId(),
+                  },
+                  deposit: utils.format.parseNearAmount(this.minimumStorage),
+                },
+              ],
+            },
+            {
+              receiverId: item.collection,
+              functionCalls: [
+                {
+                  methodName: "nft_approve",
+                  receiverId: item.collection,
+                  gas: "200000000000000",
+                  args: {
+                    token_id: item.token_id,
+                    account_id: this.selectedItem,
+                    msg: JSON.stringify({
+                      price: utils.format.parseNearAmount((item.near_amount).toString()),
+                      market_type: "sale",
+                      ft_token_id: "near"
+                    }),
+                  },
+                  deposit: "350000000000000000000",
+                },
+              ],
+            },
+          )
+          await this.batchTransaction(
+            txs,
+            {
+              meta: "list",
+            },
+          ); 
         }
-        let txs = [
-          {
-            receiverId: this.selectedItem,
-            functionCalls: [
-              {
-                methodName: "storage_deposit",
-                receiverId: this.selectedItem,
-                gas: "200000000000000",
-                args: {
-                  receiverId: wallet.getAccountId(),
-                },
-                deposit: utils.format.parseNearAmount(this.minimumStorage),
-              },
-            ],
-          },
-          {
-            receiverId: this.dataSellSettings[0].collection,
-            functionCalls: [
-              {
-                methodName: "nft_approve",
-                receiverId: this.dataSellSettings[0].collection,
-                gas: "200000000000000",
-                args: {
-                  token_id: this.dataSellSettings[0].token_id,
-                  account_id: this.selectedItem,
-                  msg: JSON.stringify(msgs),
-                },
-                deposit: "350000000000000000000",
-              },
-            ],
-          },
-        ]
-        await this.batchTransaction(
-          txs,
-          {
-            meta: "list",
-          },
-        );
       }
     },
 
     async batchTransactions() {
+      console.log(this.txs)
       await this.batchTransaction(
           this.txs,
           {
@@ -656,7 +675,12 @@ export default {
       }).then(res => {
         console.log(res)
       }).catch(err => console.log(err))
-    }
+    },
+    updateField() {
+      const saved = this.selectedItem
+      this.selectedItem = undefined
+      this.selectedItem = saved
+    },
   }
 };
 </script>
