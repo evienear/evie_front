@@ -12,13 +12,14 @@
         <v-col v-for="(item, index) in dataFilter" v-bind:key="index"
           cols="6" sm="4" md="4" lg="3" class="center padd">
           <v-select
-            :items="item.selection"
+            v-model="item.selection"
+            :items="item.list"
             hide-details="true"
+            :label="index === 0 ? 'choose marketplace' : ''"
+            :menu-props="{ offsetY: true }"
+            class="autocompleteBuy"
+            @change="selectItem($event, index)"
           >
-            <template v-slot:label>
-              <span class="titleAutocompleteBuy h8 color">{{ item.title }}</span>
-            </template>
-
             <template v-slot:append>
               <v-icon medium class="color">mdi-chevron-down</v-icon>
             </template>
@@ -26,7 +27,12 @@
         </v-col>
       </aside>
     </v-col>
-    <Chart ref="chart"></Chart>
+
+    <Chart
+      ref="chart"
+      :currentMarketplace="dataFilter[0].selection"
+      :filter="dataFilter[1].selection"
+    ></Chart>
   </section>
 </template>
 
@@ -42,15 +48,18 @@ export default {
     return {
       dataFilter: [
         {
-          title: "CHOOSE MARKETPLACE",
-          selection: [
-            'foo', 'bar', 'fizz', 'buzz'
+          selection: undefined,
+          list: [
+            'paras', 'apollo'
           ]
         },
         {
-          title: "STATS BY MONTH",
-          selection: [
-            'foo', 'bar', 'fizz', 'buzz'
+          selection: "stats by last week",
+          list: [
+            'stats by last day',
+            'stats by last week',
+            'stats by last month',
+            'all',
           ]
         }
       ]
@@ -59,6 +68,9 @@ export default {
   mounted() {
   },
   methods: {
+    selectItem(event, i) {
+      if (i === 1) this.$refs.chart.updateData(event)
+    }
   }
 };
 </script>

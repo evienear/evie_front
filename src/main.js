@@ -9,7 +9,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 //import axios from "axios";
 import VueAnimateOnScroll from 'vue-animate-onscroll';
-import VueApexCharts from 'vue-apexcharts'
+import VueApexchart from 'vue-apexcharts'
 import vueDebounce from 'vue-debounce'
 import VueFileAgent from 'vue-file-agent';
 import 'vue-file-agent/dist/vue-file-agent.css';
@@ -41,9 +41,9 @@ if (!Array.prototype.groupBy) {
 }
 
 
-Vue.use(VueApexCharts)
+Vue.use(VueApexchart)
 Vue.use(vueDebounce)
-Vue.component('apexchart', VueApexCharts)
+Vue.component('VueApexchart', VueApexchart)
 Vue.use(VueFileAgent)
 Vue.use(VueAnimateOnScroll);
 const i18n = initI18n("ES", "US");

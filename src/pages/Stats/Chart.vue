@@ -1,53 +1,407 @@
 <template>
-  <v-col class="containerChart divcolmobile">
-    <apexchart width="100%" type="line" :options="dataDay" :series="series"></apexchart>
-    <apexchart width="100%" type="area" :options="options" :series="series"></apexchart>
+  <v-col class="container-chart">
+    <div class="container-chart--wrapper divcol">
+      <aside class="container-chart--header divcol">
+        <span>VOLUME</span>
+        <span>{{volume_price}} USD</span>
+        <span>{{volume_date}}</span>
+      </aside>
+      
+      <VueApexchart
+        ref="volumeChart"
+        style="width: 100%"
+        height="400"
+        type="area"
+        :options="chartAreaOptions"
+        :series="volumeSeries"
+      ></VueApexchart>
+    </div>
+
+    <div class="container-chart--wrapper divcol">
+      <aside class="container-chart--header divcol">
+        <span>TRANSACTIONS</span>
+        <span>{{transactions_price}} TXs</span>
+        <span>{{transactions_date}}</span>
+      </aside>
+      
+      <VueApexchart
+        ref="transactionsChart"
+        style="width: 100%"
+        height="400"
+        type="bar"
+        :options="chartBarOptions"
+        :series="transactionsSeries"
+      ></VueApexchart>
+    </div>
   </v-col>
 </template>
 
 <script>
 import axios from 'axios'
+
+// autogenerate series functioin for style test
+function generateDayWiseTimeSeries(baseval, count, yrange) {
+  let i = 0;
+  const series = [];
+  while (i < count) {
+    const
+      x = baseval,
+      y = Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
+
+    series.push([x, y]);
+    baseval += 86400000;
+    i++;
+  }
+  return series;
+}
+// autogenerate series functioin for style test
 export default {
   name: "Chart",
+  props: {
+    currentMarketplace: {
+      type: String,
+      default: undefined
+    },
+    filter: {
+      type: String,
+      default: "all"
+    },
+  },
   data() {
     return {
-      options: {
-        xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-        }
-      },
-      series: [{
-        name: 'series-1',
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
+      volume_price: undefined,
+      volume_date: undefined,
+      transactions_price: undefined,
+      transactions_date: undefined,
+
+
+      volumeSeries: [{
+        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
+          min: 10,
+          max: 60
+        })
       }],
-      dataDay: {
-        xaxis: {
-          categories: []
-        }
-      },
-      dataSerie: [{
-        name:'Serie-1',
+      
+      transactionsSeries: [{
+        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
+          min: 10,
+          max: 60
+        })
       }],
+
+
+      chartAreaOptions: {
+        defaultLocale: 'en',
+        grid: {
+          show: false,
+        },
+        colors: ["#eb92ca", "#28c4dc"],
+        chart: {
+          toolbar: {
+            show: false,
+            autoSelected: "zoom",
+          },
+          events: {
+            mouseMove: (event, chartContext, config) => {
+              const points = this.volumeSeries[0].data[config.dataPointIndex];
+              
+              if (points) {
+                const
+                  price = points[1],
+                  dateEpoch = points[0],
+                  date = new Date(dateEpoch),
+                  day = date.getDate(),
+                  month = date.toLocaleString('en-US', { month: 'short' }),
+                  year = date.getFullYear();
+                this.volume_price = price
+                this.volume_date = `${month} ${day}, ${year}`
+              }
+            },
+            mouseLeave: () => {
+              const
+                price = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][1],
+                dateEpoch = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][0],
+                date = new Date(dateEpoch),
+                day = date.getDate(),
+                month = date.toLocaleString('en-US', { month: 'short' }),
+                yer = date.getFullYear();
+
+              this.volume_price = price
+              this.volume_date = `${month} ${day}, ${yer}`
+            }
+          }
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            type: "vertical",
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.9,
+            colorStops: [
+              {
+                offset: 0,
+                color: "#ebe6b4",
+                opacity: 1
+              },
+              {
+                offset: 20,
+                color: "#ebbcc4",
+                opacity: 0.9
+              },
+              {
+                offset: 60,
+                color: "#28c4dc",
+                opacity: 0.7
+              },
+              {
+                offset: 100,
+                color: "#2291e2",
+                opacity: 0.1
+              },
+            ]
+          }
+        },
+        stroke: {
+          curve: 'smooth',
+          lineCap: 'butt',
+          width: 4.5,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        markers: {
+          size: 0,
+          style: "hollow",
+          colors: ["#2291e2"],
+          strokeColors: ['#ebe6b4'],
+          strokeWidth: 4,
+          hover: {
+            size: 8,
+          },
+        },
+        yaxis: {
+          labels: {
+            show: false,
+          }
+        },
+        xaxis: {
+          type: "datetime",
+          labels: {
+            style: {
+              fontSize: "20px",
+            }
+          },
+          axisBorder: {
+            show: false
+          },
+          axisTicks: {
+            show: false,
+          }
+        },
+      },
+
+      chartBarOptions: {
+        defaultLocale: 'en',
+        grid: {
+          show: false,
+        },
+        colors: ["#eb92ca", "#28c4dc"],
+        chart: {
+          toolbar: {
+            show: false,
+            autoSelected: "zoom",
+          },
+          events: {
+            mouseMove: (event, chartContext, config) => {
+              const points = this.transactionsSeries[0].data[config.dataPointIndex];
+              
+              if (points) {
+                const
+                  price = points[1],
+                  dateEpoch = points[0],
+                  date = new Date(dateEpoch),
+                  day = date.getDate(),
+                  month = date.toLocaleString('en-US', { month: 'short' }),
+                  year = date.getFullYear();
+                this.transactions_price = price
+                this.transactions_date = `${month} ${day}, ${year}`
+              }
+            },
+            mouseLeave: () => {
+              const
+                price = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
+                dateEpoch = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][0],
+                date = new Date(dateEpoch),
+                day = date.getDate(),
+                month = date.toLocaleString('en-US', { month: 'short' }),
+                yer = date.getFullYear();
+
+              this.transactions_price = price
+              this.transactions_date = `${month} ${day}, ${yer}`
+            }
+          }
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            type: "vertical",
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.9,
+            colorStops: [
+              {
+                offset: 0,
+                color: "#ebe6b4",
+                opacity: 1
+              },
+              {
+                offset: 20,
+                color: "#ebbcc4",
+                opacity: 0.9
+              },
+              {
+                offset: 60,
+                color: "#28c4dc",
+                opacity: 0.8
+              },
+              {
+                offset: 100,
+                color: "#2291e2",
+                opacity: 0.8
+              },
+            ]
+          }
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        markers: {
+          size: 0,
+          style: "hollow",
+          colors: ["#2291e2"],
+          strokeColors: ['#ebe6b4'],
+          strokeWidth: 4,
+          hover: {
+            size: 8,
+          },
+        },
+        yaxis: {
+          labels: {
+            show: false,
+          }
+        },
+        xaxis: {
+          type: "datetime",
+          labels: {
+            style: {
+              fontSize: "20px",
+            }
+          },
+          axisBorder: {
+            show: false
+          },
+          axisTicks: {
+            show: false,
+          }
+        },
+      },
+    }
+  },
+  watch: {
+    currentMarketplace(current) {
+      console.log(current) // <---- https://apexcharts.com/docs/methods/#updateSeries
+      this.$refs.volumeChart.updateSeries([{
+        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
+          min: 10,
+          max: 60
+        })
+      }])
+      this.$refs.transactionsChart.updateSeries([{
+        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
+          min: 10,
+          max: 60
+        })
+      }])
+      
+      this.updateData(this.filter)
     }
   },
   mounted() {
     this.dataChart()
   },
+  computed: {
+    volumeData() {
+      return this.volumeSeries[0].data;
+    },
+    transactionsData() {
+      return this.transactionsSeries[0].data;
+    },
+  },
   methods: {
     dataChart() {
-      var categoria = []
-      axios.post('http://157.230.2.213:3072/api/v1/volumendiario', {
-      // axios.post('http://157.230.2.213:3071/api/v1/volumendiario', {
-         "limit": "30"
-      }).then(response => {
+      axios.post('https://evie.pro:3070/api/v1/volumendiario', { "limit": "30" })
+      .then(response => {
         console.log(response.data)
+        // set initial volume
+        const
+          volumePrice = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][1],
+          volumeDateEpoch = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][0],
+          volumeDate = new Date(volumeDateEpoch),
+          volumeDay = volumeDate.getDate(),
+          volumeMonth = volumeDate.toLocaleString('en-US', { month: 'short' }),
+          volumeYear = volumeDate.getFullYear();
+        this.volume_price = volumePrice
+        this.volume_date = `${volumeMonth} ${volumeDay}, ${volumeYear}`
         
-        response.data.forEach(item => {
-          categoria.push(item.dia)
-        })
-        this.dataDay.xaxis.categories = categoria.sort(function(a, b){return a - b})
-        console.log(this.dataDay.xaxis.categories)
+        // set initial volume
+        const
+          transactionsPrice = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
+          transactionsDateEpoch = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][0],
+          transactionsDate = new Date(transactionsDateEpoch),
+          transactionsDay = transactionsDate.getDate(),
+          transactionsMonth = transactionsDate.toLocaleString('en-US', { month: 'short' }),
+          transactionsYear = transactionsDate.getFullYear();
+        this.transactions_price = transactionsPrice
+        this.transactions_date = `${transactionsMonth} ${transactionsDay}, ${transactionsYear}`
+        
+        this.updateData(this.filter)
       }).catch(err => console.log(err))
+    },
+    updateData(timeline) {
+      const noExistdate = ref => {
+        return this.volumeData.length-1 > this.volumeData.length-(1 + ref)
+          && this.transactionsData.length-1 > this.transactionsData.length-(1 + ref)
+      }
+      
+      switch (timeline) {
+        case 'stats by last day': {
+          this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-1][0]).getTime());
+          this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-1][0]).getTime());
+          break
+        }
+        case 'stats by last week': {
+          this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-(1 + 7)][0]).getTime());
+          this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-(1 + 7)][0]).getTime());
+          break
+        }
+        case 'stats by last month': {
+          if (noExistdate(30.4167)) return;
+          this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-(1 + 30.4167)][0]).getTime());
+          this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-(1 + 30.4167)][0]).getTime());
+          break
+        }
+        // case '1y': {
+        //   if (existDate(365)) return;
+        //   this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-(1 + 365)][0]).getTime());
+        //   this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-(1 + 365)][0]).getTime());
+        //   break
+        // }
+        default: {
+          this.$refs.volumeChart.resetSeries();
+          this.$refs.transactionsChart.resetSeries();
+        }
+      }
     },
   }
 };

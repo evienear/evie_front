@@ -272,10 +272,6 @@
         &.active {background-color: $clr-btn2 !important}
       }
     }
-    .titleAutocompleteBuy {
-      font-weight: 400;
-      letter-spacing: 0.115em;
-    }
     .rightButton {
       --corner-size: 5px;
       font-weight: 400;
@@ -945,16 +941,35 @@
   position: relative;
   padding-inline: 5%;
   margin-bottom: 4em !important;
-  .containerChart {
+  .container-chart {
     margin-top: 1.5rem;
     min-height: max-content;
     overflow-y: scroll;
     overflow-x: hidden;
-    mix-blend-mode: luminosity;
+    display: flex;
+    flex-wrap: wrap;
+    > * {flex: 1 1}
     div {
       width: 50%;
       display: inline-block;
       @include media(max, small) {width: 100% !important}
+    }
+    &--header {
+      span:first-of-type + span {
+        font-size: 30px;
+        font-weight: bold;
+        & + span {
+          font-size: 14px;
+        }
+      }
+    }
+    &--wrapper {
+      .apexcharts-canvas {
+        tspan {fill: var(--color) !important}
+        [class*="tooltip"] {
+          display: none !important;
+        }
+      }
     }
   }
 }
@@ -1774,5 +1789,17 @@
       border-image-slice: 100;
     }
     span:not(.v-btn__content) {display: none !important}
+  }
+}
+
+.autocompleteBuy {
+  label, input, .v-select__selections {
+    font-weight: 400 !important;
+    font-size: var(--step--2) !important;
+    color: var(--color) !important;
+    text-transform: uppercase !important;
+  }
+  .primary--text {
+    color: #e29ac8 !important;
   }
 }
