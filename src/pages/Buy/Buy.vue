@@ -1,7 +1,8 @@
 <template>
   <section id="buy">
     <MenuBuy ref="menu" :nftCart="nftCart" :cantCart="cantCart" :priceTotal="priceTotal"></MenuBuy>
-    
+    <audio ref="audio" src="@/assets/doggy-slider/doggy-slider-theme.mp3" muted></audio>
+
     <h1 class="titulo h2mobile">BUY</h1>
     <v-row class="mt-3">
       <v-col class="containerUp divcol padd marginbottom">
@@ -981,10 +982,12 @@ export default {
     playDoggy() {
       const imgThumb = document.querySelector(".doggy-slider .doggy-slider-thumb");
       imgThumb.src = require("@/assets/doggy-slider/thumb.gif")
+      this.$refs.audio.play()
     },
     stopDoggy() {
       const imgThumb = document.querySelector(".doggy-slider .doggy-slider-thumb");
       imgThumb.src = require("@/assets/doggy-slider/thumb.svg")
+      this.$refs.audio.pause()
     },
   }
 };
