@@ -110,7 +110,7 @@ export default {
           key: "games",
           state: "-outline",
           name: "Games",
-          to: "/coming-soon-game"
+          to: "/games"
         },
         {
           key: "calendar",

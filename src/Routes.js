@@ -82,9 +82,9 @@ export default new Router({
         component: () => import('@/pages/Error/ComingSoon'),
       },
       {
-        path: '/coming-soon-game',
-        name: 'comingSoonGame',
-        component: () => import('@/pages/Error/ComingSoonGame'),
+        path: '/games',
+        name: 'games',
+        component: () => import('@/pages/Games/Games'),
       },
       {
         path: '/faq',

@@ -1,0 +1,138 @@
+#games {
+  height: calc(100vh - (100px + 150px));
+  
+  #introduction-game {
+    width: min(100%, 62.5em);
+    animation: introduction 2.5s ease backwards;
+  }
+  @keyframes introduction {
+    0% {
+      transform: scale(.5);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .onScreen {
+    height: calc(100vh - (100px + 150px));
+  }
+
+  img:not(#introduction-game) {
+    --size: 12.5em;
+    --border-size: 4px;
+    --corner-size: 5px;
+    width: var(--size);
+    height: var(--size);
+    border: var(--border-size) ridge var(--color);
+    clip-path: polygon(
+      0% var(--corner-size),
+      var(--corner-size) var(--corner-size),
+      var(--corner-size) 0%,
+      calc(100% - var(--corner-size)) 0%,
+      calc(100% - var(--corner-size)) var(--corner-size),
+      100% var(--corner-size),
+      100% calc(100% - var(--corner-size)),
+      calc(100% - var(--corner-size)) calc(100% - var(--corner-size)),
+      calc(100% - var(--corner-size)) 100%,
+      var(--corner-size) 100%,
+      var(--corner-size) calc(100% - var(--corner-size)),
+      0% calc(100% - var(--corner-size))
+    );
+  }
+
+  .v-btn {
+    --corner-size: .4em;
+    font-size: 17px;
+    height: 46px !important;
+    background-color: var(--color) !important;
+    clip-path: polygon(
+      0% var(--corner-size),
+      var(--corner-size) var(--corner-size),
+      var(--corner-size) 0%,
+      calc(100% - var(--corner-size)) 0%,
+      calc(100% - var(--corner-size)) var(--corner-size),
+      100% var(--corner-size),
+      100% calc(100% - var(--corner-size)),
+      calc(100% - var(--corner-size)) calc(100% - var(--corner-size)),
+      calc(100% - var(--corner-size)) 100%,
+      var(--corner-size) 100%,
+      var(--corner-size) calc(100% - var(--corner-size)),
+      0% calc(100% - var(--corner-size))
+    );
+    position: relative;
+    isolation: isolate;
+    &::after {
+      content: "";
+      position: absolute;
+      inset: auto;
+      width: calc(100% - var(--corner-size));
+      height: calc(100% - (var(--corner-size)));
+      background-color: var(--colorBtn) !important;
+      clip-path: polygon(
+        0% var(--corner-size),
+        var(--corner-size) var(--corner-size),
+        var(--corner-size) 0%,
+        calc(100% - var(--corner-size)) 0%,
+        calc(100% - var(--corner-size)) var(--corner-size),
+        100% var(--corner-size),
+        100% calc(100% - var(--corner-size)),
+        calc(100% - var(--corner-size)) calc(100% - var(--corner-size)),
+        calc(100% - var(--corner-size)) 100%,
+        var(--corner-size) 100%,
+        var(--corner-size) calc(100% - var(--corner-size)),
+        0% calc(100% - var(--corner-size))
+      );
+      z-index: -1;
+    }
+  }
+
+  .v-window {
+    width: 100%;
+
+    .v-window-item {
+      --gap: 20px;
+
+      width: min(100%, 62.5em);
+      margin-inline: auto;
+      display: flex;
+      justify-content: space-evenly;
+      gap: var(--gap);
+      ul {
+        appearance: none;
+        list-style: none;
+        padding-left: 0;
+        text-align: center;
+        li {
+          color: var(--color) !important;
+        }
+      }
+
+      &:not(.container-sumary) img:hover {
+        border-image: url(../../assets/doggy-slider/gradient.png) !important;
+        border-image-slice: 50 !important;
+      }
+    }
+
+    .container-sumary {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      gap: var(--gap);
+      padding-bottom: 40px;
+
+      .grid {
+        --grid-size: 8em;
+        
+        width: calc(var(--grid-size) * 2 + var(--gap));
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--grid-size)), 1fr));
+        gap: inherit;
+        img {
+          --size: var(--grid-size) !important;
+          &:not(.selected) {opacity: .5}
+        }
+      }
+    }
+  }
+}

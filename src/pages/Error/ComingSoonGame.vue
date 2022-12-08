@@ -5,12 +5,6 @@
         <v-col id="containerNotFound">
           <!-- <span class="text404">Coming soon</span> -->
           <v-img src="@/assets/game_logo_3_transparent.png" alt="Game" width="min(100%, 1000px)" />
-          <v-col style="display: flex; justify-content: center; padding-top: 0">
-            <span class="textNotFound">Coming soon</span>
-          </v-col>
-          <v-col style="display: flex; justify-content: center">
-            <v-btn href="#/" id="buttonNotFound">Homepage</v-btn>
-          </v-col>
         </v-col>
       </v-row>
   </v-container>
