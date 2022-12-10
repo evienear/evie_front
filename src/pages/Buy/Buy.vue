@@ -563,6 +563,7 @@ export default {
 
           this.dataNftTokens.push(values[0])
         }
+        console.log(this.dataNftTokens)
 
         this.armarAtributos()
         this.$store.commit('Load', false)

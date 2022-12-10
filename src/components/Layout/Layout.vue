@@ -1,7 +1,8 @@
 <template>
-  <v-app >
+  <v-app id="layout">
     <Header ref="header" id="navbar" />
     <DialogLoad />
+    <DialogMessage />
     <v-main class="content center parent">
       <router-view></router-view>
     </v-main>
@@ -13,6 +14,7 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import DialogLoad from '@/components/Dialogs/DialogLoad.vue'
+import DialogMessage from '@/components/Dialogs/DialogMessage.vue'
 import "./layout.scss";
 /*
 --Uso del GSAP:
@@ -63,7 +65,7 @@ v-animate-onscroll.repeat="'animHero'"
 */
 export default {
   name: "Layout",
-  components: { Footer, Header, DialogLoad },
+  components: { Footer, Header, DialogLoad, DialogMessage },
   mounted() {
     if (localStorage.login === 'false' || localStorage.login == undefined) {
       this.$router.push('/login')

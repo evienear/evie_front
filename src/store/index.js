@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import router from '@/Routes';
 
 Vue.use(Vuex);
 
@@ -27,6 +28,23 @@ export default new Vuex.Store({
       element.href = `${state.baseURL}themes/${theme}/theme.css`;
       localStorage.setItem("theme", theme);
       commit( "CambiarTheme", theme)
+    },
+    Message({commit}, {key, title, desc}) {
+      const dialog = router.app.$children[0].$children[0].$children[0].$children
+      .find(data => data.$el === document.querySelector("#dialog.message-dialog"))
+      
+      if (key === 'success') {
+        dialog.title = title || "Success"
+        dialog.desc = desc || "the operation has been successfully completed"
+      } else if (key === 'cancel') {
+        dialog.title = title || "Error"
+        dialog.desc = desc || "An error has been ocurred"
+      } else {
+        dialog.title = title
+        dialog.desc = desc
+      }
+      dialog.messageDialog = true
+      console.log(commit)
     },
     formData(form) {
       const formData = new FormData();
