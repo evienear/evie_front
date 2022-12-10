@@ -69,18 +69,21 @@
     <v-window v-if="windowGame2" v-model="windowGame2Step">
       <v-window-item v-for="(item, i) in dataGame2.groupAtPairs()" :value="i+1" :key="i">
         <button @click="selectedGame2(item[0])">
-          <img :src="item[0].img" :alt="`${item[0].name} nft`">
+          <img :src="item[0].icon || item[0].media"
+          :alt="`${containLetter(item[0].titulo) ? item[0].titulo : `${item[0].collection}#${item[0].titulo}`} nft`">
         </button>
       
         <button @click="selectedGame2(item[1])">
-          <img :src="item[1].img" :alt="`${item[1].name} nft`">
+          <img :src="item[1].icon || item[1].media"
+          :alt="`${containLetter(item[1].titulo) ? item[1].titulo : `${item[1].collection}#${item[1].titulo}`} nft`">
         </button>
       </v-window-item>
       
       <v-window-item :value="dataGame2.groupAtPairs().length+1" class="container-sumary">
         <div class="grid">
           <img
-            v-for="(item, i) in dataGame2.slice(0, 6)" :key="i" :src="item.img" :alt="`${item.name} nft`"
+            v-for="(item, i) in dataGame2.slice(0, 6).flat(1)" :key="i" :src="item.icon || item.media"
+            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`"
             :class="{selected: item.selected}">
         </div>
 
@@ -97,7 +100,8 @@
 
         <div class="grid">
           <img
-            v-for="(item, i) in dataGame2.slice(6, 12)" :key="i" :src="item.img" :alt="`${item.name} nft`"
+            v-for="(item, i) in dataGame2.slice(6, 12).flat(1)" :key="i" :src="item.icon || item.media"
+            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`"
             :class="{selected: item.selected}">
         </div>
       </v-window-item>
@@ -124,7 +128,6 @@ export default {
 
       collection1: [],
       collection2: [],
-      excess: null,
     }
   },
   mounted() {
@@ -166,7 +169,7 @@ export default {
         this.setAtributes(collection1, collection2)
       }).catch(err => {
         console.error(err)
-        this.$store.dispatch('Message', {key: "cancel", desc: err})
+        // this.$store.dispatch('Message', {key: "cancel", desc: err})
       })
     },
     setAtributes(col1, col2) {
@@ -190,7 +193,6 @@ export default {
           this.dataNftTokens = []
           this.dataNftTokens2 = []
           var referenceJson = ''
-          this.excess = response.data.excess
           
           for (const item of response.data.data) {
             var price = ''
@@ -232,13 +234,19 @@ export default {
         }).catch(err => console.error(err))
       }
     },
+    shuffle(arr, num) {
+      const shuffled = [...arr].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, num);
+    },
     startGame1() {
-      function shuffle(arr) {
-        const shuffled = [...arr].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, 6);
-      }
-      const collection1 = shuffle(this.collection1).length === 6 ? shuffle(this.collection1) : shuffle(this.collection1)
-      const collection2 = shuffle(this.collection2).length === 6 ? shuffle(this.collection2) : shuffle(this.collection2)
+      const
+        num = 6,
+        collection1 = this.shuffle(this.collection1).length === num
+        ? this.shuffle(this.collection1, num)
+        : this.shuffle(this.collection1, num),
+        collection2 = this.shuffle(this.collection2).length === num
+        ? this.shuffle(this.collection2, num)
+        : this.shuffle(this.collection2, num);
       
       this.dataGame1 = collection1.map((item, i) => [collection1[i], collection2[i]])
       this.windowGame1 = true
@@ -251,21 +259,25 @@ export default {
       this.$router.go()
     },
     startGame2() {
-      this.dataGame2.push()
-      console.log(this.dataGame2)
+      const num = 12
+      
+      this.dataGame2 = this.shuffle(this.collection1).length === num
+      ? this.shuffle(this.collection1, num)
+      : this.shuffle(this.collection1, num)
       this.windowGame2 = true
+      console.log(this.dataGame2)
     },
     selectedGame2(item) {
-      this.dataGame2.find(data => data === item).selected = true
+      item.selected = true
       if (this.windowGame2Step === this.dataGame2.groupAtPairs().length) this.groupRarity()
       this.windowGame2Step++
     },
     groupRarity() {
-      for (const item of this.dataGame2) {
-        for (const item2 of Object.entries(item.atributes)) {
-          console.log(item2.groupBy(item2[0]))
-        }
-      }
+      // for (const item of this.dataGame2) {
+      //   for (const item2 of Object.entries(item.atributes)) {
+      //     console.log(item2.groupBy(item2[0]))
+      //   }
+      // }
 
       this.listGame2 = [
         ["background", "black", "70%"],
@@ -278,9 +290,7 @@ export default {
       ]
     },
     endGame2() {
-      this.windowGame2Step = 1
-      this.dataGame2 = []
-      this.windowGame2 = false
+      this.$router.go()
     },
     containLetter(str) {
       return /[a-zA-Z]/.test(str);
