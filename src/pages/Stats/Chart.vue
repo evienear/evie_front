@@ -28,10 +28,10 @@
           <span>{{transactions_date}}</span>
         </div>
         
-        <div class="container-chart--header-legend divcol" style="display: flex">
+        <!-- <div class="container-chart--header-legend divcol" style="display: flex">
           <span style="color: var(--c-primary)">Primary: {{transactions_price_primary}}</span>
           <span style="color: var(--c-secondary)">Secondary: {{transactions_price_secondary}}</span>
-        </div>
+        </div> -->
       </aside>
       
       <VueApexchart
@@ -48,22 +48,24 @@
 
 <script>
 import axios from 'axios'
+import * as nearAPI from "near-api-js";
+const { utils } = nearAPI;
 
 // autogenerate series functioin for style test
-function generateDayWiseTimeSeries(baseval, count, yrange) {
-  let i = 0;
-  const series = [];
-  while (i < count) {
-    const
-      x = baseval,
-      y = Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
+// function generateDayWiseTimeSeries(baseval, count, yrange) {
+//   let i = 0;
+//   const series = [];
+//   while (i < count) {
+//     const
+//       x = baseval,
+//       y = Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
 
-    series.push([x, y]);
-    baseval += 86400000;
-    i++;
-  }
-  return series;
-}
+//     series.push([x, y]);
+//     baseval += 86400000;
+//     i++;
+//   }
+//   return series;
+// }
 // autogenerate series functioin for style test
 
 export default {
@@ -71,11 +73,11 @@ export default {
   props: {
     currentMarketplace: {
       type: String,
-      default: undefined
+      default: "%"
     },
-    filter: {
-      type: String,
-      default: "all"
+    volumeFilter: {
+      type: Number,
+      default: 20
     },
   },
   data() {
@@ -83,30 +85,28 @@ export default {
       volume_price: undefined,
       volume_date: undefined,
       transactions_price: undefined,
-      transactions_price_primary: undefined,
-      transactions_price_secondary: undefined,
+      // transactions_price_primary: undefined,
+      // transactions_price_secondary: undefined,
       transactions_date: undefined,
 
 
-      volumeSeries: [{
-        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
-          min: 10,
-          max: 60
-        })
-      }],
+      volumeSeries: [
+        {
+          data: []
+        }
+      ],
       
-      transactionsSeries: [{
-        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
-          min: 10,
-          max: 60
-        })
-      },
-      {
-        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
-          min: 10,
-          max: 60
-        })
-      }],
+      transactionsSeries: [
+        {
+          data: []
+        },
+        // {
+        //   data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
+        //     min: 10,
+        //     max: 60
+        //   })
+        // }
+      ],
 
 
       // volume chart options
@@ -123,7 +123,7 @@ export default {
           },
           events: {
             mouseMove: (event, chartContext, config) => {
-              const points = this.volumeSeries[0].data[config.dataPointIndex];
+              const points = this.volumeData[config.dataPointIndex];
               
               if (points) {
                 const
@@ -134,20 +134,20 @@ export default {
                   month = date.toLocaleString('en-US', { month: 'short' }),
                   year = date.getFullYear();
 
-                this.volume_price = price.toFixed(2)
+                this.volume_price = parseFloat(price).toFixed(2)
                 this.volume_date = `${month} ${day}, ${year}`
               }
             },
             mouseLeave: () => {
               const
-                price = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][1],
-                dateEpoch = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][0],
+                price = this.volumeData[this.volumeData.length-1][1],
+                dateEpoch = this.volumeData[this.volumeData.length-1][0],
                 date = new Date(dateEpoch),
                 day = date.getDate(),
                 month = date.toLocaleString('en-US', { month: 'short' }),
                 yer = date.getFullYear();
 
-              this.volume_price = price.toFixed(2)
+              this.volume_price = parseFloat(price).toFixed(2)
               this.volume_date = `${month} ${day}, ${yer}`
             }
           }
@@ -238,38 +238,38 @@ export default {
           events: {
             mouseMove: (event, chartContext, config) => {
               const
-                primaryPoints = this.transactionsSeries[0].data[config.dataPointIndex],
-                secondaryPoints = this.transactionsSeries[1].data[config.dataPointIndex];
+                primaryPoints = this.transactionsData[config.dataPointIndex];
+                // secondaryPoints = this.transactionsSeries[1].data[config.dataPointIndex];
               
-              if (primaryPoints && secondaryPoints) {
+              if (primaryPoints) {
                 const
                   primaryPrice = primaryPoints[1],
-                  secondaryPrice = secondaryPoints[1],
+                  // secondaryPrice = secondaryPoints[1],
                   dateEpoch = primaryPoints[0],
                   date = new Date(dateEpoch),
                   day = date.getDate(),
                   month = date.toLocaleString('en-US', { month: 'short' }),
                   year = date.getFullYear();
 
-                this.transactions_price = (primaryPrice + secondaryPrice).toFixed(2)
-                this.transactions_price_primary = primaryPrice.toFixed(2)
-                this.transactions_price_secondary = secondaryPrice.toFixed(2)
+                this.transactions_price = parseFloat(primaryPrice).toFixed(2)
+                // this.transactions_price_primary = primaryPrice.toFixed(2)
+                // this.transactions_price_secondary = secondaryPrice.toFixed(2)
                 this.transactions_date = `${month} ${day}, ${year}`
               }
             },
             mouseLeave: () => {
               const
-                primaryPrice = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
-                secondaryPrice = this.transactionsSeries[1].data[this.transactionsSeries[0].data.length-1][1],
-                dateEpoch = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][0],
+                primaryPrice = this.transactionsData[this.transactionsData.length-1][1],
+                // secondaryPrice = this.transactionsSeries[1].data[this.transactionsSeries[0].data.length-1][1],
+                dateEpoch = this.transactionsData[this.transactionsData.length-1][0],
                 date = new Date(dateEpoch),
                 day = date.getDate(),
                 month = date.toLocaleString('en-US', { month: 'short' }),
                 yer = date.getFullYear();
 
-              this.transactions_price = (primaryPrice + secondaryPrice).toFixed(2)
-              this.transactions_price_primary = primaryPrice.toFixed(2)
-              this.transactions_price_secondary = secondaryPrice.toFixed(2)
+              this.transactions_price = parseFloat(primaryPrice).toFixed(2)
+              // this.transactions_price_primary = primaryPrice.toFixed(2)
+              // this.transactions_price_secondary = secondaryPrice.toFixed(2)
               this.transactions_date = `${month} ${day}, ${yer}`
             }
           }
@@ -344,28 +344,13 @@ export default {
     }
   },
   watch: {
+    volumeFilter() {
+      this.dataChart()
+    },
     currentMarketplace(current) {
       console.log(current) // <---- https://apexcharts.com/docs/methods/#updateSeries
-      this.$refs.volumeChart.updateSeries([{
-        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
-          min: 10,
-          max: 60
-        })
-      }])
-      this.$refs.transactionsChart.updateSeries([{
-        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
-          min: 10,
-          max: 60
-        })
-      },
-      {
-        data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
-          min: 10,
-          max: 60
-        })
-      }])
       
-      this.updateData(this.filter)
+      this.dataChart()
     }
   },
   mounted() {
@@ -381,74 +366,68 @@ export default {
   },
   methods: {
     dataChart() {
-      axios.post('https://evie.pro:3070/api/v1/volumendiario', { "limit": "30" })
-      .then(response => {
-        console.log(response.data)
+      axios.post('https://evie.pro:3070/api/v1/volumendiario', {
+        "market": this.currentMarketplace,
+        "days": this.volumeFilter,
+      }).then(response => {
+        this.volumeSeries[0].data = []
+        this.transactionsSeries[0].data = []
+        
+        for (const item of response.data) {
+          const epochDate = Date.parse(new Date(item.fecha))
+          
+          this.volumeData.push([epochDate, this.nearConversor(item.volumen)])
+          this.transactionsData.push([epochDate, item.transacciones])
+        }
+        
+        console.log(this.volumeSeries[0].data, this.volumeSeries[0].data.length)
+
         // set initial volume
         const
-          volumePrice = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][1],
-          volumeDateEpoch = this.volumeSeries[0].data[this.volumeSeries[0].data.length-1][0],
+          volumePrice = this.volumeData[this.volumeData.length-1][1],
+          volumeDateEpoch = this.volumeData[this.volumeData.length-1][0],
           volumeDate = new Date(volumeDateEpoch),
           volumeDay = volumeDate.getDate(),
           volumeMonth = volumeDate.toLocaleString('en-US', { month: 'short' }),
           volumeYear = volumeDate.getFullYear();
 
-        this.volume_price = volumePrice.toFixed(2)
+        this.volume_price = parseFloat(volumePrice).toFixed(2)
         this.volume_date = `${volumeMonth} ${volumeDay}, ${volumeYear}`
-        
+
         // set initial transactions
         const
-          transactionsPricePrimary = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
-          transactionsPriceSecondary = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][1],
-          transactionsDateEpoch = this.transactionsSeries[0].data[this.transactionsSeries[0].data.length-1][0],
+          transactionsPricePrimary = this.transactionsData[this.transactionsData.length-1][1],
+          // transactionsPriceSecondary = this.transactionsData[this.transactionsSeries[0].data.length-1][1],
+          transactionsDateEpoch = this.transactionsData[this.transactionsData.length-1][0],
           transactionsDate = new Date(transactionsDateEpoch),
           transactionsDay = transactionsDate.getDate(),
           transactionsMonth = transactionsDate.toLocaleString('en-US', { month: 'short' }),
           transactionsYear = transactionsDate.getFullYear();
 
-        this.transactions_price = (transactionsPricePrimary + transactionsPriceSecondary).toFixed(2)
-        this.transactions_price_primary = transactionsPricePrimary.toFixed(2)
-        this.transactions_price_secondary = transactionsPriceSecondary.toFixed(2)
+        this.transactions_price = parseFloat(transactionsPricePrimary).toFixed(2)
+        // this.transactions_price_primary = transactionsPricePrimary.toFixed(2)
+        // this.transactions_price_secondary = transactionsPriceSecondary.toFixed(2)
         this.transactions_date = `${transactionsMonth} ${transactionsDay}, ${transactionsYear}`
         
-        this.updateData(this.filter)
-      }).catch(err => console.log(err))
+        this.$refs.volumeChart.updateSeries(this.volumeSeries)
+        this.$refs.transactionsChart.updateSeries(this.transactionsSeries)
+        
+        this.updateData(this.volumeFilter)
+      }).catch(err => console.error(err))
     },
-    updateData(timeline) {
-      const noExistdate = ref => {
-        return this.volumeData.length-1 > this.volumeData.length-(1 + ref)
-          && this.transactionsData.length-1 > this.transactionsData.length-(1 + ref)
+    updateData(volume) {
+      const noExistdate = () => {
+        return this.volumeData.length-1 < this.volumeData.length-(1 + this.volumeFilter)
+          && this.transactionsData.length-1 < this.transactionsData.length-(1 + this.volumeFilter)
       }
+      if (noExistdate()) return;
       
-      switch (timeline) {
-        case 'stats by last day': {
-          this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-1][0]).getTime());
-          this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-1][0]).getTime());
-          break
-        }
-        case 'stats by last week': {
-          this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-(1 + 7)][0]).getTime());
-          this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-(1 + 7)][0]).getTime());
-          break
-        }
-        case 'stats by last month': {
-          if (noExistdate(30.4167)) return;
-          this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-(1 + 30.4167)][0]).getTime());
-          this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-(1 + 30.4167)][0]).getTime());
-          break
-        }
-        // case '1y': {
-        //   if (existDate(365)) return;
-        //   this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-(1 + 365)][0]).getTime());
-        //   this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-(1 + 365)][0]).getTime());
-        //   break
-        // }
-        default: {
-          this.$refs.volumeChart.resetSeries();
-          this.$refs.transactionsChart.resetSeries();
-        }
-      }
+      this.$refs.volumeChart.zoomX(new Date(this.volumeData[this.volumeData.length-(1 + volume)][0]).getTime());
+      this.$refs.transactionsChart.zoomX(new Date(this.transactionsData[this.transactionsData.length-(1 + volume)][0]).getTime());
     },
+    nearConversor(amount) {
+      return Number(parseFloat(utils.format.formatNearAmount(amount)).toFixed(0));
+    }
   }
 };
 </script>

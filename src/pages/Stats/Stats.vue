@@ -18,7 +18,6 @@
             :label="index === 0 ? 'choose marketplace' : ''"
             :menu-props="{ offsetY: true }"
             class="autocompleteBuy"
-            @change="selectItem($event, index)"
           >
             <template v-slot:append>
               <v-icon medium class="color">mdi-chevron-down</v-icon>
@@ -30,8 +29,8 @@
 
     <Chart
       ref="chart"
-      :currentMarketplace="dataFilter[0].selection"
-      :filter="dataFilter[1].selection"
+      :currentMarketplace="dataMarketplaces[dataFilter[0].selection]"
+      :volumeFilter="dataVolumeFilter[dataFilter[1].selection]"
     ></Chart>
   </section>
 </template>
@@ -46,20 +45,32 @@ export default {
   },
   data() {
     return {
+      dataMarketplaces: {
+        all: "%",
+        paras: "marketplace.paras.near",
+        apollo: "marketplace.paras.near",
+        tradeport: "market.tradeport.near",
+      },
+      dataVolumeFilter: {
+        'stats by last week': 7,
+        'stats by 20 days ago': 20,
+        'stats by last month': 30.4167,
+        'stats by 1 year ago': 365,
+      },
       dataFilter: [
         {
-          selection: undefined,
+          selection: "all",
           list: [
-            'paras', 'apollo'
+            'all', 'paras', 'apollo', 'tradeport'
           ]
         },
         {
-          selection: "stats by last week",
+          selection: "stats by 20 days ago",
           list: [
-            'stats by last day',
             'stats by last week',
+            'stats by 20 days ago',
             'stats by last month',
-            'all',
+            'stats by 1 year ago',
           ]
         }
       ]
@@ -67,11 +78,6 @@ export default {
   },
   mounted() {
   },
-  methods: {
-    selectItem(event, i) {
-      if (i === 1) this.$refs.chart.updateData(event)
-    }
-  }
 };
 </script>
 
