@@ -1,18 +1,20 @@
 <template>
-  <div id="games" class="divcol center">
+  <div
+    id="games" class="divcol center"
+    :style="windowGame1Step >= dataGame1.length+2 || windowGame2Step >= dataGame2.groupAtPairs().length+2 ? 'height: auto !important' : ''">
     <!-- main content -->
     <template v-if="!windowGame1 && !windowGame2">
       <img v-if="!main" id="introduction-game" src="@/assets/game_logo_3_transparent.png" alt="Game" />
 
       <div v-else class="acenter spacea" style="gap: 20px; width: min(100%, 62.5em)">
         <v-card class="divcol" color="transparent" style="gap: 10px">
-          <img src="@/assets/nft/monkey1.png" alt="game 1">
+          <img :src="imgGame1" alt="game 1">
           
           <v-btn @click="startGame1()">Game 1</v-btn>
         </v-card>
 
         <v-card class="divcol" color="transparent" style="gap: 10px">
-          <img src="@/assets/nft/monkey2.png" alt="game 2">
+          <img :src="imgGame2" alt="game 2">
           
           <v-btn @click="startGame2()">Game 2</v-btn>
         </v-card>
@@ -22,7 +24,7 @@
 
 
     <!-- game 1 -->
-    <v-window v-if="windowGame1" v-model="windowGame1Step">
+    <v-window v-if="windowGame1" v-model="windowGame1Step" touchless>
       <v-window-item v-for="(item, i) in dataGame1" :value="i+1" :key="i">
         <button @click="selectedGame1(item[0])">
           <img :src="item[0].icon || item[0].media"
@@ -52,6 +54,7 @@
           </ul>
           
           <v-btn class="mt-5 fill-w" @click="endGame1()">Go back</v-btn>
+          <v-btn class="mt-5 fill-w" @click="windowGame1Step++">See Scoreboard</v-btn>
         </div>
 
         <div class="grid">
@@ -61,12 +64,34 @@
             :class="{selected: item.selected}">
         </div>
       </v-window-item>
+
+
+      <v-window-item :value="dataGame1.length+2" class="container-scoreboard">
+        <div class="container-scoreboard--header center py-5" style="position: relative">
+          <button class="botonBack center" @click="endGame1()">
+            <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
+          </button>
+          <!-- <v-btn @click="endGame1()">Go back</v-btn> -->
+
+          <h2 class="p">Scoreboard</h2>
+        </div>
+        
+        <ol>
+          <li v-for="(item, i) in collection1.slice(0, 10)" :key="i" :style="`--bg-image: url(${item.icon || item.media})`">
+            <img
+              :src="item.icon || item.media"
+              :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`">
+            
+            <span>{{containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`}}</span>
+          </li>
+        </ol>
+      </v-window-item>
     </v-window>
 
 
 
     <!-- game 2 -->
-    <v-window v-if="windowGame2" v-model="windowGame2Step">
+    <v-window v-if="windowGame2" v-model="windowGame2Step" touchless>
       <v-window-item v-for="(item, i) in dataGame2.groupAtPairs()" :value="i+1" :key="i">
         <button @click="selectedGame2(item[0])">
           <img :src="item[0].icon || item[0].media"
@@ -96,6 +121,7 @@
           </ul>
           
           <v-btn class="mt-5 fill-w" @click="endGame2()">Go back</v-btn>
+          <v-btn class="mt-5 fill-w" @click="windowGame2Step++">See Scoreboard</v-btn>
         </div>
 
         <div class="grid">
@@ -104,6 +130,28 @@
             :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`"
             :class="{selected: item.selected}">
         </div>
+      </v-window-item>
+
+
+      <v-window-item :value="dataGame2.groupAtPairs().length+2" class="container-scoreboard">
+        <div class="container-scoreboard--header center py-5" style="position: relative">
+          <button class="botonBack center" @click="endGame1()">
+            <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
+          </button>
+          <!-- <v-btn @click="endGame1()">Go back</v-btn> -->
+
+          <h2 class="p">Scoreboard</h2>
+        </div>
+        
+        <ol>
+          <li v-for="(item, i) in collection2.slice(0, 10)" :key="i" :style="`--bg-image: url(${item.icon || item.media})`">
+            <img
+              :src="item.icon || item.media"
+              :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`">
+            
+            <span>{{containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`}}</span>
+          </li>
+        </ol>
       </v-window-item>
     </v-window>
   </div>
@@ -116,6 +164,9 @@ export default {
   name: 'games',
   data() {
     return {
+      imgGame1: undefined,
+      imgGame2: undefined,
+
       main: false,
       windowGame1: false,
       windowGame2: false,
@@ -128,7 +179,15 @@ export default {
 
       collection1: [],
       collection2: [],
+
+      scoreboard1: [],
+      scoreboard2: [],
     }
+  },
+  computed: {
+    accountId() {
+      return JSON.parse(localStorage.getItem("Mintbase.js_wallet_auth_key")).accountId
+    },
   },
   mounted() {
     this.getDataCollections()
@@ -159,12 +218,25 @@ export default {
           if(!item.icon) item.icon = require('@/assets/azul-color.png')
           dataCollections.push(item)
         }
+        
+        // choose 2 random nft images
+        this.imgGame1 = dataCollections[Math.floor(Math.random() * dataCollections.length)].icon
+        this.imgGame2 = this.imgGame1 === dataCollections[Math.floor(Math.random() * dataCollections.length)].icon
+        ? dataCollections[Math.floor(Math.random() * dataCollections.length)].icon
+        : dataCollections[Math.floor(Math.random() * dataCollections.length)].icon
+        
+        // choosing 2 random collections
         const
-          randomMath1 = Math.floor(Math.random() * dataCollections.length) + 1,
-          randomMath2 = randomMath1 === Math.floor(Math.random() * dataCollections.length) + 1
-          ? Math.floor(Math.random() * dataCollections.length) + 1 : Math.floor(Math.random() * dataCollections.length) + 1,
+          randomMath1 = Math.floor(Math.random() * dataCollections.length),
+          randomMath2 = randomMath1 === Math.floor(Math.random() * dataCollections.length)
+          ? Math.floor(Math.random() * dataCollections.length) : Math.floor(Math.random() * dataCollections.length),
           collection1 = dataCollections[randomMath1],
           collection2 = dataCollections[randomMath2];
+        
+        // const
+        //   randomMath1 = Math.floor(Math.random() * dataCollections.length),
+        //   collection1 = dataCollections[randomMath1],
+        //   collection2 = dataCollections[13];  // <----- for test
 
         this.setAtributes(collection1, collection2)
       }).catch(err => {
@@ -179,7 +251,7 @@ export default {
         const col = collections[i];
         
         axios.post('https://evie.pro:3070/api/v1/listnft', {
-          'collection': col.nft_contract,
+          'collection': col.nft_contract, // error here     "near-punks.near"    no recieve data
           'limit': 50,
           'index': 0,
           'sales': true,
@@ -195,15 +267,17 @@ export default {
           var referenceJson = ''
           
           for (const item of response.data.data) {
+            // console.log(`${i+1} ---->`, item)
             var price = ''
             if(item.precio !== null) {
               price = item.precio_near
             } else {
               price = 0
             }
+
             if (item.extra !== null && item.extra !== '') {
-              if(JSON.parse(item.extra)) {
-                item.extra = JSON.parse(item.extra)
+              if(item.extra && item.extra !== '') {
+                // item.extra = JSON.parse(item.extra)
                 if (item.extra.attributes) item.attributes = item.extra.attributes
                 if (item.extra.atributos) item.attributes = item.extra.atributos
               }
@@ -212,7 +286,7 @@ export default {
               if(item.reference.includes('https://')) referenceJson = item.reference
               if (item.base_uri == null) referenceJson = item.reference
               
-              axios.get(referenceJson).then(res => item.attributes = res.data.attributes)
+              axios.get(referenceJson).then(res => item.attributes = res.data.attributes) // error here cors access
               .catch(err => console.error(err))
               
               if(item.media_pinata == null || item.media_pinata === '') {
@@ -221,6 +295,7 @@ export default {
                 item.icon = item.media_pinata
               }
             }
+
             item.price = parseFloat(price)
             item.selected = false
             if (i === 0) {
@@ -256,6 +331,12 @@ export default {
       this.windowGame1Step++
     },
     endGame1() {
+      const dataSelected1 = []
+      for (const item of this.dataGame1) {
+        const element = item.filter(data => data.selected)[0]
+        dataSelected1.push({collection: element.collection, token_id: element.token_id, accountId: this.accountId}) // optional <-------------
+        console.log(element.collection, element.token_id, this.accountId) // <-------- elements to send
+      }
       this.$router.go()
     },
     startGame2() {
