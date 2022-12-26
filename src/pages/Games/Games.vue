@@ -10,13 +10,13 @@
         <v-card class="divcol" color="transparent" style="gap: 10px">
           <img :src="imgGame1" alt="game 1">
           
-          <v-btn @click="startGame1()">Game 1</v-btn>
+          <v-btn :disabled="disabledGames" @click="startGame1()">Game 1</v-btn>
         </v-card>
 
         <v-card class="divcol" color="transparent" style="gap: 10px">
           <img :src="imgGame2" alt="game 2">
           
-          <v-btn @click="startGame2()">Game 2</v-btn>
+          <v-btn :disabled="disabledGames" @click="startGame2()">Game 2</v-btn>
         </v-card>
       </div>
     </template>
@@ -28,12 +28,12 @@
       <v-window-item v-for="(item, i) in dataGame1" :value="i+1" :key="i">
         <button @click="selectedGame1(item[0])">
           <img :src="item[0].icon || item[0].media"
-          :alt="`${containLetter(item[0].titulo) ? item[0].titulo : `${item[0].collection}#${item[0].titulo}`} nft`">
+          :alt="`${containLetter(item[0].titulo) ? item[0].titulo : `${item[0].collection} #${item[0].titulo}`} nft`">
         </button>
       
         <button @click="selectedGame1(item[1])">
           <img :src="item[1].icon || item[1].media"
-          :alt="`${containLetter(item[1].titulo) ? item[1].titulo : `${item[1].collection}#${item[1].titulo}`} nft`">
+          :alt="`${containLetter(item[1].titulo) ? item[1].titulo : `${item[1].collection} #${item[1].titulo}`} nft`">
         </button>
       </v-window-item>
       
@@ -41,7 +41,7 @@
         <div class="grid">
           <img
             v-for="(item, i) in dataGame1.slice(0, 3).flat(1)" :key="i" :src="item.icon || item.media"
-            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`"
+            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection} #${item.titulo}`} nft`"
             :class="{selected: item.selected}">
         </div>
 
@@ -49,18 +49,18 @@
           <h6 class="p bold">You Choose:</h6>
           <ul>
             <li v-for="(item, i) in dataGame1.flat(1).filter(data => data.selected)" :key="i">
-              {{containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`}}
+              {{containLetter(item.titulo) ? item.titulo : `${item.collection} #${item.titulo}`}}
             </li>
           </ul>
           
-          <v-btn class="mt-5 fill-w" @click="endGame1()">Go back</v-btn>
-          <v-btn class="mt-5 fill-w" @click="windowGame1Step++">See Scoreboard</v-btn>
+          <v-btn class="mt-5 fill-w" @click="$router.go()">Go back</v-btn>
+          <v-btn class="mt-5 fill-w" @click="getScoreboard1()">See Scoreboard</v-btn>
         </div>
 
         <div class="grid">
           <img
             v-for="(item, i) in dataGame1.slice(3, 6).flat(1)" :key="i" :src="item.icon || item.media"
-            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`"
+            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection} #${item.titulo}`} nft`"
             :class="{selected: item.selected}">
         </div>
       </v-window-item>
@@ -68,21 +68,21 @@
 
       <v-window-item :value="dataGame1.length+2" class="container-scoreboard">
         <div class="container-scoreboard--header center py-5" style="position: relative">
-          <button class="botonBack center" @click="endGame1()">
+          <button class="botonBack center" @click="$router.go()">
             <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
           </button>
-          <!-- <v-btn @click="endGame1()">Go back</v-btn> -->
+          <!-- <v-btn @click="$router.go()">Go back</v-btn> -->
 
           <h2 class="p">Scoreboard</h2>
         </div>
         
         <ol>
-          <li v-for="(item, i) in collection1.slice(0, 10)" :key="i" :style="`--bg-image: url(${item.icon || item.media})`">
+          <li v-for="(item, i) in scoreboard1" :key="i" :style="`--bg-image: url(${item.icon || item.media})`">
             <img
               :src="item.icon || item.media"
-              :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`">
+              :alt="`${containLetter(item.titulo) ? item.titulo : `${item.contract_nft} #${item.titulo}`} nft`">
             
-            <span>{{containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`}}</span>
+            <span>{{containLetter(item.titulo) ? item.titulo : `${item.contract_nft} #${item.titulo}`}}</span>
           </li>
         </ol>
       </v-window-item>
@@ -95,12 +95,12 @@
       <v-window-item v-for="(item, i) in dataGame2.groupAtPairs()" :value="i+1" :key="i">
         <button @click="selectedGame2(item[0])">
           <img :src="item[0].icon || item[0].media"
-          :alt="`${containLetter(item[0].titulo) ? item[0].titulo : `${item[0].collection}#${item[0].titulo}`} nft`">
+          :alt="`${containLetter(item[0].titulo) ? item[0].titulo : `${item[0].collection} #${item[0].titulo}`} nft`">
         </button>
       
         <button @click="selectedGame2(item[1])">
           <img :src="item[1].icon || item[1].media"
-          :alt="`${containLetter(item[1].titulo) ? item[1].titulo : `${item[1].collection}#${item[1].titulo}`} nft`">
+          :alt="`${containLetter(item[1].titulo) ? item[1].titulo : `${item[1].collection} #${item[1].titulo}`} nft`">
         </button>
       </v-window-item>
       
@@ -108,7 +108,7 @@
         <div class="grid">
           <img
             v-for="(item, i) in dataGame2.slice(0, 6).flat(1)" :key="i" :src="item.icon || item.media"
-            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`"
+            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection} #${item.titulo}`} nft`"
             :class="{selected: item.selected}">
         </div>
 
@@ -127,7 +127,7 @@
         <div class="grid">
           <img
             v-for="(item, i) in dataGame2.slice(6, 12).flat(1)" :key="i" :src="item.icon || item.media"
-            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`"
+            :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection} #${item.titulo}`} nft`"
             :class="{selected: item.selected}">
         </div>
       </v-window-item>
@@ -135,10 +135,10 @@
 
       <v-window-item :value="dataGame2.groupAtPairs().length+2" class="container-scoreboard">
         <div class="container-scoreboard--header center py-5" style="position: relative">
-          <button class="botonBack center" @click="endGame1()">
+          <button class="botonBack center" @click="$router.go()">
             <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/back.svg`" alt="back icon">
           </button>
-          <!-- <v-btn @click="endGame1()">Go back</v-btn> -->
+          <!-- <v-btn @click="$router.go()">Go back</v-btn> -->
 
           <h2 class="p">Scoreboard</h2>
         </div>
@@ -147,9 +147,9 @@
           <li v-for="(item, i) in collection2.slice(0, 10)" :key="i" :style="`--bg-image: url(${item.icon || item.media})`">
             <img
               :src="item.icon || item.media"
-              :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`} nft`">
+              :alt="`${containLetter(item.titulo) ? item.titulo : `${item.collection} #${item.titulo}`} nft`">
             
-            <span>{{containLetter(item.titulo) ? item.titulo : `${item.collection}#${item.titulo}`}}</span>
+            <span>{{containLetter(item.titulo) ? item.titulo : `${item.collection} #${item.titulo}`}}</span>
           </li>
         </ol>
       </v-window-item>
@@ -164,6 +164,7 @@ export default {
   name: 'games',
   data() {
     return {
+      disabledGames: true,
       imgGame1: undefined,
       imgGame2: undefined,
 
@@ -188,6 +189,28 @@ export default {
     accountId() {
       return JSON.parse(localStorage.getItem("Mintbase.js_wallet_auth_key")).accountId
     },
+  },
+  watch: {
+    windowGame1Step(curr) {
+      if (curr === this.dataGame1.length+1) {
+        const lista_nft = []
+        for (const item of this.dataGame1) {
+          const element = item.filter(data => data.selected)[0]
+          lista_nft.push({"contract": element.collection, "token_id": element.token_id})
+        }
+        
+        axios.post('https://evie.pro:3070/api/v1/insertEncuestaA',
+        {
+          "user_id": this.accountId,
+          lista_nft
+        }).then(result => {
+          console.log(result)
+        }).catch(err => {
+          console.error(err)
+          this.$router.go()
+        })
+      }
+    }
   },
   mounted() {
     this.getDataCollections()
@@ -304,6 +327,7 @@ export default {
               this.collection2.push(item)
             }
           }
+          this.disabledGames = false
           
           console.log(this.collection1, this.collection2) // <--
         }).catch(err => console.error(err))
@@ -330,14 +354,12 @@ export default {
       item.selected = true
       this.windowGame1Step++
     },
-    endGame1() {
-      const dataSelected1 = []
-      for (const item of this.dataGame1) {
-        const element = item.filter(data => data.selected)[0]
-        dataSelected1.push({collection: element.collection, token_id: element.token_id, accountId: this.accountId}) // optional <-------------
-        console.log(element.collection, element.token_id, this.accountId) // <-------- elements to send
-      }
-      this.$router.go()
+    getScoreboard1() {
+      axios.post('https://evie.pro:3070/api/v1/topNftEncuestaA', {"top": 10}).then(result => {
+        this.windowGame1Step++
+        this.scoreboard1 = result.data
+        console.log(result)
+      }).catch(err => console.error(err))
     },
     startGame2() {
       const num = 12
