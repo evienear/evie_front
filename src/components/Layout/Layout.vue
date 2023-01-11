@@ -67,9 +67,9 @@ export default {
   name: "Layout",
   components: { Footer, Header, DialogLoad, DialogMessage },
   mounted() {
-    if (localStorage.login === 'false' || localStorage.login == undefined) {
-      this.$router.push('/login')
-    }
+    // if (localStorage.login === 'false' || localStorage.login == undefined) {
+    //   this.$router.push('/login')
+    // }
   },
 }
 </script>

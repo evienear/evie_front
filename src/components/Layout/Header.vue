@@ -33,9 +33,9 @@
               <img :src="`${$store.state.baseURL}themes/${$store.state.theme}/toggle.svg`" alt="toggle navbar">
             </button>
           </aside>
-          <aside @click="logout()" style="cursor:pointer">
+          <!-- <aside @click="logout()" style="cursor:pointer">
             <v-icon>mdi-logout</v-icon>
-          </aside>
+          </aside> -->
         </v-col>
       </v-row>
     </v-app-bar>
