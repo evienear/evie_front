@@ -3,26 +3,60 @@
 //const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX
 const BASE_URL = process.env.VUE_APP_API_BASE_URL
 // const NETWORK = process.env.NODE_ENV === 'development' ? 'testnet' : 'mainnet'
-const NETWORK = 'mainnet'
-// var NETWORK = ''
+// const NETWORK = 'mainnet'
 
-function CONFIG(keyStores) {
+// function CONFIG(keyStores) {
+//   switch (NETWORK) {
+//   case 'mainnet':
+//     return {
+//       networkId: 'mainnet',
+//       keyStore: keyStores,
+//       nodeUrl: "https://rpc.mainnet.near.org",
+//       walletUrl: localStorage.getItem("walletBaseUrl"),
+//       helperUrl: "https://helper.mainnet.near.org",
+//       explorerUrl: "https://explorer.mainnet.near.org",
+//     }
+  
+//   case 'testnet':
+//     return {
+//       networkId: "testnet",
+//       keyStore: keyStores,
+//       nodeUrl: "https://rpc.testnet.near.org",
+//       walletUrl: localStorage.getItem("walletBaseUrl"),
+//       helperUrl: "https://helper.testnet.near.org",
+//       explorerUrl: "https://explorer.testnet.near.org",
+//     }
+//   default:
+//     throw Error(`Unconfigured environment '${NETWORK}'`)
+//   }
+// }
+
+function CONFIG(keyStores, NETWORK) {
   switch (NETWORK) {
-  case 'mainnet':
+  case 'near':
     return {
       networkId: 'mainnet',
       keyStore: keyStores,
       nodeUrl: "https://rpc.mainnet.near.org",
-      walletUrl: localStorage.getItem("walletBaseUrl"),
+      walletUrl: "https://wallet.mainnet.near.org/",
       helperUrl: "https://helper.mainnet.near.org",
       explorerUrl: "https://explorer.mainnet.near.org",
     }
+  case 'myNear':
+      return {
+        networkId: 'mainnet',
+        keyStore: keyStores,
+        nodeUrl: "https://rpc.mainnet.near.org",
+        walletUrl: "https://app.mynearwallet.com/",
+        helperUrl: "https://helper.mainnet.near.org",
+        explorerUrl: "https://explorer.mainnet.near.org",
+      }
   case 'testnet':
     return {
       networkId: "testnet",
       keyStore: keyStores,
       nodeUrl: "https://rpc.testnet.near.org",
-      walletUrl: localStorage.getItem("walletBaseUrl"),
+      walletUrl: "https://wallet.testnet.near.org/",
       helperUrl: "https://helper.testnet.near.org",
       explorerUrl: "https://explorer.testnet.near.org",
     }
@@ -30,6 +64,7 @@ function CONFIG(keyStores) {
     throw Error(`Unconfigured environment '${NETWORK}'`)
   }
 }
+
 
 
 module.exports = {

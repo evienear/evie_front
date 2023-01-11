@@ -49,7 +49,7 @@ import ModalConnect from "@/components/modals/connect";
 import * as nearAPI from "near-api-js";
 import { CONFIG } from "@/services/api";
 const { connect, keyStores, WalletConnection, /*Contract*/ } = nearAPI;
-// const contractId = 'backend.evie.testnet'
+const contractIdTestnet = 'backend.evie.testnet'
 const contractId = 'backend.eviepro.near'
 let scrollValue =
 document.body.scrollTop || document.documentElement.scrollTop;
@@ -149,34 +149,55 @@ export default {
     },
     scrollListener() {resizeThrottler(this.OcultarNavbar)},
     async loginNear(key) {
+      localStorage.network = key
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
       );
       const wallet = new WalletConnection(near);
 
-      const nearWallet = "https://wallet.mainnet.near.org"
-      const myNearWallet = "https://app.mynearwallet.com/"
+      var contract = ''
       if (!this.sesion && key === 'near') {
-        localStorage.setItem("walletBaseUrl", nearWallet)
-        wallet._walletBaseUrl = nearWallet
+        contract = contractId
       } else if (!this.sesion && key === 'myNear') {
-        localStorage.setItem("walletBaseUrl", myNearWallet)
-        wallet._walletBaseUrl = myNearWallet
+        contract = contractId
+      } else if (!this.sesion && key === 'testnet'){
+        contract = contractIdTestnet
       } else if (!this.sesion && key === 'sender') {
         return alert("comming soon")
       } else if (this.sesion) {
+        console.log('sesion true')
         wallet.signOut();
         this.user = "Connect Wallet";
         this.sesion = false;
         localStorage.sesion = false;
         return this.$router.go();
       }
-      wallet.requestSignIn(contractId);
+
+      // const nearWallet = "https://wallet.mainnet.near.org"
+      // const myNearWallet = "https://app.mynearwallet.com/"
+      // if (!this.sesion && key === 'near') {
+      //   localStorage.setItem("walletBaseUrl", nearWallet)
+      //   wallet._walletBaseUrl = nearWallet
+      // } else if (!this.sesion && key === 'myNear') {
+      //   localStorage.setItem("walletBaseUrl", myNearWallet)
+      //   wallet._walletBaseUrl = myNearWallet
+      // } else if (!this.sesion && key === 'sender') {
+      //   return alert("comming soon")
+      // } else if (this.sesion) {
+      //   wallet.signOut();
+      //   this.user = "Connect Wallet";
+      //   this.sesion = false;
+      //   localStorage.sesion = false;
+      //   return this.$router.go();
+      // }
+
+      wallet.requestSignIn(contract);
+        
     },
     async isSigned() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -198,7 +219,7 @@ export default {
       }
     },
     logout() {
-      // console.log('logout')
+      console.log('logout')
       localStorage.login = 'false'
       localStorage.removeItem('isAdmin')
       this.$router.push('/login')
