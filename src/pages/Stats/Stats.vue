@@ -46,9 +46,8 @@ export default {
   data() {
     return {
       dataMarketplaces: {
-        all: "%",
         paras: "marketplace.paras.near",
-        apollo: "marketplace.paras.near",
+        apollo: "apollo42.near",
         tradeport: "market.tradeport.near",
       },
       dataVolumeFilter: {
@@ -59,9 +58,9 @@ export default {
       },
       dataFilter: [
         {
-          selection: "all",
+          selection: "paras",
           list: [
-            'all', 'paras', 'apollo', 'tradeport'
+            'paras', 'apollo', 'tradeport'
           ]
         },
         {

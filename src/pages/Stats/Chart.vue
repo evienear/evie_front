@@ -73,7 +73,7 @@ export default {
   props: {
     currentMarketplace: {
       type: String,
-      default: "%"
+      default: "paras"
     },
     volumeFilter: {
       type: Number,
