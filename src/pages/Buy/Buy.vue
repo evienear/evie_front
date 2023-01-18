@@ -138,14 +138,14 @@
               
               <v-slider
                 v-model="doggySlider"
-                :max="dataNftTokens.length"
+                :max="dataNftTokens?.length"
                 hide-details
                 class="doggy-slider"
                 @input="sliderSelect($event)"
                 @change="sliderPush()"
                 @mousedown="playDoggy()"
                 @mouseup="stopDoggy()"
-                :style="`--clip: ${doggySlider === dataNftTokens.length ? 'var(--clip-path2)' : 'var(--clip-path2-left)'}`"
+                :style="`--clip: ${doggySlider === dataNftTokens?.length ? 'var(--clip-path2)' : 'var(--clip-path2-left)'}`"
               ></v-slider>
             </div>
           </div>
@@ -226,7 +226,7 @@
 
         <v-col clas id="tableBuy" class="padd">
           <div v-for="(item, index) in dataNftTokens" v-bind:key="index"
-            class="containerMarketplace" :class="{active: item.marketplaces.some(e => e.select)}">
+            class="containerMarketplace" :class="{active: item?.marketplaces?.some(e => e.select)}">
 
             <v-img class="images" :src="item.icon" alt="NFT Market Place" @click="nftSelect(item)" />
 
@@ -240,7 +240,7 @@
             </span>
 
             <aside class="buttons" >
-              <v-btn v-show="item.marketplaces.length > 4" icon class="btn3" :disabled="slider <= 0" @click="prev($event)">
+              <v-btn v-show="item.marketplaces?.length > 4" icon class="btn3" :disabled="slider <= 0" @click="prev($event)">
                 <v-icon small>mdi-arrow-up</v-icon>
               </v-btn>
               <div class="buttons__wrapper" @scroll="scroll($event)">
@@ -493,14 +493,19 @@ export default {
           } else {
             price = 0
           }
-          if (item.extra !== null && item.extra !== '') {
-            if(JSON.parse(item.extra)) {
-              item.extra = JSON.parse(item.extra)
-              if (item.extra.attributes) {
-                item.attributes = item.extra.attributes
-              }
-              if (item.extra.atributos) {
-                item.attributes = item.extra.atributos
+          if (item.extra && JSON.parse(item.extra)) {
+            item.extra = JSON.parse(item.extra)
+            if (item.extra.attributes) {
+              item.attributes = item.extra.attributes
+            } else if (item.extra.atributos) {
+              item.attributes = item.extra.atributos
+            } else {
+              item.attributes = []
+              for (const [key, value] of Object.entries(item.extra)) {
+                if (key.includes("attributes")) {
+                  const type = key.split("_")[1]
+                  item.attributes.push({trait_type: type, value: value})
+                }
               }
             }
           } else if ((item.extra == null || item.extra === '') && (item.reference !== null || item.reference !== 'Pinata')) {
@@ -518,13 +523,9 @@ export default {
             }).catch(err => {
               console.log(err)
             })
-            if(item.media_pinata == null || item.media_pinata === '') {
-              item.icon = item.media
-            } else {
-              item.icon = item.media_pinata
-            }
           } 
-          //console.log(item)
+          item.icon = item.media || item.media_pinata
+          // console.log(item)
           item.price = parseFloat(price)
           // if(item.attributes == undefined) {}
           this.dataNftTokens2.push(item)
@@ -670,6 +671,7 @@ export default {
           this.dataAttr.forEach(filter => {
             this.dataNftTokens2.forEach(nft => {
               if (nft.attributes) {
+                console.log(nft);
                 nft.attributes.forEach(tag => {
                   if (filter.filter === tag.trait_type && filter.name === tag.value){
                     data.push(nft)
