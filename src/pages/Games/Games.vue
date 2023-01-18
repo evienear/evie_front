@@ -10,14 +10,14 @@
         <v-card class="divcol" color="transparent" style="gap: 10px">
           <img :src="imgGame1" alt="game 1">
           
-          <v-btn :disabled="disabledGames" @click="startGame1()">Game 1</v-btn>
+          <v-btn :disabled="disabledGames" @click="startGame1()">Game</v-btn>
         </v-card>
 
-        <v-card class="divcol" color="transparent" style="gap: 10px">
+        <!-- <v-card class="divcol" color="transparent" style="gap: 10px">
           <img :src="imgGame2" alt="game 2">
           
           <v-btn :disabled="disabledGames" @click="startGame2()">Game 2</v-btn>
-        </v-card>
+        </v-card> -->
       </div>
     </template>
 
@@ -252,15 +252,17 @@ export default {
         const
           randomMath1 = Math.floor(Math.random() * dataCollections.length),
           randomMath2 = randomMath1 === Math.floor(Math.random() * dataCollections.length)
-          ? Math.floor(Math.random() * dataCollections.length) : Math.floor(Math.random() * dataCollections.length),
-          collection1 = dataCollections[randomMath1],
-          collection2 = dataCollections[randomMath2];
+          ? Math.floor(Math.random() * dataCollections.length - 1) : Math.floor(Math.random() * dataCollections.length),
+          
+          collection1 = dataCollections[randomMath1 === 9 ? randomMath1 : randomMath1], // <--- not for 9
+          collection2 = dataCollections[randomMath2 === 9 ? randomMath2 : randomMath2]; // <--- not for 9
         
         // const
-        //   randomMath1 = Math.floor(Math.random() * dataCollections.length),
+        //   randomMath1 = Math.floor(Math.random() * dataCollections.length - 1),
         //   collection1 = dataCollections[randomMath1],
-        //   collection2 = dataCollections[13];  // <----- for test
+        //   collection2 = dataCollections[9];  // <----- for test: error in --> 3, 9
 
+        this.disabledGames = false
         this.setAtributes(collection1, collection2)
       }).catch(err => {
         console.error(err)
@@ -288,8 +290,8 @@ export default {
           this.dataNftTokens = []
           this.dataNftTokens2 = []
           var referenceJson = ''
-          
-          for (const item of response.data.data) {
+
+          for (const item of response?.data?.data) {
             // console.log(`${i+1} ---->`, item)
             var price = ''
             if(item.precio !== null) {
@@ -298,11 +300,20 @@ export default {
               price = 0
             }
 
-            if (item.extra !== null && item.extra !== '') {
-              if(item.extra && item.extra !== '') {
-                // item.extra = JSON.parse(item.extra)
-                if (item.extra.attributes) item.attributes = item.extra.attributes
-                if (item.extra.atributos) item.attributes = item.extra.atributos
+            if (item.extra && JSON.parse(item.extra)) {
+              item.extra = JSON.parse(item.extra)
+              if (item.extra.attributes) {
+                item.attributes = item.extra.attributes
+              } else if (item.extra.atributos) {
+                item.attributes = item.extra.atributos
+              } else {
+                item.attributes = []
+                for (const [key, value] of Object.entries(item.extra)) {
+                  if (key.includes("attributes")) {
+                    const type = key.split("_")[1]
+                    item.attributes.push({trait_type: type, value: value})
+                  }
+                }
               }
             } else if ((item.extra == null || item.extra === '') && (item.reference !== null || item.reference !== 'Pinata')) {
               if(item.base_uri !== null  && !item.reference.includes('https://')) referenceJson = item.base_uri + '/' + item.reference
@@ -311,13 +322,8 @@ export default {
               
               axios.get(referenceJson).then(res => item.attributes = res.data.attributes) // error here cors access
               .catch(err => console.error(err))
-              
-              if(item.media_pinata == null || item.media_pinata === '') {
-                item.icon = item.media
-              } else {
-                item.icon = item.media_pinata
-              }
             }
+            item.icon = item.media || item.media_pinata
 
             item.price = parseFloat(price)
             item.selected = false
@@ -331,6 +337,7 @@ export default {
           
           console.log(this.collection1, this.collection2) // <--
         }).catch(err => console.error(err))
+        // if (!(this.collection1.length >= 4) || !(this.collection2.length >= 4)) this.$router.go()
       }
     },
     shuffle(arr, num) {
