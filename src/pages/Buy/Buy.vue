@@ -671,7 +671,6 @@ export default {
           this.dataAttr.forEach(filter => {
             this.dataNftTokens2.forEach(nft => {
               if (nft.attributes) {
-                console.log(nft);
                 nft.attributes.forEach(tag => {
                   if (filter.filter === tag.trait_type && filter.name === tag.value){
                     data.push(nft)
