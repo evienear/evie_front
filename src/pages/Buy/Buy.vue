@@ -710,7 +710,7 @@ export default {
     async addCartItem(item) {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -759,7 +759,7 @@ export default {
       console.log('pasando por getcart')
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);

@@ -349,7 +349,7 @@ export default {
     },
     async getBalance() {
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -368,7 +368,7 @@ export default {
     async removeCartItem(item) {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -408,7 +408,7 @@ export default {
     async clearCart() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -448,7 +448,7 @@ export default {
     async purchase(item) {
       const selectedMarketplace = item.marketplaces.find(data => data.selectBuy)
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       const wallet = new WalletConnection(near);
       // const contract = new Contract(wallet.account(), item.contract_market, {
@@ -531,7 +531,7 @@ export default {
       receiverId,
       actions
     ){
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network));
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
       if (!wallet || !near) {
@@ -580,7 +580,7 @@ export default {
     },
 
     async batchTransaction(transactions, options) {
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network));
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
       const nearTransactions = await Promise.all(

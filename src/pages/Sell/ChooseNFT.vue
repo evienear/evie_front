@@ -324,7 +324,7 @@ export default {
       var responseData = []
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -375,7 +375,7 @@ export default {
     async storage() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore()k)
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -433,7 +433,7 @@ export default {
       }
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
@@ -492,7 +492,7 @@ export default {
    // FUNCIONES DEL BATCH
 
    async storage_minimum() {
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network));
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
       const contract = new Contract(wallet.account(), this.selectedItem, {
@@ -507,7 +507,7 @@ export default {
       })
     },
     async storage_balance() {
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network));
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
       const contract = new Contract(wallet.account(), this.selectedItem, {
@@ -538,7 +538,7 @@ export default {
 
       await this.storage_minimum()
       await this.storage_balance()
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network));
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
       if (this.storageBalance > this.minimumStorage) {
@@ -606,7 +606,7 @@ export default {
       receiverId,
       actions
     ){
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network));
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
       if (!wallet || !near) {
@@ -655,7 +655,7 @@ export default {
     },
 
     async batchTransaction(transactions, options) {
-      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore(), localStorage.network));
+      const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 
       const nearTransactions = await Promise.all(
