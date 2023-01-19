@@ -9,14 +9,14 @@
     </aside>
 
     <v-sheet class="grid" color="transparent">
-      <v-btn plain @click="$parent.loginNear('testnet')">
+      <!-- <v-btn plain @click="$parent.loginNear('testnet')">
         <img src="@/assets/logo/near-wallet-icon.svg" alt="near">
         
         <div class="divcol astart" style="gap: 5px">
           <span class="h12_em bold">NEAR testnet</span>
           <span class="h13_em">wallet.testnet.near.org</span>
         </div>
-      </v-btn>
+      </v-btn> -->
 
       <v-btn plain @click="$parent.loginNear('near')">
         <img src="@/assets/logo/near-wallet-icon.svg" alt="near">
