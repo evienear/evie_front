@@ -148,13 +148,12 @@ export default {
       }
     },
     scrollListener() {resizeThrottler(this.OcultarNavbar)},
-    async loginNear(key) {
-      // if(key === undefined) {
-      //   localStorage.network = 'near'
-      // } else {
-      //   localStorage.network = key
-      // }
 
+    async loginNear(key) {
+      const near = await connect(
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
+      );
+      const wallet = new WalletConnection(near);
       const nearWallet = "https://wallet.mainnet.near.org"
       const myNearWallet = "https://app.mynearwallet.com/"
       if (!this.sesion && key === 'near') {
@@ -172,11 +171,16 @@ export default {
         localStorage.sesion = false;
         return this.$router.go();
       }
+      wallet.requestSignIn(contractId);
+    },
 
-      const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
-      );
-      const wallet = new WalletConnection(near);
+    // async loginNear(key) {
+      // if(key === undefined) {
+      //   localStorage.network = 'near'
+      // } else {
+      //   localStorage.network = key
+      // }
+      
 
       // var contract = ''
       // if (!this.sesion && key === 'near') {
@@ -198,9 +202,9 @@ export default {
       // }
 
 
-      wallet.requestSignIn(contractId);
+    //   wallet.requestSignIn(contractId);
         
-    },
+    // },
     async isSigned() {
       // connect to NEAR
       const near = await connect(
