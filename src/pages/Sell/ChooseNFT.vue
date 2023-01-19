@@ -375,7 +375,7 @@ export default {
     async storage() {
       // connect to NEAR
       const near = await connect(
-        CONFIG(new keyStores.BrowserLocalStorageKeyStore()k)
+        CONFIG(new keyStores.BrowserLocalStorageKeyStore())
       );
       // create wallet connection
       const wallet = new WalletConnection(near);
