@@ -564,7 +564,7 @@ export default {
 
           this.dataNftTokens.push(values[0])
         }
-        console.log(this.dataNftTokens)
+        // console.log(this.dataNftTokens)
 
         this.armarAtributos()
         this.$store.commit('Load', false)
@@ -756,7 +756,7 @@ export default {
     },
     
     async getCartItems() {
-      console.log('pasando por getcart')
+      // console.log('pasando por getcart')
       // connect to NEAR
       const near = await connect(
         CONFIG(new keyStores.BrowserLocalStorageKeyStore())
@@ -833,7 +833,7 @@ export default {
           this.priceFilter.splice(index, 1)
         }
         this.filterSelect = 'desc'
-        console.log(this.priceFilter)
+        //console.log(this.priceFilter)
       }
       if(this.clickValueFilter === true) {
         index = this.priceFilter.findIndex(i => i === 'false')
@@ -844,7 +844,7 @@ export default {
       }
       if(this.clickValueFilter === false) {
         index = this.priceFilter.findIndex(i => i === 'true')
-        console.log(index, 'index')
+        // console.log(index, 'index')
         if(index > -1) {
           this.priceFilter.splice(index, 1)
         }
@@ -864,7 +864,7 @@ export default {
         this.filterSelect = ''
         this.sales = true
       } 
-      console.log(this.priceFilter, 'variable del select')
+      // console.log(this.priceFilter, 'variable del select')
       this.viewTokens()
     },
     viewFormEducation() {
@@ -883,7 +883,7 @@ export default {
       if (slide.scrollTop >= 0) {
         slide.scrollTop -= 80;
         this.slider = slide.scrollTop -= 80;
-        console.log(this.slider)
+        // console.log(this.slider)
       }
     },
     next(e) {
@@ -895,7 +895,7 @@ export default {
       } else {
         this.slider = 'disabled'
       }
-      console.log(this.slider)
+      // console.log(this.slider)
     },
     scroll(e) {
       const wrapper = e.path[1];

@@ -471,7 +471,7 @@ export default {
     //INICIA EL BACHT
     async buyAll () {
       var txs = []
-      //console.log(this.nftCart)
+      console.log(this.nftCart)
       this.nftCart.forEach(item => {
         const selectedMarketplace = item.marketplaces.find(data => data.selectBuy)
         txs.push({
@@ -485,9 +485,11 @@ export default {
                 nft_contract_id: item.contract_id ,
                 token_id: item.token_id,
                 ft_token_id: 'near',
-                price: item.lower_price
+                price: item.precio
+                // price: item.lower_price
               },
-              deposit: item.lower_price,
+              deposit: item.precio,
+              // deposit: item.lower_price,
             },
           ],
         })
@@ -527,10 +529,7 @@ export default {
         },
       );
     },
-    async createTransactionFn(
-      receiverId,
-      actions
-    ){
+    async createTransactionFn(receiverId, actions){
       const near = await connect(CONFIG(new keyStores.BrowserLocalStorageKeyStore()));
       const wallet = new WalletConnection(near);
 

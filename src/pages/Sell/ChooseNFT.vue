@@ -542,7 +542,38 @@ export default {
       const wallet = new WalletConnection(near);
 
       if (this.storageBalance > this.minimumStorage) {
-        this.approve()
+        // this.approve()
+        const txs = []
+        for (const item of this.dataSellSettings) {
+          txs.push(
+            {
+              receiverId: item.collection,
+              functionCalls: [
+                {
+                  methodName: "nft_approve",
+                  receiverId: item.collection,
+                  gas: "200000000000000",
+                  args: {
+                    token_id: item.token_id,
+                    account_id: this.selectedItem,
+                    msg: JSON.stringify({
+                      price: utils.format.parseNearAmount((item.near_amount).toString()),
+                      market_type: "sale",
+                      ft_token_id: "near"
+                    }),
+                  },
+                  deposit: "350000000000000000000",
+                },
+              ],
+            },
+          )
+          await this.batchTransaction(
+            txs,
+            {
+              meta: "list",
+            },
+          ); 
+        }
       } else {
         const txs = []
         for (const item of this.dataSellSettings) {
